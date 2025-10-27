@@ -8,21 +8,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 //* AUTH TABLES ----------
 model User {
-  id            String   @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
+  id              String   @id
+  name            String
+  email           String
+  emailVerified   Boolean
+  image           String?
+  createdAt       DateTime
+  updatedAt       DateTime
 
-  sessions Session[]
-  accounts Account[]
+  sessions        Session[]
+  accounts        Account[]
 
   @@unique([email])
-  @@index([email])
   @@map("user")
 }
 
@@ -39,7 +39,6 @@ model Session {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
-  @@index([userId, token])
   @@map("session")
 }
 
@@ -60,7 +59,6 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
   @@map("account")
 }
 
@@ -72,8 +70,6 @@ model Verification {
   createdAt  DateTime?
   updatedAt  DateTime?
 
-  @@index([identifier])
   @@map("verification")
 }
-
 //* ----------------------

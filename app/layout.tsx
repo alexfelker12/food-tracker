@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 // import { Geist, Geist_Mono } from "next/font/google";
-
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { Toaster } from "@/components/ui/sonner";
-import { auth } from "@/lib/auth";
-
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
-import { AuthProvider } from "@/components/providers/AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -23,20 +18,14 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: "MFoody",
-  description: "Track calories and reach your fitness goals!",
+  description: "Track calories and your progress towards your fitness goals!",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  console.log("fetched session in root")
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
@@ -46,10 +35,8 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider initialSession={session}>
-            {children}
-            <Toaster />
-          </AuthProvider>
+          {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
