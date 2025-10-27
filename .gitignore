@@ -48,3 +48,6 @@ lib/generated/prisma
 
 # google oauth
 google-auth-client_food-tracker.json
+
+# brainstorming notes
+brainstorming.yaml

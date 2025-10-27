@@ -1,6 +1,9 @@
 import { betterAuth, BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { username } from "better-auth/plugins";
+
 import { db } from "./db";
+import { validateUsername } from "./utils";
 
 export const betterAuthConfig: BetterAuthOptions = {
   database: prismaAdapter(db, {
@@ -16,12 +19,18 @@ export const betterAuthConfig: BetterAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-  session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 24 * 60 * 60 // 1 day
-    }
-  },
-}
+  plugins: [
+    username({
+      minUsernameLength: 1,
+      usernameValidator: (username) => {
+        if (username === "admin") {
+          return false;
+        }
+        const { valid } = validateUsername(username); // global username validator
+        return valid;
+      },
+    }),
+  ],
+};
 
 export const auth = betterAuth(betterAuthConfig);
