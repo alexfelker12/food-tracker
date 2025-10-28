@@ -6,10 +6,10 @@ import { auth } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
 
 
-type Session = typeof auth.$Infer.Session
+export type AuthSession = typeof auth.$Infer.Session
 
 type AuthContextType = {
-  session: Session | null
+  session: AuthSession | null
   refreshSession: () => Promise<void>
 }
 
@@ -20,9 +20,9 @@ function AuthProvider({
   initialSession,
 }: {
   children: React.ReactNode
-  initialSession: Session | null
+  initialSession: AuthSession | null
 }) {
-  const [session, setSession] = useState(initialSession)
+  const [session, setSession] = useState<AuthSession | null>(initialSession)
 
   const refreshSession = async () => {
     const { data: newSession, error } = await authClient.getSession()

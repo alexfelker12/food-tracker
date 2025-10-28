@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -44,10 +42,14 @@ next-env.d.ts
 public/manifest.json
 
 # prisma
-lib/generated/prisma
+generated/prisma
+add-check-constraints-postgresql.md
 
 # google oauth
 google-auth-client_food-tracker.json
 
 # my stuff
 brainstorming.yaml
+
+# prettier - for now
+.prettier*

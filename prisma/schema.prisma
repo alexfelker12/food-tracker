@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output   = "../generated/client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -8,21 +8,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//* -----------------------------
+//* AUTH TABLES
+//* -----------------------------
 
-//* AUTH TABLES ----------
 model User {
-  id              String   @id
-  name            String
-  email           String
-  emailVerified   Boolean
-  image           String?
-  createdAt       DateTime
-  updatedAt       DateTime
+  id            String   @id
+  name          String
+  email         String   @unique // each user must have a unique email
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
 
-  sessions        Session[]
-  accounts        Account[]
+  // relations
+  sessions       Session[]
+  accounts       Account[]
+  metricsProfile MetricsProfile?
+  journalDay     JournalDay[]
+  meal           Meal[]
 
-  @@unique([email])
+  @@index([email])
   @@map("user")
 }
 
@@ -38,7 +44,7 @@ model Session {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
+  @@index([userId, token])
   @@map("session")
 }
 
@@ -59,6 +65,7 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("account")
 }
 
@@ -70,6 +77,267 @@ model Verification {
   createdAt  DateTime?
   updatedAt  DateTime?
 
+  @@index([identifier])
   @@map("verification")
 }
-//* ----------------------
+
+//* -----------------------------
+//* METRIC PROFILE TABLES (for now, not completed)
+//* -----------------------------
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum FitnessGoal {
+  LOSE_WEIGHT
+  MAINTAIN
+  GAIN_MUSCLE
+}
+
+enum ActivityLevel {
+  VERY_LOW
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+}
+
+enum DietaryStyle {
+  KETOGENIC
+  LOWCARB
+  HIGHCARB
+  BALANCED
+}
+
+//  TODO: agree on MetricsProfile columns - (for now, not completed)
+model MetricsProfile {
+  id                  String        @id @default(cuid())
+  // body metrics
+  gender              Gender
+  age                 Int
+  heightCm            Int
+  weightKg            Float
+  bodyFat             Float
+  // fitness profile
+  fitnessGoal         FitnessGoal
+  activityLevel       ActivityLevel
+  dietaryStyle        DietaryStyle
+  trainingDaysPerWeek Int
+  cardioDaysPerWeek   Int
+
+  // relations
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  nutritionResult NutritionResult[]
+}
+
+model NutritionResult {
+  id   String   @id @default(cuid())
+  date DateTime @default(now()) @db.Date // stores result per date
+
+  bmr        Float
+  tdee       Float
+  caloryGoal Float
+
+  // in percent %
+  fatSplit     Int
+  carbSplit    Int
+  proteinSplit Int
+
+  // snapshot of metricsProfile at that time (for historical accuracy)
+  profileSnapshot Json
+
+  metricsProfileId String
+  metricsProfile   MetricsProfile @relation(fields: [metricsProfileId], references: [id])
+
+  // provides information about open and used calories for a JournalDay
+  journalDay JournalDay[]
+
+  @@unique([metricsProfileId, date]) // one result per profile per date
+  @@index([metricsProfileId])
+}
+
+//* -----------------------------
+//* FOOD TABLES
+//* -----------------------------
+
+model Food {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // soft-delete marker to preserve journal history and meal integrity
+
+  name  String
+  brand String?
+
+  // relations
+  nutrients      FoodNutrients?
+  portions       FoodPortion[]
+  journalEntries JournalEntry[]
+  mealIngredient MealIngredient[]
+
+  @@index([name])
+  @@index([brand])
+}
+
+// contains nutritional data per 100g for a food
+model FoodNutrients {
+  id     String @id @default(cuid())
+  foodId String @unique
+  food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
+
+  kcal    Float
+  fats    Float
+  carbs   Float
+  protein Float
+}
+
+// defines one or more portion sizes for a food (e.g. 1 bar = 40g)
+model FoodPortion {
+  id     String @id @default(cuid())
+  foodId String
+  food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
+
+  name      String // e.g. "1 bar", "1 scoop"
+  grams     Float // weight of this portion in grams
+  isDefault Boolean @default(false)
+
+  journalEntry     JournalEntry[]
+  portionReference PortionReference[]
+
+  @@unique([foodId, name]) // prevent duplicate portion names per food
+  @@index([foodId])
+}
+
+//* -----------------------------
+//* MEAL TABLES
+//* -----------------------------
+
+model Meal {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // soft-delete marker to preserve journal history
+
+  name        String
+  description String?
+
+  // reference to user (optional: shared meals or templates possible)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // relations
+  ingredients    MealIngredient[]
+  portions       MealPortion[]
+  journalEntries JournalEntry[]
+
+  @@index([userId])
+  @@index([name])
+}
+
+// links a food as an ingredient in a meal with a gram amount
+model MealIngredient {
+  id     String @id @default(cuid())
+  mealId String
+  meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
+
+  foodId String
+  food   Food   @relation(fields: [foodId], references: [id], onDelete: Restrict)
+
+  grams Float // how much of this food (in grams) is used in the meal
+
+  portionName   String? // if ingridient was added through a portion save the name
+  portionFactor Float? // and quantity of the portion to show it in the UI
+
+  @@index([mealId])
+}
+
+// defines meal-specific portion sizes (e.g. "1 plate" = 250g)
+model MealPortion {
+  id     String @id @default(cuid())
+  mealId String
+  meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
+
+  name      String
+  grams     Float
+  isDefault Boolean @default(false)
+
+  portionReference PortionReference[]
+
+  @@unique([mealId, name]) // prevent duplicate portion names per meal
+}
+
+//* -----------------------------
+//* JOURNAL TABLES
+//* -----------------------------
+
+model JournalDay {
+  date DateTime @db.Date // one entry per user per day
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  journalEntries JournalEntry[]
+
+  // caloryGoal is being used to calculate open calories for a JournalDay
+  nutritionResultId String
+  nutritionResult   NutritionResult @relation(fields: [nutritionResultId], references: [id])
+
+  @@id(name: "journalDayId", fields: [userId, date])
+  @@index([userId, date])
+}
+
+// represents a mapping between food/meal portions and journal entries
+model PortionReference {
+  id String @id @default(cuid())
+
+  foodPortionId String?
+  foodPortion   FoodPortion? @relation(fields: [foodPortionId], references: [id], onDelete: Cascade)
+  mealPortionId String?
+  mealPortion   MealPortion? @relation(fields: [mealPortionId], references: [id], onDelete: Cascade)
+
+  grams Float // actual gram weight used
+  label String // descriptive label for the portion used (e.g. "1/2 bar")
+
+  @@index([foodPortionId])
+  @@index([mealPortionId])
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACKS
+}
+
+// represents a logged item (food or meal) in the daily journal
+model JournalEntry {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mealType  MealType @default(BREAKFAST)
+
+  // link to journal day
+  journalDayUserId String
+  journalDayDate   DateTime   @db.Date
+  journalDay       JournalDay @relation(fields: [journalDayUserId, journalDayDate], references: [userId, date], onDelete: Cascade)
+
+  // reference to either food or meal (both optional but one required logically)
+  foodId String?
+  food   Food?   @relation(fields: [foodId], references: [id], onDelete: Restrict)
+  mealId String?
+  meal   Meal?   @relation(fields: [mealId], references: [id], onDelete: Restrict)
+
+  // portion reference (which portion user used)
+  portionId String
+  portion   FoodPortion @relation(fields: [portionId], references: [id], onDelete: Restrict)
+
+  amount Float @default(1) // how many portions/servings user logged
+
+  @@index([journalDayUserId, journalDayDate])
+  @@index([foodId])
+  @@index([mealId])
+}
