@@ -1,7 +1,11 @@
+// core
 import { betterAuth, BetterAuthOptions } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
-import { username } from "better-auth/plugins"
 
+// plugins
+import { username, admin } from "better-auth/plugins"
+
+// local
 import { db } from "./db"
 import { validateUsername } from "./utils"
 
@@ -29,7 +33,8 @@ export const betterAuthConfig: BetterAuthOptions = {
         const { valid } = validateUsername(username)
         return valid
       }
-    })
+    }),
+    admin()
   ]
 }
 
