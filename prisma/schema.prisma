@@ -121,31 +121,40 @@ enum ActivityLevel {
   VERY_HIGH
 }
 
+enum BodyType {
+  VERY_ATHELTIC
+  ATHELTIC
+  AVERAGE
+  SLIGHTLY_OVERWEIGHT
+  MORE_OVERWEIGHT
+}
+
 //* not used (for now?)
 // enum DietaryStyle {
 //   KETOGENIC
 //   LOWCARB
-//   HIGHCARB
+//   HIGHCARBnutriment
 //   BALANCED
 // }
 
 model MetricsProfile {
-  id       String @id @default(cuid())
-  // body metrics
+  id       String   @id @default(cuid())
+  //* body metrics
   gender   Gender
   age      Int
   heightCm Int
   weightKg Float
   // bodyFat Float <- //* not used (for now?)
+  bodyType BodyType
 
-  // fitness profile
+  //* fitness profile
   fitnessGoal         FitnessGoal
   activityLevel       ActivityLevel
   // dietaryStyle DietaryStyle <- //* not used (for now?)
   trainingDaysPerWeek Int
   // cardioDaysPerWeek Int <- //* not used (for now?)
 
-  // macro splits in percent %
+  //* macro splits in percent %
   fatSplit     Int
   carbSplit    Int
   proteinSplit Int
@@ -161,11 +170,18 @@ model NutritionResult {
   id   String   @id @default(cuid())
   date DateTime @default(now()) @db.Date // stores result per date
 
+  //* calculated calories/factors
   bmr        Float
   tdee       Float
   caloryGoal Float
   tefQuota   Float
 
+  //* actual gram amount calculated from goal calories, tef quota and macro splits
+  amountFats    Int
+  amountCarbs   Int
+  amountProtein Int
+
+  // save profil data for potential future reference 
   profileSnapshot Json
 
   metricsProfileId String
