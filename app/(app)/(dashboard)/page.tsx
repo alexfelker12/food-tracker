@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <main className="flex justify-center items-center h-full">
       <div className="flex flex-col items-center gap-4">
-        <Button asChild variant="link">
+        <Button asChild variant="outline">
           <NoPrefetchLink href="/auth">
             <LogInIcon /> Einloggen
           </NoPrefetchLink>

@@ -32,13 +32,13 @@ export const SignOutButton = ({
       fetchOptions: {
         // ctx: SuccessContext
         onSuccess: () => {
-          // router.push("/sign-in")
-          //* refresh current page on sign out to trigger middleware redirect to sign-in page with current url search params (if not "/")
+          toast.success("Erfolgreich abgemeldet", {
+            position: "top-right"
+          })
           if (callbackUrl) {
             router.push(callbackUrl)
           } else {
             router.refresh()
-            toast.success("Erfolgreich abgemeldet")
           }
         },
       }

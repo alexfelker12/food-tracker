@@ -1,11 +1,14 @@
+import { headers } from "next/headers";
+
+import { auth } from "@/lib/auth";
+
+import { HouseIcon } from "lucide-react";
+
 import { OAuthLoginButton } from "@/components/auth/OAuthLoginButton";
-import { SignOutButton } from "@/components/auth/SignOutButton";
 import NoPrefetchLink from "@/components/NoPrefetchLink";
 import { AuthSession } from "@/components/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/auth";
-import { HouseIcon, LogOutIcon } from "lucide-react";
-import { headers } from "next/headers";
+
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -14,16 +17,18 @@ export default async function Page() {
 
   return (
     <main className="flex justify-center items-center h-full">
-      <div className="flex flex-col items-start gap-4">
-        <Button asChild variant="link">
+      <div className="flex flex-col items-center gap-4">
+        <Button asChild variant="outline">
           <NoPrefetchLink href="/">
             <HouseIcon /> Go to home
           </NoPrefetchLink>
         </Button>
-        {session
-          ? <AuthedUser session={session} />
-          : <UnauthedUser />
-        }
+        <div className="space-y-1 text-center">
+          {session
+            ? <AuthedUser session={session} />
+            : <UnauthedUser />
+          }
+        </div>
       </div>
     </main>
   );
@@ -35,25 +40,20 @@ function AuthedUser({
   session: AuthSession
 }) {
   return (
-    <div>
-      <p>Hallo {session.user.name}!</p>
-      <SignOutButton
-        callbackUrl="/auth"
-        variant="secondary"
-      >
-        <LogOutIcon /> Ausloggen
-      </SignOutButton>
-    </div>
+    <>
+      <p>Hallo, {session.user.name}!</p>
+      <p>Du bist schon angemeldet.</p>
+    </>
   );
 }
 
 function UnauthedUser() {
   return (
-    <div>
-      <p>Du bist nicht angemeldet,</p>
+    <>
+      <p>Du bist nicht angemeldet</p>
       <OAuthLoginButton
-        callbackURL="/auth"
+        callbackURL="/"
       />
-    </div>
+    </>
   );
 }

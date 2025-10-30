@@ -183,8 +183,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    @apply h-full
+  }
   html, body {
-    @apply min-h-full h-full
+    @apply min-h-full
   }
   body {
     @apply bg-background text-foreground;

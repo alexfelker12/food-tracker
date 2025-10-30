@@ -21,7 +21,7 @@ export const OAuthLoginButton = ({
   callbackURL,
   loading,
   asChild,
-  size = "sm",
+  size,
   variant = "outline",
   className,
   ref,
