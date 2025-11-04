@@ -1,5 +1,5 @@
-// components/Step1.tsx
-"use client";
+"use client"
+
 import { useFormContext, Controller } from "react-hook-form";
 import {
   Field,
@@ -11,7 +11,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { ProfileSchema } from "@/schemas/profileSchema";
 
-export function ProfileFormStep1() {
+
+// enum BodyType {
+//   VERY_ATHELTIC
+//   ATHELTIC
+//   AVERAGE
+//   SLIGHTLY_OVERWEIGHT
+//   MORE_OVERWEIGHT
+// }
+// gender   Gender
+// age      Int
+// heightCm Int
+// weightKg Float
+// bodyType BodyType
+
+
+
+export function ProfileFormBodyData() {
   const { control } = useFormContext<ProfileSchema>();
 
   return (

@@ -1,5 +1,5 @@
-// components/Step1.tsx
-"use client";
+"use client"
+
 import { useFormContext, Controller } from "react-hook-form";
 import {
   Field,
@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { ProfileSchema } from "@/schemas/profileSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export function ProfileFormStep3() {
+export function ProfileFormSplitData() {
   const { control } = useFormContext<ProfileSchema>();
 
   return (

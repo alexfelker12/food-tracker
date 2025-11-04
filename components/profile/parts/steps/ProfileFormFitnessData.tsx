@@ -1,5 +1,5 @@
-// components/Step1.tsx
-"use client";
+"use client"
+
 import { useFormContext, Controller } from "react-hook-form";
 import {
   Field,
@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ProfileSchema } from "@/schemas/profileSchema";
 
-export function ProfileFormStep2() {
+export function ProfileFormFitnessData() {
   const { control } = useFormContext<ProfileSchema>();
 
   return (
@@ -27,9 +27,10 @@ export function ProfileFormStep2() {
             </FieldLabel>
             <Input
               {...field}
+              type="email"
               id="step2.email"
               aria-invalid={fieldState.invalid}
-              placeholder="Firstname"
+              placeholder="example@mail.com"
               autoComplete="off"
             />
             {fieldState.invalid && (

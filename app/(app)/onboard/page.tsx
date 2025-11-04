@@ -1,11 +1,9 @@
-import { ProfileForm as MultiStepProfileForm } from "@/components/profile/ProfileForm";
+import { ProfileForm } from "@/components/profile/ProfileForm";
 
 export default function Page() {
   return (
-    <main className="flex justify-center items-center h-full">
-
-      <MultiStepProfileForm />
-
+    <main className="flex justify-center items-center p-4 h-full">
+      <ProfileForm />
     </main>
   );
 }

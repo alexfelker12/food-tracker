@@ -1,59 +1,44 @@
-"use client";
+"use client"
 
-import { cn } from "@/lib/utils";
+import { FormProvider, useForm } from "react-hook-form";
 
-import { useFormContext } from "react-hook-form";
-import { ProfileSchema } from "@/schemas/profileSchema";
-import { ProfileStepsProvider, useProfileSteps } from "./ProfileFormContext";
-import { ProfileFormStep1 } from "./steps/ProfileFormStep1";
-import { ProfileFormStep2 } from "./steps/ProfileFormStep2";
-import { ProfileFormStep3 } from "./steps/ProfileFormStep3";
-import { Button } from "../ui/button";
+import { profileSchema, ProfileSchema } from "@/schemas/profileSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { ProfileStepsContent } from "./parts/ProfileStepsContent";
+import { ProfileStepsFooter } from "./parts/ProfileStepsFooter";
+import { ProfileStepsHeader } from "./parts/ProfileStepsHeader";
+import { ProfileSteps } from "./parts/ProfileSteps";
 
 
-export function ProfileForm() {
-  return (
-    <ProfileStepsProvider>
-      <ProfileFormInner />
-    </ProfileStepsProvider>
-  );
-}
-
-function ProfileFormInner() {
-  const { currentStep, nextStep, prevStep } = useProfileSteps();
-
-  const { handleSubmit } = useFormContext<ProfileSchema>(); // from RHF
+export function ProfileForm({ className, children, ...props }: React.ComponentProps<"form">) {
+  const form = useForm<ProfileSchema>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      step1: { firstName: "", lastName: "" },
+      step2: { email: "", age: 18 },
+      step3: { agreeTerms: false },
+    },
+    mode: "onTouched",
+  })
 
   const onSubmit = (values: ProfileSchema) => {
-    console.log("Gesamtdaten:", values);
-    // hier API call etc.
-  };
+    console.log("values:", values)
+  }
 
   return (
-    // <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7 p-2 w-full">
-    //   <ProfileFormStep1 />
-    //   <ProfileFormStep2 />
-    //   <ProfileFormStep3 />
-    //   <Button type="submit">Absenden</Button>
-    // </form>
-
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7 p-2 w-full">
-      {currentStep === 1 && <ProfileFormStep1 />}
-      {currentStep === 2 && <ProfileFormStep2 />}
-      {currentStep === 3 && <ProfileFormStep3 />}
-      <div className={cn("flex justify-between", currentStep === 1 && "justify-end")}>
-        {currentStep > 1 && (
-          <Button type="button" variant="outline" onClick={prevStep}>
-            Zurück
-          </Button>
-        )}
-        {currentStep < 3 && (
-          <Button type="button" variant="outline" onClick={nextStep}>
-            Weiter
-          </Button>
-        )}
-        {currentStep === 3 && <Button type="submit">Absenden</Button>}
-      </div>
-    </form>
+    <FormProvider {...form}>
+      <form
+        className="flex flex-col justify-between gap-8 py-8 size-full"
+        onSubmit={form.handleSubmit(onSubmit)}
+        {...props}
+      >
+        <ProfileSteps>
+          <ProfileStepsHeader />
+          <ProfileStepsContent />
+          <ProfileStepsFooter />
+        </ProfileSteps>
+      </form>
+    </FormProvider>
   );
 }
