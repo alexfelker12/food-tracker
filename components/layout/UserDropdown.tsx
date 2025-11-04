@@ -21,8 +21,6 @@ export function UserDropdown({ children }: React.ComponentProps<"button">) {
   const { session } = useAuth()
   // const pathname = usePathname()
 
-  console.log("image", session?.user.image || undefined)
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
