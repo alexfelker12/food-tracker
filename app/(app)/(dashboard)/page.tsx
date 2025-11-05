@@ -8,6 +8,11 @@ export default function Page() {
     <main className="flex justify-center items-center h-full">
       <div className="flex flex-col items-center gap-4">
         <ThemeToggle />
+        <Button asChild variant="link">
+          <NoPrefetchLink href="/onboard">
+            <LogInIcon /> Zum Onbaord
+          </NoPrefetchLink>
+        </Button>
       </div>
     </main>
   );

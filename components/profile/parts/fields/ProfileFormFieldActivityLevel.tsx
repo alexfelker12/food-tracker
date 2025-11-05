@@ -2,28 +2,28 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 
-import { GenderEnum, ProfileSchema } from "@/schemas/profileSchema";
+import { ActivityLevelEnum, GenderEnum, ProfileSchema } from "@/schemas/profileSchema";
 
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { genderLabels } from "@/schemas/labels/profileSchemaLabels";
+import { activityLevelLabels, genderLabels } from "@/schemas/labels/profileSchemaLabels";
 
 
-export function ProfileFormFieldGender() {
+export function ProfileFormFieldActivityLevel() {
   const { control } = useFormContext<ProfileSchema>();
 
   return (
     <Controller
-      name="step1.gender"
+      name="step2.activityLevel"
       control={control}
       render={({ field, fieldState }) => (
         <Field orientation="horizontal" data-invalid={fieldState.invalid}>
           <FieldContent>
-            <FieldLabel htmlFor="step1.gender">
-              Geschlecht
+            <FieldLabel htmlFor="step2.activityLevel">
+              Aktivitätslevel
             </FieldLabel>
             <FieldDescription>
-              Dies beeinflusst das Kalorien-Ziel
+              Wie viel bewegst du dich täglich?
             </FieldDescription>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </FieldContent>
@@ -33,14 +33,14 @@ export function ProfileFormFieldGender() {
             onValueChange={field.onChange}
           >
             <SelectTrigger
-              id="step1.gender"
+              id="step2.activityLevel"
               aria-invalid={fieldState.invalid}
             >
-              <SelectValue placeholder="Geschlecht" />
+              <SelectValue placeholder="Aktivitätslevel" />
             </SelectTrigger>
             <SelectContent position="popper">
-              {GenderEnum.options.map((gender) => (
-                <SelectItem key={gender} value={gender}>{genderLabels[gender]}</SelectItem>
+              {ActivityLevelEnum.options.map((level) => (
+                <SelectItem key={level} value={level}>{activityLevelLabels[level]}</SelectItem>
               ))}
             </SelectContent>
           </Select>

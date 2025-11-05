@@ -102,7 +102,7 @@ function FormStep({
         active && "bg-primary", // fill circle if active
       )}></div>
       <ChevronUpIcon className={cn(
-        "left-1/2 -z-20 absolute -translate-x-1/2",
+        "left-1/2 -z-20 absolute text-secondary-foreground -translate-x-1/2",
         "transition-all transition-discrete", // enable enter/exit animation
         "top-1/2 opacity-0", // initial
         isCurrentStep && "top-full opacity-100", // animate 

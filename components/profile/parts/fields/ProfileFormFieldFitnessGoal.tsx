@@ -2,28 +2,28 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 
-import { GenderEnum, ProfileSchema } from "@/schemas/profileSchema";
+import { FitnessGoalEnum, GenderEnum, ProfileSchema } from "@/schemas/profileSchema";
 
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { genderLabels } from "@/schemas/labels/profileSchemaLabels";
+import { fitnessGoalLabels, genderLabels } from "@/schemas/labels/profileSchemaLabels";
 
 
-export function ProfileFormFieldGender() {
+export function ProfileFormFieldFitnessGoal() {
   const { control } = useFormContext<ProfileSchema>();
 
   return (
     <Controller
-      name="step1.gender"
+      name="step2.fitnessGoal"
       control={control}
       render={({ field, fieldState }) => (
         <Field orientation="horizontal" data-invalid={fieldState.invalid}>
           <FieldContent>
-            <FieldLabel htmlFor="step1.gender">
-              Geschlecht
+            <FieldLabel htmlFor="step2.fitnessGoal">
+              Abnehmziel
             </FieldLabel>
             <FieldDescription>
-              Dies beeinflusst das Kalorien-Ziel
+              Bestimme dein Ziel in dieser App
             </FieldDescription>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </FieldContent>
@@ -33,14 +33,14 @@ export function ProfileFormFieldGender() {
             onValueChange={field.onChange}
           >
             <SelectTrigger
-              id="step1.gender"
+              id="step2.fitnessGoal"
               aria-invalid={fieldState.invalid}
             >
-              <SelectValue placeholder="Geschlecht" />
+              <SelectValue placeholder="Fitness-Ziel" />
             </SelectTrigger>
             <SelectContent position="popper">
-              {GenderEnum.options.map((gender) => (
-                <SelectItem key={gender} value={gender}>{genderLabels[gender]}</SelectItem>
+              {FitnessGoalEnum.options.map((goal) => (
+                <SelectItem key={goal} value={goal}>{fitnessGoalLabels[goal]}</SelectItem>
               ))}
             </SelectContent>
           </Select>
