@@ -12,14 +12,31 @@ export function ProfileStepsFooter() {
   return (
     <div className="flex justify-between">
       {currentStep > 1 &&
-        <Button type="button" variant="outline" onClick={stepBack}><StepBackIcon />Zurück</Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={stepBack}
+        >
+          <StepBackIcon /> Zurück
+        </Button>
       }
       <div className="opacity-0"></div>
       {currentStep < 3 ?
-        <Button type="button" variant="secondary" onClick={stepForward}>Weiter <StepForwardIcon /></Button>
+        <Button
+          type="button"
+          variant="secondary"
+          // timeout to avoid triggering click on tap up after rendering submit button
+          onClick={() => setTimeout(() => stepForward(), 0)}
+        >
+          Weiter < StepForwardIcon />
+        </Button>
         :
-        <Button type="submit"><SaveIcon />Speichern</Button>
+        <Button
+          type="submit"
+        >
+          <SaveIcon /> Speichern
+        </Button>
       }
-    </div>
+    </div >
   );
 }
