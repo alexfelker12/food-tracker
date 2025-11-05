@@ -18,15 +18,15 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
     defaultValues: {
       step1: {
         gender: undefined,
-        age: 18,
-        heightCm: 160,
-        weightKg: 60,
+        age: undefined,
+        heightCm: undefined,
+        weightKg: undefined,
         bodyType: undefined
       },
       step2: {
         fitnessGoal: undefined,
         activityLevel: undefined,
-        trainingDaysPerWeek: 0
+        trainingDaysPerWeek: undefined
       },
       step3: {
         fatSplit: 25,
@@ -34,12 +34,12 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
         proteinSplit: 25
       },
     },
-    mode: "onChange",
+    mode: "onTouched",
   })
 
-  if (form.formState.errors.step1) console.log("Page 1 errors:", form.formState.errors.step1)
-  if (form.formState.errors.step1) console.log("Page 2 errors:", form.formState.errors.step1)
-  if (form.formState.errors.step3) console.log("Page 3 errors:", form.formState.errors.step3)
+  // if (form.formState.errors.step1) console.log("Page 1 errors:", form.formState.errors.step1)
+  // if (form.formState.errors.step1) console.log("Page 2 errors:", form.formState.errors.step1)
+  // if (form.formState.errors.step3) console.log("Page 3 errors:", form.formState.errors.step3)
 
   const onSubmit = (values: ProfileSchema) => {
     console.log("values:", values)
@@ -70,3 +70,4 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
     </FormProvider>
   );
 }
+

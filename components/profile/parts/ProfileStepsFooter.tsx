@@ -28,7 +28,7 @@ export function ProfileStepsFooter() {
           // timeout to avoid triggering click on tap up after rendering submit button
           onClick={() => setTimeout(() => stepForward(), 0)}
         >
-          Weiter < StepForwardIcon />
+          Weiter <StepForwardIcon />
         </Button>
         :
         <Button

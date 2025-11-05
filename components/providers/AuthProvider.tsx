@@ -38,7 +38,7 @@ function AuthProvider({
   const [session, setSession] = useState<AuthSession | null>(use(initialSessionPromise)) // resolve promise to get session obj
 
   // server-side redirect can be used during render process in client components 
-  // if (!session) redirect("/auth");
+  if (!session) redirect("/auth");
 
   const refreshSession = async () => {
     const { data: newSession, error } = await authClient.getSession()
