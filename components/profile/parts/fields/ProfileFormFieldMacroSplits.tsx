@@ -70,7 +70,7 @@ export function ProfileFormFieldMacroSplits() {
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
                     <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-primary-foreground">{150}g</span>
+                    <span className="text-secondary-foreground">{150}g</span>
                   </span>
                 </FieldLabel>
 
@@ -120,7 +120,7 @@ export function ProfileFormFieldMacroSplits() {
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
                     <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-primary-foreground">{150}g</span>
+                    <span className="text-secondary-foreground">{150}g</span>
                   </span>
                 </FieldLabel>
 
@@ -171,7 +171,7 @@ export function ProfileFormFieldMacroSplits() {
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
                     <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-primary-foreground">{150}g</span>
+                    <span className="text-secondary-foreground">{150}g</span>
                   </span>
                 </FieldLabel>
 

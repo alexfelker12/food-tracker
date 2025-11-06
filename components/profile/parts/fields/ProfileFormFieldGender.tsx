@@ -1,12 +1,11 @@
 "use client"
 
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, FieldPath, useFormContext } from "react-hook-form";
 
 import { GenderEnum, ProfileSchema } from "@/schemas/profileSchema";
 
-import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { genderLabels } from "@/schemas/labels/profileSchemaLabels";
+import { EnumField } from "./EnumField";
 
 
 export function ProfileFormFieldGender() {
@@ -17,34 +16,15 @@ export function ProfileFormFieldGender() {
       name="step1.gender"
       control={control}
       render={({ field, fieldState }) => (
-        <Field orientation="horizontal" data-invalid={fieldState.invalid}>
-          <FieldContent>
-            <FieldLabel htmlFor="step1.gender">
-              Geschlecht
-            </FieldLabel>
-            <FieldDescription>
-              Dies beeinflusst das Kalorien-Ziel
-            </FieldDescription>
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-          </FieldContent>
-          <Select
-            name={field.name}
-            value={field.value ?? ""}
-            onValueChange={field.onChange}
-          >
-            <SelectTrigger
-              id="step1.gender"
-              aria-invalid={fieldState.invalid}
-            >
-              <SelectValue placeholder="Geschlecht" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              {GenderEnum.options.map((gender) => (
-                <SelectItem key={gender} value={gender}>{genderLabels[gender]}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <EnumField
+          field={field}
+          fieldState={fieldState}
+          label="Geschlecht"
+          description="Dies beeinflusst das Kalorien-Ziel"
+          placeholder="Geschlecht"
+          options={GenderEnum.options}
+          labels={genderLabels}
+        />
       )}
     />
   );

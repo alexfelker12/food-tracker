@@ -1,8 +1,8 @@
 "use client"
 
-import { ProfileSchema } from "@/schemas/profileSchema";
+import { type ProfileSchema } from "@/schemas/profileSchema";
 import { createContext, ReactNode, use, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { type FieldPath, useFormContext } from "react-hook-form";
 
 type ProfileStepsContextType = {
   currentStep: number
@@ -16,7 +16,7 @@ const ProfileStepsContext = createContext<ProfileStepsContextType | undefined>(u
 
 export function useProfileSteps() {
   const ctx = use(ProfileStepsContext)
-  if (!ctx) throw new Error("useProfileSteps must be used within ProfileStepsProvider")
+  if (!ctx) throw new Error("useProfileSteps must be used within ProfileSteps")
   return ctx
 }
 
@@ -25,14 +25,17 @@ export function ProfileSteps({
 }: {
   children: ReactNode
 }) {
-  const { trigger } = useFormContext<ProfileSchema>()
+  const { trigger, getValues } = useFormContext<ProfileSchema>()
 
   const [currentStep, setCurrentStep] = useState(1)
   const [prevStep, setPrevStep] = useState(1)
 
   const isCurrentStepValid = async () => {
     const stepName = `step${currentStep}` as keyof ProfileSchema
-    return await trigger(stepName);
+
+    const currentStepFields = Object.keys(getValues()[stepName]).map((key) => `${stepName}.${key}` as FieldPath<ProfileSchema>) // fix: build field keys array to dynamically trigger validation on fields of current page, because validating whole step (step1, step2, ...) doesn't render the error but on specific fields does...
+
+    return await trigger(currentStepFields)
   }
 
   const stepForward = async () => {

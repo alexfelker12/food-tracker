@@ -1,3 +1,4 @@
+import { FieldPath, FieldPathByValue } from "react-hook-form";
 import { z } from "zod";
 
 //* -----------------------------
@@ -22,8 +23,8 @@ export const ActivityLevelEnum = z.enum([
   "VERY_HIGH",
 ])
 export const BodyTypeEnum = z.enum([
-  "VERY_ATHELTIC",
-  "ATHELTIC",
+  "VERY_ATHLETIC",
+  "ATHLETIC",
   "AVERAGE",
   "SLIGHTLY_OVERWEIGHT",
   "MORE_OVERWEIGHT",
@@ -32,7 +33,9 @@ export const BodyTypeEnum = z.enum([
 
 //* STEP 1 — body data
 export const Step1Schema = z.object({
-  gender: GenderEnum,
+  gender: GenderEnum.optional().refine((val) => val !== undefined, {
+    message: "Bitte gebe dein Geschlecht an",
+  }),
   age: z
     .number({ error: "Bitte gib dein Alter an" })
     .int()
@@ -46,14 +49,20 @@ export const Step1Schema = z.object({
     .number({ error: "Bitte gib dein Gewicht an" })
     .min(30, "Gewicht zu niedrig")
     .max(250, "Gewicht zu hoch"),
-  bodyType: BodyTypeEnum,
+  bodyType: BodyTypeEnum.optional().refine((val) => val !== undefined, {
+    message: "Bitte wähle einen Körpertyp aus",
+  })
 })
 
 
 //* STEP 2 — Fitness Profile
 export const Step2Schema = z.object({
-  fitnessGoal: FitnessGoalEnum,
-  activityLevel: ActivityLevelEnum,
+  fitnessGoal: FitnessGoalEnum.optional().refine((val) => val !== undefined, {
+    message: "Bitte wähle dein Ziel aus",
+  }),
+  activityLevel: ActivityLevelEnum.optional().refine((val) => val !== undefined, {
+    message: "Bitte gebe dein Aktivitätslevel an",
+  }),
   trainingDaysPerWeek: z
     .number({ error: "Bitte gib an, wie oft du trainierst" })
     .int()
@@ -103,4 +112,3 @@ export type ProfileSchema = z.infer<typeof profileSchema>
 //   ...formData.step2,
 //   ...formData.step3,
 // })
-

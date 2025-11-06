@@ -24,8 +24,8 @@ export const activityLevelLabels: Record<typeof ActivityLevelEnum.enum[keyof typ
   VERY_HIGH: "Sehr hoch",
 }
 export const bodyTypeLabels: Record<typeof BodyTypeEnum.enum[keyof typeof BodyTypeEnum.enum], string> = {
-  VERY_ATHELTIC: "Sehr athletisch",
-  ATHELTIC: "Athletisch",
+  VERY_ATHLETIC: "Sehr athletisch",
+  ATHLETIC: "Athletisch",
   AVERAGE: "Durchschnittlich",
   SLIGHTLY_OVERWEIGHT: "Etwas übergewichtig",
   MORE_OVERWEIGHT: "Stark übergewichtig",

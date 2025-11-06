@@ -16,18 +16,6 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
   const form = useForm<ProfileSchema>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      step1: {
-        gender: undefined,
-        age: undefined,
-        heightCm: undefined,
-        weightKg: undefined,
-        bodyType: undefined
-      },
-      step2: {
-        fitnessGoal: undefined,
-        activityLevel: undefined,
-        trainingDaysPerWeek: undefined
-      },
       step3: {
         fatSplit: 25,
         carbSplit: 50,
@@ -46,7 +34,7 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
     toast("Gespeicherte Werte", {
       position: "bottom-center",
       description: (
-        <pre className="bg-code mt-2 p-4 rounded-md text-code-foreground overflow-x-auto">
+        <pre className="mt-2 p-4 rounded-md overflow-x-auto">
           <code>{JSON.stringify(values, null, 2)}</code>
         </pre>
       ),
