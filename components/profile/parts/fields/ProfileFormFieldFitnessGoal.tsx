@@ -2,7 +2,8 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 
-import { FitnessGoalEnum, ProfileSchema } from "@/schemas/profileSchema";
+import { FitnessGoalEnum } from "@/schemas/profileSchema";
+import { ProfileSchema } from "@/schemas/types";
 
 import { fitnessGoalLabels } from "@/schemas/labels/profileSchemaLabels";
 import { EnumField } from "./EnumField";

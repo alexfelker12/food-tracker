@@ -2,7 +2,8 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 
-import { ActivityLevelEnum, ProfileSchema } from "@/schemas/profileSchema";
+import { ActivityLevelEnum } from "@/schemas/profileSchema";
+import { ProfileSchema } from "@/schemas/types";
 
 import { activityLevelLabels } from "@/schemas/labels/profileSchemaLabels";
 import { EnumField } from "./EnumField";

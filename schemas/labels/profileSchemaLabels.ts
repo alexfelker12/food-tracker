@@ -1,32 +1,34 @@
-import { ActivityLevelEnum, BodyTypeEnum, FitnessGoalEnum, GenderEnum } from "../profileSchema";
+import { ActivityLevelEnumKeys, BodyTypeEnumKeys, FitnessGoalEnumKeys, GenderEnumKeys } from "../types";
 
 //* -----------------------------
 //* LABELS
 //* -----------------------------
 
-export const genderLabels: Record<typeof GenderEnum.enum[keyof typeof GenderEnum.enum], string> = {
+export const genderLabels: Record<GenderEnumKeys, string> = {
   MALE: "Männlich",
   FEMALE: "Weiblich",
 }
 
-export const fitnessGoalLabels: Record<typeof FitnessGoalEnum.enum[keyof typeof FitnessGoalEnum.enum], string> = {
+export const bodyTypeLabels: Record<BodyTypeEnumKeys, string> = {
+  VERY_ATHLETIC: "Sehr athletisch",
+  ATHLETIC: "Athletisch",
+  AVERAGE: "Durchschnittlich",
+  SLIGHTLY_OVERWEIGHT: "Etwas übergewichtig",
+  MORE_OVERWEIGHT: "Stark übergewichtig",
+}
+
+export const fitnessGoalLabels: Record<FitnessGoalEnumKeys, string> = {
   QUICKLY_LOSE_WEIGHT: "Schnell abnehmen",
   LOSE_WEIGHT: "Abnehmen",
   MAINTAIN: "Halten",
   GAIN_WEIGHT: "Zunehmen",
   QUICKLY_GAIN_WEIGHT: "Schnell zunehmen",
 }
-export const activityLevelLabels: Record<typeof ActivityLevelEnum.enum[keyof typeof ActivityLevelEnum.enum], string> = {
+
+export const activityLevelLabels: Record<ActivityLevelEnumKeys, string> = {
   VERY_LOW: "Sehr niedrig",
   LOW: "niedrig",
   MEDIUM: "mittel",
   HIGH: "hoch",
   VERY_HIGH: "Sehr hoch",
-}
-export const bodyTypeLabels: Record<typeof BodyTypeEnum.enum[keyof typeof BodyTypeEnum.enum], string> = {
-  VERY_ATHLETIC: "Sehr athletisch",
-  ATHLETIC: "Athletisch",
-  AVERAGE: "Durchschnittlich",
-  SLIGHTLY_OVERWEIGHT: "Etwas übergewichtig",
-  MORE_OVERWEIGHT: "Stark übergewichtig",
 }

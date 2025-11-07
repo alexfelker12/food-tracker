@@ -2,7 +2,7 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 
-import { ProfileSchema } from "@/schemas/profileSchema";
+import { ProfileSchema } from "@/schemas/types";
 
 import { NumField } from "./NumField";
 

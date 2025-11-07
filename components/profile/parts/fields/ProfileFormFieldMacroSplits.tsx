@@ -4,7 +4,8 @@ import { useState } from "react";
 
 import { Controller, useFormContext } from "react-hook-form";
 
-import { ProfileSchema, Step3Schema } from "@/schemas/profileSchema";
+import { Step3Schema } from "@/schemas/profileSchema";
+import { ProfileSchema } from "@/schemas/types";
 
 import { LockIcon, LockOpenIcon, MoveRightIcon } from "lucide-react";
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { type ProfileSchema } from "@/schemas/profileSchema";
+import { type ProfileSchema } from "@/schemas/types";
 import { createContext, ReactNode, use, useState } from "react";
 import { type FieldPath, useFormContext } from "react-hook-form";
 

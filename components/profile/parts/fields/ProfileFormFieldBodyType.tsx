@@ -2,7 +2,8 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 
-import { BodyTypeEnum, ProfileSchema } from "@/schemas/profileSchema";
+import { BodyTypeEnum } from "@/schemas/profileSchema";
+import { ProfileSchema } from "@/schemas/types";
 
 import { bodyTypeLabels } from "@/schemas/labels/profileSchemaLabels";
 import { EnumField } from "./EnumField";

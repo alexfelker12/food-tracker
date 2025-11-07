@@ -1,4 +1,3 @@
-import { FieldPath, FieldPathByValue } from "react-hook-form";
 import { z } from "zod";
 
 //* -----------------------------
@@ -99,14 +98,12 @@ export const profileSchema = z.object({
   step3: Step3Schema,
 })
 
-export type ProfileSchema = z.infer<typeof profileSchema>
-
 
 //? to validate flatten form, validate like this:
-// export const mergedProfileSchema = Step1Schema
-//   .extend(Step2Schema.shape)
-//   .extend(Step3Schema.shape)
-//
+export const mergedProfileSchema = Step1Schema
+  .extend(Step2Schema.shape)
+  .extend(Step3Schema.shape)
+
 // mergedProfileSchema.parse({
 //   ...formData.step1,
 //   ...formData.step2,

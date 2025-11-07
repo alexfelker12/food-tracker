@@ -2,7 +2,7 @@
 
 import { FormProvider, useForm } from "react-hook-form";
 
-import { profileSchema, ProfileSchema } from "@/schemas/profileSchema";
+import { profileSchema } from "@/schemas/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ProfileSteps } from "./parts/ProfileSteps";
@@ -10,6 +10,7 @@ import { ProfileStepsContent } from "./parts/ProfileStepsContent";
 import { ProfileStepsFooter } from "./parts/ProfileStepsFooter";
 import { ProfileStepsHeader } from "./parts/ProfileStepsHeader";
 import { toast } from "sonner";
+import { ProfileSchema } from "@/schemas/types";
 
 
 export function ProfileForm({ className, children, ...props }: React.ComponentProps<"form">) {

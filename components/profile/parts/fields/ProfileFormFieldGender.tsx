@@ -1,8 +1,9 @@
 "use client"
 
-import { Controller, FieldPath, useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
-import { GenderEnum, ProfileSchema } from "@/schemas/profileSchema";
+import { GenderEnum } from "@/schemas/profileSchema";
+import { ProfileSchema } from "@/schemas/types";
 
 import { genderLabels } from "@/schemas/labels/profileSchemaLabels";
 import { EnumField } from "./EnumField";
