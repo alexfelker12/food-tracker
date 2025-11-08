@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { Controller, useFormContext } from "react-hook-form";
 
-import { Step3Schema } from "@/schemas/profileSchema";
+import { MacroSplitsStepSchema } from "@/schemas/profileSchema";
 import { ProfileSchema } from "@/schemas/types";
 
 import { LockIcon, LockOpenIcon, MoveRightIcon } from "lucide-react";
@@ -14,25 +14,31 @@ import { Slider } from "@/components/ui/slider";
 import { Toggle } from "@/components/ui/toggle";
 
 
-type SplitLabel = keyof typeof Step3Schema.shape
+type SplitLabel = keyof typeof MacroSplitsStepSchema.shape
 
 export function ProfileFormFieldMacroSplits() {
   const { control, formState, setValue, getValues } = useFormContext<ProfileSchema>();
+
+  const useRecommended = getValues("macroSplitStep.useRecommended")
 
   const [unlockedSplit, setUnLockedSplit] = useState<SplitLabel>("carbSplit") // default carbSplit locked
 
   //* intercepts slider value change to check, if open sliders value sums up to more than 100
   //* -> dont allow change if so
   const handleSliderValueChange = (changedSplitKey: SplitLabel, slideChangeValue: number) => {
-    const splitValues = getValues("step3")
-    const splitName: `step3.${SplitLabel}` = `step3.${unlockedSplit}`
-    const changedSplitName: `step3.${SplitLabel}` = `step3.${changedSplitKey}`
+    if (useRecommended) return; // disable change functionality when using recommendedValues
+    // const stepValues = getValues(["macroSplitStep.fatSplit", "macroSplitStep.carbSplit", "macroSplitStep.proteinSplit"])
+    const { fatSplit, carbSplit, proteinSplit } = getValues("macroSplitStep")
+    const stepValues = { fatSplit, carbSplit, proteinSplit }
+    const splitName: `macroSplitStep.${SplitLabel}` = `macroSplitStep.${unlockedSplit}`
+    const changedSplitName: `macroSplitStep.${SplitLabel}` = `macroSplitStep.${changedSplitKey}`
     let openSplitsSum = 0 // will be incremented to the sum of splits that are not locked
 
-    Object.entries(splitValues).forEach(([splitKey, splitValue]) => {
-      if (splitKey === unlockedSplit) return; // don't increment when splitValue is from unlockedSplit
-      openSplitsSum += splitKey === changedSplitKey ? slideChangeValue : splitValue // take new value instead of current
-    })
+    Object.entries(stepValues)
+      .forEach(([splitKey, splitValue]) => {
+        if (splitKey === unlockedSplit) return; // don't increment when splitValue is from unlockedSplit
+        openSplitsSum += splitKey === changedSplitKey ? slideChangeValue : splitValue // take new value instead of current
+      })
 
     if (openSplitsSum <= 100) {
       setValue(splitName, 100 - openSplitsSum) // subtract sum of open splits to get the value for the locked split
@@ -49,24 +55,24 @@ export function ProfileFormFieldMacroSplits() {
   }
 
   // derived state
-  const fatsUnlocked = unlockedSplit === "fatSplit"
-  const carbsUnlocked = unlockedSplit === "carbSplit"
-  const proteinsUnlocked = unlockedSplit === "proteinSplit"
+  const fatsUnlocked = unlockedSplit === "fatSplit" || useRecommended
+  const carbsUnlocked = unlockedSplit === "carbSplit" || useRecommended
+  const proteinsUnlocked = unlockedSplit === "proteinSplit" || useRecommended
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-7 w-full">
+      <div className="flex flex-col gap-4 w-full">
 
         {/* fats */}
         <Controller
-          name="step3.fatSplit"
+          name="macroSplitStep.fatSplit"
           control={control}
           render={({ field, fieldState }) => (
-            <Field orientation="vertical" data-invalid={fieldState.invalid}>
+            <Field className="gap-1.5" orientation="vertical" data-invalid={fieldState.invalid}>
 
               <FieldContent className="gap-1">
 
-                <FieldLabel id="step3.fatSplit" className="flex justify-between gap-2 w-full">
+                <FieldLabel id="macroSplitStep" className="flex justify-between gap-2 w-full">
                   <span>Fettverteilung</span>
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
@@ -81,7 +87,7 @@ export function ProfileFormFieldMacroSplits() {
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </FieldContent>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 h-8">
                 <Slider
                   value={[field.value]}
                   onValueChange={(value) => {
@@ -91,16 +97,18 @@ export function ProfileFormFieldMacroSplits() {
                   aria-invalid={fieldState.invalid}
                   className="w-full transition-opacity"
                   aria-label="Price Range"
-                  aria-describedby="step3.fatSplit"
+                  aria-describedby="macroSplitStep"
                   disabled={fatsUnlocked}
                 />
-                <Toggle
+                {/* only show when not using recommended values */}
+                {!useRecommended && <Toggle
                   aria-label="Sperre Fette"
                   pressed={fatsUnlocked}
                   onPressedChange={() => { if (!fatsUnlocked) setUnLockedSplit("fatSplit") }}
+                  size="sm"
                 >
                   {getLockIcon("fatSplit")}
-                </Toggle>
+                </Toggle>}
               </div>
 
             </Field>
@@ -109,14 +117,14 @@ export function ProfileFormFieldMacroSplits() {
 
         {/* carbs */}
         <Controller
-          name="step3.carbSplit"
+          name="macroSplitStep.carbSplit"
           control={control}
           render={({ field, fieldState }) => (
-            <Field orientation="vertical" data-invalid={fieldState.invalid}>
+            <Field className="gap-1.5" orientation="vertical" data-invalid={fieldState.invalid}>
 
               <FieldContent className="gap-1">
 
-                <FieldLabel id="step3.carbSplit" className="flex justify-between gap-2 w-full">
+                <FieldLabel id="macroSplitStep.carbSplit" className="flex justify-between gap-2 w-full">
                   <span>Kohlenhydratverteilung</span>
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
@@ -131,7 +139,7 @@ export function ProfileFormFieldMacroSplits() {
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </FieldContent>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3 h-8">
                 <Slider
                   value={[field.value]}
                   onValueChange={(value) => {
@@ -142,16 +150,18 @@ export function ProfileFormFieldMacroSplits() {
                   aria-invalid={fieldState.invalid}
                   className="w-full transition-opacity"
                   aria-label="Price Range"
-                  aria-describedby="step3.carbSplit"
+                  aria-describedby="macroSplitStep.carbSplit"
                   disabled={carbsUnlocked}
                 />
-                <Toggle
+                {/* only show when not using recommended values */}
+                {!useRecommended && <Toggle
                   aria-label="Sperre Kohlenhydrate"
                   pressed={carbsUnlocked}
                   onPressedChange={() => { if (!carbsUnlocked) setUnLockedSplit("carbSplit") }}
+                  size="sm"
                 >
                   {getLockIcon("carbSplit")}
-                </Toggle>
+                </Toggle>}
               </div>
 
             </Field>
@@ -160,14 +170,14 @@ export function ProfileFormFieldMacroSplits() {
 
         {/* protein */}
         <Controller
-          name="step3.proteinSplit"
+          name="macroSplitStep.proteinSplit"
           control={control}
           render={({ field, fieldState }) => (
-            <Field orientation="vertical" data-invalid={fieldState.invalid}>
+            <Field className="gap-1.5" orientation="vertical" data-invalid={fieldState.invalid}>
 
               <FieldContent className="gap-1">
 
-                <FieldLabel id="step3.proteinSplit" className="flex justify-between gap-2 w-full">
+                <FieldLabel id="macroSplitStep.proteinSplit" className="flex justify-between gap-2 w-full">
                   <span>Proteinverteilung</span>
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
@@ -182,7 +192,7 @@ export function ProfileFormFieldMacroSplits() {
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </FieldContent>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3 h-8">
                 <Slider
                   value={[field.value]}
                   onValueChange={(value) => {
@@ -193,16 +203,18 @@ export function ProfileFormFieldMacroSplits() {
                   aria-invalid={fieldState.invalid}
                   className="w-full transition-opacity"
                   aria-label="Price Range"
-                  aria-describedby="step3.proteinSplit"
+                  aria-describedby="macroSplitStep.proteinSplit"
                   disabled={proteinsUnlocked}
                 />
-                <Toggle
+                {/* only show when not using recommended values */}
+                {!useRecommended && <Toggle
                   aria-label="Sperre Proteine"
                   pressed={proteinsUnlocked}
                   onPressedChange={() => { if (!proteinsUnlocked) setUnLockedSplit("proteinSplit") }}
+                  size="sm"
                 >
                   {getLockIcon("proteinSplit")}
-                </Toggle>
+                </Toggle>}
               </div>
 
             </Field>
@@ -216,8 +228,8 @@ export function ProfileFormFieldMacroSplits() {
       splits error, because of dynamic sider calculation and min/max error on single sliders is not possible
       ! this should never appear
       */
-        formState.errors.step3 && <p className="text-destructive text-sm">
-          {formState.errors.step3.message}
+        formState.errors.macroSplitStep && <p className="text-destructive text-sm">
+          {formState.errors.macroSplitStep.message}
         </p>
       }
 

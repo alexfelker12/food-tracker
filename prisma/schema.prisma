@@ -129,30 +129,23 @@ enum BodyType {
   MORE_OVERWEIGHT
 }
 
-//* not used (for now?)
-// enum DietaryStyle {
-//   KETOGENIC
-//   LOWCARB
-//   HIGHCARBnutriment
-//   BALANCED
-// }
-
 model MetricsProfile {
-  id       String   @id @default(cuid())
+  id String @id @default(cuid())
+
+  //* user data
+  // username in User table
+  gender    Gender
+  birthDate DateTime @db.Date
+
   //* body metrics
-  gender   Gender
-  age      Int
   heightCm Int
   weightKg Float
-  // bodyFat Float <- //* not used (for now?)
   bodyType BodyType
 
   //* fitness profile
   fitnessGoal         FitnessGoal
   activityLevel       ActivityLevel
-  // dietaryStyle DietaryStyle <- //* not used (for now?)
   trainingDaysPerWeek Int
-  // cardioDaysPerWeek Int <- //* not used (for now?)
 
   //* macro splits in percent %
   fatSplit     Int

@@ -12,7 +12,7 @@ export function ProfileFormFieldWeight() {
 
   return (
     <Controller
-      name="step1.weightKg"
+      name="bodyDataStep.weightKg"
       control={control}
       render={({ field, fieldState }) => (
         <NumField

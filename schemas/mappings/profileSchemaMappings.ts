@@ -74,11 +74,11 @@ export const recommendedBaseSplitsMapping: Record<FitnessGoalEnumKeys, MacroSpli
 }
 
 export const flatProfileSchemaMapping = ({
-  gender, age, heightCm, weightKg, bodyType, fitnessGoal, activityLevel, trainingDaysPerWeek, proteinSplit, fatSplit, carbSplit
+  gender, birthDate, heightCm, weightKg, bodyType, fitnessGoal, activityLevel, trainingDaysPerWeek, proteinSplit, fatSplit, carbSplit
 }: Required<FlatProfileSchema>): MappedFlatProfileSchema => {
   return {
     gender,
-    age,
+    birthDate,
     heightCm,
     weightKg,
     kfaMap: bodyFatPercentageValueMapping[gender][bodyType],

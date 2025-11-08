@@ -14,7 +14,7 @@ export function ProfileFormFieldGender() {
 
   return (
     <Controller
-      name="step1.gender"
+      name="userDataStep.gender"
       control={control}
       render={({ field, fieldState }) => (
         <EnumField

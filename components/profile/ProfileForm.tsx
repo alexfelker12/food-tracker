@@ -17,7 +17,8 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
   const form = useForm<ProfileSchema>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      step3: {
+      macroSplitStep: {
+        useRecommended: true,
         fatSplit: 25,
         carbSplit: 50,
         proteinSplit: 25
@@ -26,12 +27,14 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
     mode: "onTouched",
   })
 
-  // if (form.formState.errors.step1) console.log("Page 1 errors:", form.formState.errors.step1)
-  // if (form.formState.errors.step1) console.log("Page 2 errors:", form.formState.errors.step1)
-  // if (form.formState.errors.step3) console.log("Page 3 errors:", form.formState.errors.step3)
+  // if (form.formState.errors.userDataStep) console.log("Page 1 errors:", form.formState.errors.userDataStep)
+  // if (form.formState.errors.bodyDataStep) console.log("Page 2 errors:", form.formState.errors.bodyDataStep)
+  // if (form.formState.errors.fitnessProfileStep) console.log("Page 3 errors:", form.formState.errors.fitnessProfileStep)
+  // if (form.formState.errors.macroSplitStep) console.log("Page 4 errors:", form.formState.errors.macroSplitStep)
 
   const onSubmit = (values: ProfileSchema) => {
     console.log("values:", values)
+    console.log(values.userDataStep.birthDate?.toLocaleDateString())
     toast("Gespeicherte Werte", {
       position: "bottom-center",
       description: (
@@ -50,7 +53,7 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
         onSubmit={form.handleSubmit(onSubmit)}
         {...props}
       >
-        <ProfileSteps>
+        <ProfileSteps maxStep={4}>
           <ProfileStepsHeader />
           <ProfileStepsContent />
           <ProfileStepsFooter />

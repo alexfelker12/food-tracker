@@ -25,7 +25,7 @@ export function BottomNavbar() {
     <header className="right-0 bottom-0 left-0 z-50 sticky p-2">
       <div className="relative">
         {/* backgrund blur */}
-        <div className="absolute inset-0 bg-background/80 shadow-lg backdrop-blur-xl border border-border rounded-2xl" />
+        <div className="absolute inset-0 bg-background/80 shadow-lg backdrop-blur-xl border border-border rounded-md" />
 
         {/* nav items */}
         <nav className="relative flex justify-between items-stretch p-2">

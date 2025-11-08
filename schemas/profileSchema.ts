@@ -30,16 +30,21 @@ export const BodyTypeEnum = z.enum([
 ])
 
 
-//* STEP 1 — body data
-export const Step1Schema = z.object({
+//* STEP — user data
+export const UserDataStepSchema = z.object({
+  // TODO: fix -> validating once then removing selected date keeps date valid
+  birthDate: z.coerce.date<Date>().nullish().refine((val) => val ?? false, {
+    message: "Gebe bitte dein Geburtsdatum an",
+  }),
+  // birthDate: z.coerce.date<Date>({ error: "Gebe bitte dein Geburtsdatum an" }),
   gender: GenderEnum.optional().refine((val) => val !== undefined, {
     message: "Bitte gebe dein Geschlecht an",
   }),
-  age: z
-    .number({ error: "Bitte gib dein Alter an" })
-    .int()
-    .min(12, "Das Mindestalter ist 12 Jahre")
-    .max(99, "Das Höchstalter ist 99 Jahre"),
+})
+
+
+//* STEP — body data
+export const BodyDataStepSchema = z.object({
   heightCm: z
     .number({ error: "Bitte gib deine Körpergröße an" })
     .min(100, "Körpergröße zu niedrig")
@@ -54,8 +59,8 @@ export const Step1Schema = z.object({
 })
 
 
-//* STEP 2 — Fitness Profile
-export const Step2Schema = z.object({
+//* STEP — Fitness Profile
+export const FitnessProfileStepSchema = z.object({
   fitnessGoal: FitnessGoalEnum.optional().refine((val) => val !== undefined, {
     message: "Bitte wähle dein Ziel aus",
   }),
@@ -70,8 +75,9 @@ export const Step2Schema = z.object({
 })
 
 
-//* STEP 3 — Macro Splits
-export const Step3Schema = z.object({
+//* STEP — Macro Splits
+export const MacroSplitsStepSchema = z.object({
+  useRecommended: z.boolean(),
   fatSplit: z
     .number({ error: "Bitte gib deinen Fettanteil an" })
     .min(0)
@@ -92,20 +98,24 @@ export const Step3Schema = z.object({
 
 
 //* combined (steps-) schema
+//! order of keys determines internal step order
 export const profileSchema = z.object({
-  step1: Step1Schema,
-  step2: Step2Schema,
-  step3: Step3Schema,
+  userDataStep: UserDataStepSchema, //! step 1
+  bodyDataStep: BodyDataStepSchema, //! step 2
+  fitnessProfileStep: FitnessProfileStepSchema, //! step 3
+  macroSplitStep: MacroSplitsStepSchema, //! step 4
 })
 
 
-//? to validate flatten form, validate like this:
-export const mergedProfileSchema = Step1Schema
-  .extend(Step2Schema.shape)
-  .extend(Step3Schema.shape)
+export const mergedProfileSchema = UserDataStepSchema
+  .extend(BodyDataStepSchema.shape)
+  .extend(FitnessProfileStepSchema.shape)
+  .extend(MacroSplitsStepSchema.shape)
 
+//? to validate flatten form, validate like this:
 // mergedProfileSchema.parse({
-//   ...formData.step1,
-//   ...formData.step2,
-//   ...formData.step3,
+//   ...formData.userDataStep,
+//   ...formData.bodyDataStep,
+//   ...formData.fitnessProfileStep,
+//   ...formData.macroSplitStep,
 // })

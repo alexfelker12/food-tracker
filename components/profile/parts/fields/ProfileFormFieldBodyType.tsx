@@ -14,7 +14,7 @@ export function ProfileFormFieldBodyType() {
 
   return (
     <Controller
-      name="step1.bodyType"
+      name="bodyDataStep.bodyType"
       control={control}
       render={({ field, fieldState }) => (
         <EnumField

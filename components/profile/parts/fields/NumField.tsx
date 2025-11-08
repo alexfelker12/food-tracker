@@ -48,12 +48,12 @@ export function NumField({
         <InputGroupInput
           id={field.name}
           className={cn(
-            "flex-none",
-            (field.value || +placeholder) > 99
-              ? "max-w-11"
-              : (field.value || +placeholder) > 9
-                ? "max-w-9"
-                : "max-w-7"
+            "text-right flex-none max-w-[68px]",
+            // (field.value || +placeholder) > 99
+            //   ? "max-w-11"
+            //   : (field.value || +placeholder) > 9
+            //     ? "max-w-9"
+            //     : "max-w-7"
           )}
           type="number"
           min={min}
@@ -65,12 +65,11 @@ export function NumField({
           onChange={event => {
             const value = event.target.value
             const numValue = +value
-            console.log(numValue)
             const onChangeValue = value === "" || isNaN(numValue)
               ? null
               : Math.min(Math.max(numValue, min), max)
             field.onChange(onChangeValue)
-            field.onBlur() // trigger onBlur at onChange event (level): onBlur triggers validation "onInput"
+            if (fieldState.isTouched) field.onBlur() // trigger onBlur at onChange event (level): onBlur triggers validation "onInput"
           }}
           onFocus={(e) => e.target.select()}
         />

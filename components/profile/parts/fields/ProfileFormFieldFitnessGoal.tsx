@@ -14,7 +14,7 @@ export function ProfileFormFieldFitnessGoal() {
 
   return (
     <Controller
-      name="step2.fitnessGoal"
+      name="fitnessProfileStep.fitnessGoal"
       control={control}
       render={({ field, fieldState }) => (
         <EnumField

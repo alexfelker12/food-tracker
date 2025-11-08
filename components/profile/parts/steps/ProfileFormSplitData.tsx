@@ -2,21 +2,22 @@
 
 import { FieldDescription, FieldGroup, FieldLegend, FieldSeparator, FieldSet } from "@/components/ui/field";
 import { ProfileFormFieldMacroSplits } from "../fields/ProfileFormFieldMacroSplits";
+import { ProfileFormFieldRecommended } from "../fields/ProfileFormFieldRecommended";
 
 export function ProfileFormSplitData() {
   return (
-    <FieldGroup>
-      <FieldSet>
-        <FieldLegend>Makronährstoffverteilung</FieldLegend>
-        <FieldDescription>
-          Passe an, wie sich die Makronährstoffe <strong>Fette</strong>, <strong>Kohlenhydrate</strong> und <strong>Proteine</strong> in deinen Kalorienhaushalt verteilen sollen
-        </FieldDescription>
-      </FieldSet>
+    <FieldSet>
+      <FieldLegend>Makronährstoffverteilung</FieldLegend>
+      <FieldDescription>
+        Passe an, wie sich die Makronährstoffe <strong>Fette</strong>, <strong>Kohlenhydrate</strong> und <strong>Proteine</strong> in deinen Kalorienhaushalt verteilen sollen
+      </FieldDescription>
 
       <FieldSeparator />
 
-      <ProfileFormFieldMacroSplits />
-
-    </FieldGroup>
+      <FieldGroup>
+        <ProfileFormFieldRecommended />
+        <ProfileFormFieldMacroSplits />
+      </FieldGroup>
+    </FieldSet>
   );
 }

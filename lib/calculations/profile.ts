@@ -1,5 +1,7 @@
 // "use server"
 
+// TODO: adjust calcs to derive age from new birthDate field
+
 import {
   activityLevelValueMapping as activityMap,
   fitnessGoalValueMapping as fitnGoalMap,

@@ -5,16 +5,17 @@ import { useProfileSteps } from "./ProfileSteps";
 
 
 export function ProfileStepsHeader() {
-  const { currentStep, toStep } = useProfileSteps()
+  const { currentStep, toStep, maxStep } = useProfileSteps()
 
   return (
     <FormStepper
-      maxStep={3}
+      maxStep={maxStep}
       currentStep={currentStep}
     >
-      <FormStep step={1} onClick={() => toStep(1)} />
-      <FormStep step={2} onClick={() => toStep(2)} />
-      <FormStep step={3} onClick={() => toStep(3)} />
+      {Array.from({ length: maxStep }).map((_, idx) => {
+        const step = idx + 1
+        return <FormStep key={step} step={step} onClick={() => toStep(step)} />
+      })}
     </FormStepper>
   );
 }

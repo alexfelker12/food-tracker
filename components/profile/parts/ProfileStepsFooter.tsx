@@ -7,7 +7,7 @@ import { useProfileSteps } from "./ProfileSteps";
 
 
 export function ProfileStepsFooter() {
-  const { currentStep, stepBack, stepForward } = useProfileSteps()
+  const { currentStep, stepBack, stepForward, maxStep } = useProfileSteps()
 
   return (
     <div className="flex justify-between">
@@ -21,7 +21,7 @@ export function ProfileStepsFooter() {
         </Button>
       }
       <div className="opacity-0"></div>
-      {currentStep < 3 ?
+      {currentStep < maxStep ?
         <Button
           type="button"
           variant="secondary"

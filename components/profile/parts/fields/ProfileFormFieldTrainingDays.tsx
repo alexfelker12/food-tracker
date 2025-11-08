@@ -12,7 +12,7 @@ export function ProfileFormFieldTrainingDays() {
 
   return (
     <Controller
-      name="step2.trainingDaysPerWeek"
+      name="fitnessProfileStep.trainingDaysPerWeek"
       control={control}
       render={({ field, fieldState }) => (
         <NumField

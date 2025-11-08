@@ -12,7 +12,7 @@ export function ProfileFormFieldHeight() {
 
   return (
     <Controller
-      name="step1.heightCm"
+      name="bodyDataStep.heightCm"
       control={control}
       render={({ field, fieldState }) => (
         <NumField

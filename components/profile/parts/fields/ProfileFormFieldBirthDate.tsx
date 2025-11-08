@@ -4,24 +4,23 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { ProfileSchema } from "@/schemas/types";
 
-import { NumField } from "./NumField";
+import { DateField } from "./DateField";
 
 
-export function ProfileFormFieldAge() {
+export function ProfileFormFieldBirthDate() {
   const { control } = useFormContext<ProfileSchema>();
 
   return (
     <Controller
-      name="step1.age"
+      name="userDataStep.birthDate"
       control={control}
       render={({ field, fieldState }) => (
-        <NumField
+        <DateField
           field={field}
           fieldState={fieldState}
-          label="Alter"
-          description="Gebe bitte dein Alter an"
-          placeholder="18"
-          unit="Jahre"
+          label="Geburtsdatum"
+          description="Daraus leiten wir dein Alter ab"
+          placeholder="Geburtsdatum"
         />
       )}
     />

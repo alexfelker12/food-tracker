@@ -8,20 +8,19 @@ import { ProfileFormFieldTrainingDays } from "../fields/ProfileFormFieldTraining
 
 export function ProfileFormFitnessData() {
   return (
-    <FieldGroup>
-      <FieldSet>
-        <FieldLegend>Fitnessdaten</FieldLegend>
-        <FieldDescription>
-          Gebe dein Aktivitätslevel und Fitness-Ziel an. Dies wirkt sich besonders auf dein Kalorien-Ziel aus
-        </FieldDescription>
-      </FieldSet>
+    <FieldSet>
+      <FieldLegend>Fitnessdaten</FieldLegend>
+      <FieldDescription>
+        Gebe dein Aktivitätslevel und Fitness-Ziel an. Dies wirkt sich besonders auf dein Kalorien-Ziel aus
+      </FieldDescription>
 
       <FieldSeparator />
 
-      <ProfileFormFieldFitnessGoal />
-      <ProfileFormFieldActivityLevel />
-      <ProfileFormFieldTrainingDays />
-
-    </FieldGroup>
+      <FieldGroup>
+        <ProfileFormFieldFitnessGoal />
+        <ProfileFormFieldActivityLevel />
+        <ProfileFormFieldTrainingDays />
+      </FieldGroup>
+    </FieldSet>
   );
 }

@@ -14,7 +14,7 @@ export function ProfileFormFieldActivityLevel() {
 
   return (
     <Controller
-      name="step2.activityLevel"
+      name="fitnessProfileStep.activityLevel"
       control={control}
       render={({ field, fieldState }) => (
         <EnumField
