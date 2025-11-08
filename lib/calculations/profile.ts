@@ -1,6 +1,7 @@
 // "use server"
 
 // TODO: adjust calcs to derive age from new birthDate field
+// TODO: heightCm and age are not used -> discuss
 
 import {
   activityLevelValueMapping as activityMap,
@@ -22,7 +23,7 @@ import type {
 // example values to validate calculations
 export const testData: Required<FlatProfileSchema> = {
   gender: "MALE",
-  age: 28,
+  birthDate: null,
   heightCm: 184,
   weightKg: 85,
   bodyType: "SLIGHTLY_OVERWEIGHT",
@@ -31,12 +32,13 @@ export const testData: Required<FlatProfileSchema> = {
   trainingDaysPerWeek: 2,
   fatSplit: 22,
   carbSplit: 41,
-  proteinSplit: 37
+  proteinSplit: 37,
+  useRecommended: true
 }
 
 // excel cell names
 const B3 = testData["gender"]  // Geschlecht
-const B4 = testData["age"]  // Alter (Jahre)
+const B4 = testData["birthDate"]  // Alter (Jahre)
 const B5 = testData["heightCm"]  // Größe (cm)
 const B6 = testData["weightKg"]  // Gewicht (kg)
 const B7 = testData["bodyType"]  // Körpertyp
@@ -50,7 +52,7 @@ const B20 = testData["carbSplit"]  // Trainingstage/Woche
 
 export const mappedTestData: MappedFlatProfileSchema = {
   gender: B3,
-  age: B4,
+  birthDate: B4,
   heightCm: B5,
   weightKg: B6,
   fitnGoalMap: B8,
@@ -59,7 +61,8 @@ export const mappedTestData: MappedFlatProfileSchema = {
   kfaMap: B11,
   proteinSplit: B18,
   fatSplit: B19,
-  carbSplit: B20
+  carbSplit: B20,
+  useRecommended: true
 }
 
 
