@@ -8,8 +8,8 @@ export function ProfileFormSplitData() {
   return (
     <FieldSet>
       <FieldLegend>Makronährstoffverteilung</FieldLegend>
-      <FieldDescription>
-        Passe an, wie sich die Makronährstoffe <strong>Fette</strong>, <strong>Kohlenhydrate</strong> und <strong>Proteine</strong> in deinen Kalorienhaushalt verteilen sollen
+      <FieldDescription className="">
+        Nutze unsere empfohlenen Werte oder passe selbst an, wie sich die Makronährstoffe <strong>Fette</strong>, <strong>Kohlenhydrate</strong> und <strong>Proteine</strong> in deinen Kalorienhaushalt verteilen sollen
       </FieldDescription>
 
       <FieldSeparator />

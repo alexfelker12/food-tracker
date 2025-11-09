@@ -135,8 +135,8 @@ export function calculateTotalSplitValues({ caloryGoal, fatSplit, carbSplit, pro
 
 
 //* RecommendedSplitsByBodyType
-export type calculateRecommendedBodyTypeSplitsProps = Pick<Required<FlatProfileSchema>, "fitnessGoal" | "bodyType">
-export function calculateRecommendedSplitsByBodyType({ bodyType, fitnessGoal }: calculateRecommendedBodyTypeSplitsProps): MacroSplits {
+export type CalculateRecommendedBodyTypeSplitsProps = Pick<Required<FlatProfileSchema>, "fitnessGoal" | "bodyType">
+export function calculateRecommendedSplitsByBodyType({ bodyType, fitnessGoal }: CalculateRecommendedBodyTypeSplitsProps): MacroSplits {
   const baseMapping = recommendedBaseSplitsMapping[fitnessGoal]
 
   switch (bodyType) {

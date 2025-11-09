@@ -76,8 +76,8 @@ export function ProfileFormFieldMacroSplits() {
                   <span>Fettverteilung</span>
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
-                    <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-secondary-foreground">{150}g</span>
+                    {/* <MoveRightIcon aria-description="ergibt wert" />
+                    <span className="text-secondary-foreground">{150}g</span> */}
                   </span>
                 </FieldLabel>
 
@@ -128,8 +128,8 @@ export function ProfileFormFieldMacroSplits() {
                   <span>Kohlenhydratverteilung</span>
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
-                    <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-secondary-foreground">{150}g</span>
+                    {/* <MoveRightIcon aria-description="ergibt wert" />
+                    <span className="text-secondary-foreground">{150}g</span> */}
                   </span>
                 </FieldLabel>
 
@@ -181,8 +181,8 @@ export function ProfileFormFieldMacroSplits() {
                   <span>Proteinverteilung</span>
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <span>{field.value}%</span>
-                    <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-secondary-foreground">{150}g</span>
+                    {/* <MoveRightIcon aria-description="ergibt wert" />
+                    <span className="text-secondary-foreground">{150}g</span> */}
                   </span>
                 </FieldLabel>
 

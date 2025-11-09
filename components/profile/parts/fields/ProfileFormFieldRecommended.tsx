@@ -1,13 +1,17 @@
 "use client"
 
+import { useEffect, useState } from "react";
+
 import { Controller, useFormContext } from "react-hook-form";
 
+import { type CalculateRecommendedBodyTypeSplitsProps, calculateRecommendedSplitsByBodyType } from "@/lib/calculations/profile";
+import { cn } from "@/lib/utils";
 import { ProfileSchema } from "@/schemas/types";
+
+import { LucideIcon, SlidersHorizontalIcon, SparklesIcon } from "lucide-react";
 
 import { Field, FieldLabel, FieldTitle } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { cn } from "@/lib/utils";
-import { LucideIcon, SlidersHorizontalIcon, SparklesIcon } from "lucide-react";
 
 const recommendedSwitcherItems: {
   id: "recommended" | "custom"
@@ -28,26 +32,42 @@ const recommendedSwitcherItems: {
 }]
 
 export function ProfileFormFieldRecommended() {
-  const { control } = useFormContext<ProfileSchema>();
+  const { control, setValue, getValues } = useFormContext<ProfileSchema>();
+
+  const calcRecommendedData = {
+    bodyType: getValues("bodyDataStep.bodyType"),
+    fitnessGoal: getValues("fitnessProfileStep.fitnessGoal")
+  }
+
+  const applyRecommendedValues = ({ bodyType, fitnessGoal }: Partial<CalculateRecommendedBodyTypeSplitsProps>) => {
+    if (!bodyType || !fitnessGoal) return
+    const { fatSplit, carbSplit, proteinSplit } = calculateRecommendedSplitsByBodyType({ bodyType, fitnessGoal })
+
+    setValue("macroSplitStep.fatSplit", fatSplit)
+    setValue("macroSplitStep.carbSplit", carbSplit)
+    setValue("macroSplitStep.proteinSplit", proteinSplit)
+  }
+
+  useEffect(() => {
+    applyRecommendedValues(calcRecommendedData)
+  }, [])
 
   return (
     <Controller
       name="macroSplitStep.useRecommended"
       control={control}
       render={({ field, fieldState }) => (
-
         <RadioGroup
           name={field.name}
           value={field.value ? "recommended" : "custom"}
           onValueChange={(value) => {
             const recommendedSelected = value === "recommended"
 
-            if (recommendedSelected) {
-              // setValues here
-            }
-
+            if ((field.value && recommendedSelected) || (!field.value && !recommendedSelected)) return;
             field.onChange(recommendedSelected)
             field.onBlur()
+
+            if (recommendedSelected) applyRecommendedValues(calcRecommendedData)
           }}
           className="gap-2 grid-cols-2"
         >

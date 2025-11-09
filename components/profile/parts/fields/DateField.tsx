@@ -73,7 +73,6 @@ export function DateField({
             onMonthChange={(month) => setSelectedMonth(month)}
             selected={field.value}
             onSelect={(date) => {
-              console.log(date)
               field.onChange(date ?? null)
               field.onBlur()
               setOpen(false)
