@@ -17,9 +17,9 @@ import { Toggle } from "@/components/ui/toggle";
 type SplitLabel = keyof typeof MacroSplitsStepSchema.shape
 
 export function ProfileFormFieldMacroSplits() {
-  const { control, formState, setValue, getValues } = useFormContext<ProfileSchema>();
+  const { control, formState, setValue, getValues, watch } = useFormContext<ProfileSchema>();
 
-  const useRecommended = getValues("macroSplitStep.useRecommended")
+  const useRecommended = watch("macroSplitStep.useRecommended", true)
 
   const [unlockedSplit, setUnLockedSplit] = useState<SplitLabel>("carbSplit") // default carbSplit locked
 
