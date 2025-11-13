@@ -53,7 +53,7 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "maskable"
       }
     ],
-    start_url: "/",
+    start_url: "/app",
     background_color: "#FFFFFF",
     display: "standalone",
     scope: "/",

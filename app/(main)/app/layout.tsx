@@ -4,13 +4,15 @@ import { Suspense } from "react"
 
 import { auth } from "@/lib/auth"
 
-import { Toaster } from "@/components/ui/sonner"
-import { Spinner } from "@/components/ui/spinner"
 import { BottomNavbar } from "@/components/layout/BottomNavbar"
 import { AuthProvider } from "@/components/providers/AuthProvider"
+import { QueryProvider } from "@/components/providers/QueryProvider"
 import { ThemeProvider } from "@/components/providers/ThemeProvider"
+import { Toaster } from "@/components/ui/sonner"
+import { Spinner } from "@/components/ui/spinner"
 
-import "../globals.css"
+import "@/app/globals.css"
+import "@/lib/orpc.server"; // for pre-rendering
 
 // import { Geist, Geist_Mono } from "next/font/google";
 // const geistSans = Geist({
@@ -33,7 +35,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+export default async function AppLayout({
   children
 }: Readonly<{
   children: React.ReactNode
@@ -41,8 +43,7 @@ export default async function RootLayout({
   const sessionPromise = auth.api.getSession({
     headers: await headers()
   })
-
-  console.log("fetched session in root")
+  console.log("fetched session in app root")
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -53,12 +54,14 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Suspense fallback={<AppLoader />}>
-            <AuthProvider initialSessionPromise={sessionPromise}>
-              {children}
-              <BottomNavbar />
-            </AuthProvider>
-          </Suspense>
+          <QueryProvider>
+            <Suspense fallback={<AppLoader />}>
+              <AuthProvider initialSessionPromise={sessionPromise}>
+                {children}
+                <BottomNavbar />
+              </AuthProvider>
+            </Suspense>
+          </QueryProvider>
           <Toaster />
         </ThemeProvider>
       </body>

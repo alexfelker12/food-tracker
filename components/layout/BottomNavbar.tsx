@@ -5,6 +5,7 @@ import { BookOpenIcon, HomeIcon, LucideIcon, MoreHorizontalIcon, PlusIcon } from
 import { NavbarItem } from "./NavbarItem"
 import { UserDropdown } from "./UserDropdown"
 
+
 export type NavItemProps = {
   id: string
   icon: LucideIcon
@@ -14,10 +15,10 @@ export type NavItemProps = {
 }
 
 const navItems: NavItemProps[] = [
-  { id: "home", icon: HomeIcon, label: "Start", href: "/" },
-  { id: "journal", icon: BookOpenIcon, label: "Tagebuch", href: "/journal" },
-  { id: "create", icon: PlusIcon, label: "Eintrag", href: "/track-food", isPrimary: true },
-  { id: "more", icon: MoreHorizontalIcon, label: "Weiteres", href: "/more" },
+  { id: "home", icon: HomeIcon, label: "Start", href: "/app" },
+  { id: "journal", icon: BookOpenIcon, label: "Tagebuch", href: "/app/journal" },
+  { id: "create", icon: PlusIcon, label: "Eintrag", href: "/app/track-food", isPrimary: true },
+  { id: "more", icon: MoreHorizontalIcon, label: "Weiteres", href: "/app/more" },
 ]
 
 export function BottomNavbar() {

@@ -1,13 +1,14 @@
 // core
-import { betterAuth, BetterAuthOptions } from "better-auth"
-import { prismaAdapter } from "better-auth/adapters/prisma"
+import { betterAuth, BetterAuthOptions } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 
 // plugins
-import { username, admin } from "better-auth/plugins"
+import { admin, username } from "better-auth/plugins";
 
 // local
-import { db } from "./db"
-import { validateUsername } from "./utils"
+import { db } from "./db";
+import { validateUsername } from "./utils";
+
 
 export const betterAuthConfig: BetterAuthOptions = {
   database: prismaAdapter(db, {

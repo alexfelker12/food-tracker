@@ -16,7 +16,7 @@ interface NavbarItemProps {
 export function NavbarItem({ item, prefetch }: NavbarItemProps) {
   const pathname = usePathname()
   // check if href is startpage, else if current pathname is a descendant of nav item
-  const isActive = (item.href === "/" && pathname === "/") || (item.href !== "/" && pathname.startsWith(item.href))
+  const isActive = (item.href === "/app" && pathname === "/app") || (item.href !== "/app" && pathname.startsWith(item.href))
   const Icon = item.icon
 
   return (

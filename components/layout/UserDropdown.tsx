@@ -46,10 +46,10 @@ export function UserDropdown({ children }: React.ComponentProps<"button">) {
         {session ?
           <>
             <DropdownMenuItem asChild>
-              <NoPrefetchLink href="/user"><FileUserIcon />Profil</NoPrefetchLink>
+              <NoPrefetchLink href="/app/user"><FileUserIcon />Profil</NoPrefetchLink>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <NoPrefetchLink href="/user/settings"><SettingsIcon />Einstellungen</NoPrefetchLink>
+              <NoPrefetchLink href="/app/user/settings"><SettingsIcon />Einstellungen</NoPrefetchLink>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
