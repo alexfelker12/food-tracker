@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 
 import NoPrefetchLink from "@/components/NoPrefetchLink"
-import { NavItemProps } from "./BottomNavbar"
+import { NavItemProps } from "./NavbarItems"
 
 
 interface NavbarItemProps {

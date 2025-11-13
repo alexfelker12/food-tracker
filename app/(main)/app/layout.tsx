@@ -5,11 +5,9 @@ import { Suspense } from "react"
 import { auth } from "@/lib/auth"
 
 import { BottomNavbar } from "@/components/layout/BottomNavbar"
-import { AuthProvider } from "@/components/providers/AuthProvider"
 import { QueryProvider } from "@/components/providers/QueryProvider"
 import { ThemeProvider } from "@/components/providers/ThemeProvider"
 import { Toaster } from "@/components/ui/sonner"
-import { Spinner } from "@/components/ui/spinner"
 
 import "@/app/globals.css"
 import "@/lib/orpc.server"; // for pre-rendering
@@ -35,16 +33,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function AppLayout({
+export default function AppLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const sessionPromise = auth.api.getSession({
-    headers: await headers()
-  })
-  console.log("fetched session in app root")
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="grid grid-rows-[1fr_auto] antialiased">
@@ -55,24 +48,12 @@ export default async function AppLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <Suspense fallback={<AppLoader />}>
-              <AuthProvider initialSessionPromise={sessionPromise}>
-                {children}
-                <BottomNavbar />
-              </AuthProvider>
-            </Suspense>
+            {children}
+            <BottomNavbar />
+            <Toaster />
           </QueryProvider>
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>
   )
-}
-
-function AppLoader() {
-  return (
-    <div className="flex justify-center items-center w-full h-full">
-      <Spinner className="text-primary size-6" />
-    </div>
-  );
 }

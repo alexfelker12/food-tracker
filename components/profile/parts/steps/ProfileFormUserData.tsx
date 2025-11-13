@@ -1,4 +1,4 @@
-"use client"
+import { Suspense } from "react";
 
 import { FieldDescription, FieldGroup, FieldLegend, FieldSeparator, FieldSet } from "@/components/ui/field";
 import { ProfileFormFieldBirthDate } from "../fields/ProfileFormFieldBirthDate";
@@ -16,7 +16,9 @@ export function ProfileFormUserData() {
       <FieldSeparator />
 
       <FieldGroup>
-        <ProfileFormFieldBirthDate />
+        <Suspense>
+          <ProfileFormFieldBirthDate />
+        </Suspense>
         <ProfileFormFieldGender />
       </FieldGroup>
     </FieldSet >

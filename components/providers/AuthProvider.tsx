@@ -30,12 +30,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 function AuthProvider({
   children,
-  initialSessionPromise,
+  initialSession,
 }: {
   children: React.ReactNode
-  initialSessionPromise: Promise<AuthSession | null>
+  initialSession: AuthSession | null
 }) {
-  const [session, setSession] = useState<AuthSession | null>(use(initialSessionPromise)) // resolve promise to get session obj
+  const [session, setSession] = useState<AuthSession | null>(initialSession)
 
   // server-side redirect can be used during render process in client components 
   if (!session) redirect("/auth");

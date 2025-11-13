@@ -6,14 +6,18 @@ import { Button } from "@/components/ui/button";
 
 export default function Page() {
   return (
-    <main className="flex justify-center items-center h-full">
-      <div className="flex flex-col items-center gap-4">
-        <Button asChild variant="outline">
-          <NoPrefetchLink href="/app">
-            <HouseIcon /> Go to dashboard
-          </NoPrefetchLink>
-        </Button>
-      </div>
-    </main>
+    <>
+      <header></header>
+      <main className="flex justify-center items-center h-full">
+        <div className="flex flex-col items-center gap-4">
+          <Button asChild variant="outline">
+            <NoPrefetchLink href="/app">
+              <HouseIcon /> Go to dashboard
+            </NoPrefetchLink>
+          </Button>
+        </div>
+      </main>
+      <footer></footer>
+    </>
   );
 }

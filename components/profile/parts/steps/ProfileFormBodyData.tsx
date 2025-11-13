@@ -1,5 +1,3 @@
-"use client"
-
 import { FieldDescription, FieldGroup, FieldLegend, FieldSeparator, FieldSet } from "@/components/ui/field";
 import { ProfileFormFieldBodyType } from "../fields/ProfileFormFieldBodyType";
 import { ProfileFormFieldHeight } from "../fields/ProfileFormFieldHeight";

@@ -1,5 +1,3 @@
-"use client"
-
 import { FieldDescription, FieldGroup, FieldLegend, FieldSeparator, FieldSet } from "@/components/ui/field";
 import { ProfileFormFieldMacroSplits } from "../fields/ProfileFormFieldMacroSplits";
 import { ProfileFormFieldRecommended } from "../fields/ProfileFormFieldRecommended";

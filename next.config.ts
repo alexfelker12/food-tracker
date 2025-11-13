@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname)
   },
   devIndicators: false,
-  // cacheComponents: true //! currently tries to run static content from edge causing compatability issues with prisma's generated client
+  cacheComponents: true // enables ppr
 }
 
 export default nextConfig;

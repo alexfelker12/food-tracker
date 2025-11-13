@@ -1,5 +1,3 @@
-"use client"
-
 import { FieldDescription, FieldGroup, FieldLegend, FieldSeparator, FieldSet } from "@/components/ui/field";
 import { ProfileFormFieldActivityLevel } from "../fields/ProfileFormFieldActivityLevel";
 import { ProfileFormFieldFitnessGoal } from "../fields/ProfileFormFieldFitnessGoal";

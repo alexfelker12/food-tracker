@@ -1,25 +1,13 @@
-"use client"
+import { headers } from "next/headers"
+import { Suspense } from "react"
 
-import { BookOpenIcon, HomeIcon, LucideIcon, MoreHorizontalIcon, PlusIcon } from "lucide-react"
+import { auth } from "@/lib/auth"
 
-import { NavbarItem } from "./NavbarItem"
+import { AuthProvider } from "@/components/providers/AuthProvider"
+import { Skeleton } from "@/components/ui/skeleton"
+import { NavbarItems } from "./NavbarItems"
 import { UserDropdown } from "./UserDropdown"
 
-
-export type NavItemProps = {
-  id: string
-  icon: LucideIcon
-  label: Capitalize<string>
-  href: `/${string}`
-  isPrimary?: boolean
-}
-
-const navItems: NavItemProps[] = [
-  { id: "home", icon: HomeIcon, label: "Start", href: "/app" },
-  { id: "journal", icon: BookOpenIcon, label: "Tagebuch", href: "/app/journal" },
-  { id: "create", icon: PlusIcon, label: "Eintrag", href: "/app/track-food", isPrimary: true },
-  { id: "more", icon: MoreHorizontalIcon, label: "Weiteres", href: "/app/more" },
-]
 
 export function BottomNavbar() {
   return (
@@ -30,14 +18,39 @@ export function BottomNavbar() {
 
         {/* nav items */}
         <nav className="relative flex justify-between items-stretch p-2">
-          {navItems.map((item) =>
-            <NavbarItem key={item.id} item={item} />
-          )}
+          <NavbarItems />
 
           {/* user dropdown */}
-          <UserDropdown />
+          <Suspense fallback={<AppLoader />}>
+            <UserDropdownWrap />
+          </Suspense>
         </nav>
       </div>
     </header>
   )
+}
+
+async function UserDropdownWrap() {
+  const sessionPromise = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  console.log("fetched session in wrap")
+
+  return (
+    <AuthProvider initialSession={sessionPromise}>
+      <UserDropdown />
+    </AuthProvider>
+  );
+}
+
+function AppLoader() {
+  return (
+    <div className="flex flex-col items-center gap-1 min-w-14">
+      <div className="flex justify-center items-center size-10">
+        <Skeleton className="rounded-full text-primary size-9" />
+      </div>
+      <span className="font-medium text-muted-foreground text-xs transition-colors">Profil</span>
+    </div>
+  );
 }
