@@ -1,13 +1,24 @@
 "use client"
 
+import { useMutationState } from "@tanstack/react-query";
+
+import { orpc } from "@/lib/orpc";
+
 import { SaveIcon, StepBackIcon, StepForwardIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useProfileSteps } from "./ProfileSteps";
 
 
 export function ProfileStepsFooter() {
   const { currentStep, stepBack, stepForward, maxStep } = useProfileSteps()
+
+  const createProfileState = useMutationState({
+    filters: { mutationKey: orpc.onboard.createProfile.mutationKey() },
+    select: (mutation) => mutation.state.status === "pending"
+  })
+  const buttonsDisabled = createProfileState.length > 0 ? createProfileState[createProfileState.length - 1] : false
 
   return (
     <div className="flex justify-between">
@@ -15,7 +26,11 @@ export function ProfileStepsFooter() {
         <Button
           type="button"
           variant="outline"
-          onClick={stepBack}
+          onClick={() => {
+            if (buttonsDisabled) return
+            stepBack()
+          }}
+          disabled={buttonsDisabled}
         >
           <StepBackIcon /> Zurück
         </Button>
@@ -25,16 +40,21 @@ export function ProfileStepsFooter() {
         <Button
           type="button"
           variant="secondary"
-          // timeout to avoid triggering click on tap up after rendering submit button
-          onClick={() => setTimeout(() => stepForward(), 0)}
+          onClick={() => {
+            if (buttonsDisabled) return
+            // timeout to avoid triggering click on tap up after rendering submit button
+            setTimeout(() => stepForward(), 0)
+          }}
+          disabled={buttonsDisabled}
         >
           Weiter <StepForwardIcon />
         </Button>
         :
         <Button
           type="submit"
+          disabled={buttonsDisabled}
         >
-          <SaveIcon /> Speichern
+          {buttonsDisabled ? <Spinner /> : <SaveIcon />} Speichern
         </Button>
       }
     </div >

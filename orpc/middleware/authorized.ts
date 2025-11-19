@@ -3,7 +3,7 @@ import { base } from "./base";
 
 export const authMiddleware = base.middleware(async ({ context, next, errors }) => {
   const sessionData = context.session ?? await auth.api.getSession({
-    headers: context.headers, // or reqHeaders if you're using the plugin
+    headers: context.headers,
   })
 
   if (!sessionData) throw errors.UNAUTHORIZED()
@@ -18,5 +18,3 @@ export const authMiddleware = base.middleware(async ({ context, next, errors }) 
     }
   })
 })
-
-export const authorized = base.use(authMiddleware);

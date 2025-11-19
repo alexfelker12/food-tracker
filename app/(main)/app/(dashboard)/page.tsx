@@ -31,7 +31,7 @@ export default function Page() {
       <div className="flex flex-col items-center gap-4">
         <ThemeToggle />
         <Button asChild variant="link">
-          <NoPrefetchLink href="/onboard">
+          <NoPrefetchLink href="/app/onboard">
             <LogInIcon /> Zum Onbaord
           </NoPrefetchLink>
         </Button>

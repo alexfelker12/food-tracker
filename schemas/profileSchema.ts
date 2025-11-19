@@ -6,40 +6,47 @@ import { z } from "zod";
 export const GenderEnum = z.enum([
   "MALE",
   "FEMALE"
-])
+], {
+  error: "Bitte gebe dein Geschlecht an"
+})
 export const FitnessGoalEnum = z.enum([
   "QUICKLY_LOSE_WEIGHT",
   "LOSE_WEIGHT",
   "MAINTAIN",
   "GAIN_WEIGHT",
   "QUICKLY_GAIN_WEIGHT",
-])
+], {
+  error: "Bitte wähle dein Ziel aus"
+})
 export const ActivityLevelEnum = z.enum([
   "VERY_LOW",
   "LOW",
   "MEDIUM",
   "HIGH",
   "VERY_HIGH",
-])
+], {
+  error: "Bitte gebe dein Aktivitätslevel an"
+})
 export const BodyTypeEnum = z.enum([
   "VERY_ATHLETIC",
   "ATHLETIC",
   "AVERAGE",
   "SLIGHTLY_OVERWEIGHT",
   "MORE_OVERWEIGHT",
-])
+], {
+  error: "Bitte wähle einen Körpertyp aus"
+})
 
 
 //* STEP — user data
 export const UserDataStepSchema = z.object({
-  // TODO: fix -> validating once then removing selected date keeps date valid
-  birthDate: z.coerce.date<Date>().nullish().refine((val) => val ?? false, {
-    message: "Gebe bitte dein Geburtsdatum an",
-  }),
-  // birthDate: z.coerce.date<Date>({ error: "Gebe bitte dein Geburtsdatum an" }),
-  gender: GenderEnum.optional().refine((val) => val !== undefined, {
-    message: "Bitte gebe dein Geschlecht an",
-  }),
+  birthDate: z.preprocess(
+    (val) => val === null ? undefined : val,
+    z.coerce.date<Date>({
+      error: "Gebe bitte dein Geburtsdatum an"
+    })
+  ),
+  gender: GenderEnum,
 })
 
 
@@ -53,20 +60,14 @@ export const BodyDataStepSchema = z.object({
     .number({ error: "Bitte gib dein Gewicht an" })
     .min(30, "Gewicht zu niedrig")
     .max(250, "Gewicht zu hoch"),
-  bodyType: BodyTypeEnum.optional().refine((val) => val !== undefined, {
-    message: "Bitte wähle einen Körpertyp aus",
-  })
+  bodyType: BodyTypeEnum,
 })
 
 
 //* STEP — Fitness Profile
 export const FitnessProfileStepSchema = z.object({
-  fitnessGoal: FitnessGoalEnum.optional().refine((val) => val !== undefined, {
-    message: "Bitte wähle dein Ziel aus",
-  }),
-  activityLevel: ActivityLevelEnum.optional().refine((val) => val !== undefined, {
-    message: "Bitte gebe dein Aktivitätslevel an",
-  }),
+  fitnessGoal: FitnessGoalEnum,
+  activityLevel: ActivityLevelEnum,
   trainingDaysPerWeek: z
     .number({ error: "Bitte gib an, wie oft du trainierst" })
     .int()
@@ -105,6 +106,16 @@ export const profileSchema = z.object({
   fitnessProfileStep: FitnessProfileStepSchema, //! step 3
   macroSplitStep: MacroSplitsStepSchema, //! step 4
 })
+
+// export const requiredProfileSchema = z.object({
+//   userDataStep: UserDataStepSchema
+//     .refine((data) =>)
+//   ,
+//   bodyDataStep: BodyDataStepSchema,
+//   fitnessProfileStep: FitnessProfileStepSchema,
+//   macroSplitStep: MacroSplitsStepSchema,
+// })
+
 
 
 export const mergedProfileSchema = UserDataStepSchema

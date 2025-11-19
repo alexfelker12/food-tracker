@@ -23,7 +23,7 @@ import type {
 // example values to validate calculations
 export const testData: Required<FlatProfileSchema> = {
   gender: "MALE",
-  birthDate: null,
+  birthDate: new Date("2000-26-10"),
   heightCm: 184,
   weightKg: 85,
   bodyType: "SLIGHTLY_OVERWEIGHT",
@@ -127,9 +127,9 @@ export type CalculateTotalSplitValuesProps = Pick<Required<FlatProfileSchema>, "
 }
 export function calculateTotalSplitValues({ caloryGoal, fatSplit, carbSplit, proteinSplit }: CalculateTotalSplitValuesProps) {
   return {
-    fatSplit: ((caloryGoal * (fatSplit / 100)) / 9),
-    carbSplit: ((caloryGoal * (carbSplit / 100)) / 4),
-    proteinSplit: ((caloryGoal * (proteinSplit / 100)) / 4)
+    amountFats: ((caloryGoal * (fatSplit / 100)) / 9),
+    amountCarbs: ((caloryGoal * (carbSplit / 100)) / 4),
+    amountProtein: ((caloryGoal * (proteinSplit / 100)) / 4)
   }
 }
 

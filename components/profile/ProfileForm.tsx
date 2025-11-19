@@ -11,10 +11,12 @@ import { ProfileStepsFooter } from "./parts/ProfileStepsFooter";
 import { ProfileStepsHeader } from "./parts/ProfileStepsHeader";
 import { toast } from "sonner";
 import { ProfileSchema } from "@/schemas/types";
+import { useMutation } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
 
 
 export function ProfileForm({ className, children, ...props }: React.ComponentProps<"form">) {
-  const form = useForm<ProfileSchema>({
+  const form = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       macroSplitStep: {
@@ -27,22 +29,22 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
     mode: "onTouched",
   })
 
-  // if (form.formState.errors.userDataStep) console.log("Page 1 errors:", form.formState.errors.userDataStep)
-  // if (form.formState.errors.bodyDataStep) console.log("Page 2 errors:", form.formState.errors.bodyDataStep)
-  // if (form.formState.errors.fitnessProfileStep) console.log("Page 3 errors:", form.formState.errors.fitnessProfileStep)
-  // if (form.formState.errors.macroSplitStep) console.log("Page 4 errors:", form.formState.errors.macroSplitStep)
+  const { mutate } = useMutation(orpc.onboard.createProfile.mutationOptions())
 
   const onSubmit = (values: ProfileSchema) => {
-    console.log("values:", values)
-    console.log(values.userDataStep.birthDate?.toLocaleDateString())
-    toast("Gespeicherte Werte", {
-      position: "bottom-center",
-      description: (
-        <pre className="mt-2 p-4 rounded-md overflow-x-auto">
-          <code>{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      ),
-      duration: 15000
+    mutate(values, {
+      // callback parameters: (data, variables, onMutateResult, context)
+      onSuccess: (data) => {
+        toast("Nutritionresult", {
+          position: "bottom-center",
+          description: (
+            <pre className="mt-2 p-4 rounded-md overflow-x-auto">
+              <code>{JSON.stringify(data, null, 2)}</code>
+            </pre>
+          ),
+          duration: 20000
+        })
+      },
     })
   }
 

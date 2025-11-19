@@ -1,10 +1,10 @@
 "use client"
 
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
 
-import NoPrefetchLink from "@/components/NoPrefetchLink"
 import { NavItemProps } from "./NavbarItems"
 
 
@@ -21,7 +21,7 @@ export function NavbarItem({ item, prefetch }: NavbarItemProps) {
 
   return (
     <div className={item.isPrimary ? "flex items-center" : ""}>
-      <NoPrefetchLink
+      <Link
         data-component="nav-item"
         href={item.href}
         prefetch={prefetch}
@@ -56,7 +56,7 @@ export function NavbarItem({ item, prefetch }: NavbarItemProps) {
             {item.label}
           </span>
         }
-      </NoPrefetchLink>
+      </Link>
     </div>
   )
 }

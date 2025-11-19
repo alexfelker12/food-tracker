@@ -1,8 +1,9 @@
 import z from "zod"
-import { base } from "@/app/middleware/base"
-// import { authorized } from "@/app/middleware/authorized"
+import { base } from "@/orpc/middleware/base"
+import { authMiddleware } from "@/orpc/middleware/authorized"
 
 export const listTests = base
+  .use(authMiddleware)
   .route({
     method: "GET",
     path: "/test",
