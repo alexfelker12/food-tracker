@@ -113,5 +113,4 @@ export async function createNutritionResultFromProfile({ profileData, useRecomme
       metricsProfile: { connect: { id } }
     }
   })
-
 }

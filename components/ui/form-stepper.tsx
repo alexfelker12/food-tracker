@@ -68,6 +68,7 @@ function FormStepProgress({
 
 function FormStep({
   step,
+  disabled,
   className,
   ...props
 }: React.ComponentProps<typeof Button> & {
@@ -81,6 +82,7 @@ function FormStep({
   const isCurrentStep = step === currentStep
   const active = step <= currentStep
   const reachable = step <= currentStep + 1
+  const isDisabled = !reachable || disabled
 
   return (
     <Button
@@ -93,8 +95,8 @@ function FormStep({
       )}
       size="icon"
       aria-description={`Gehe zu Schritt ${step} / ${maxStep}`}
-      disabled={!reachable}
-      aria-disabled={!reachable}
+      disabled={isDisabled}
+      aria-disabled={isDisabled}
       {...props}
     >
       <div className={cn(
@@ -112,7 +114,7 @@ function FormStep({
         className={cn(
           "z-10 text-secondary-foreground text-xl",
           active && "text-primary-foreground",
-          !reachable && "text-muted-foreground" // show disabled state with muted text
+          isDisabled && "text-muted-foreground" // show disabled state with muted text
         )}
         role="presentation"
       >{step}</span>
