@@ -36,22 +36,24 @@ export const OAuthLoginButton = ({
     authClient.signIn.social({
       provider,
       callbackURL,
-      //? not working as intended
-      // fetchOptions: {
-      //   // ctx: SuccessContext
-      //   onSuccess() {
-      //     toast.success("Signed in successfully")
-      //   },
-      //   // ctx: ErrorContext
-      //   onError() {
-      //     toast.error("Sign in failed")
-      //   },
-      //   onResponse(ctx) {
-      //     console.log(ctx.request)
-      //     toast("Response completed")
-      //     setInternalLoading(false)
-      //   }
-      // }
+      newUserCallbackURL: "/app/onboard",
+      fetchOptions: {
+        //? not working as intended
+        //   // ctx: SuccessContext
+        //   onSuccess() {
+        //     toast.success("Signed in successfully")
+        //   },
+        //   // ctx: ErrorContext
+        //   onError() {
+        //     toast.error("Sign in failed")
+        //   },
+        // // ctx: ResponseContext
+        onResponse: () => {
+          // console.log(ctx.request)
+          // toast("Response completed")
+          setInternalLoading(false)
+        }
+      }
     })
   }
 
@@ -86,3 +88,32 @@ export const OAuthLoginButton = ({
     </Button>
   )
 }
+
+
+// {
+//   "id": "cmi7f4uhw0001e5eaze0n871x",
+//   "date": "2025-11-20T00:00:00.000Z",
+//   "bmr": 1770.98,
+//   "tdee": 2358,
+//   "caloryGoal": 2051,
+//   "tefQuota": 0.1095,
+//   "waterDemand": 3.3,
+//   "amountFats": 56,
+//   "amountCarbs": 205,
+//   "amountProtein": 179,
+//   "profileSnapshot": {
+//     "gender": "MALE",
+//     "bodyType": "MORE_OVERWEIGHT",
+//     "fatSplit": 25,
+//     "heightCm": 183,
+//     "weightKg": 94,
+//     "birthDate": "2000-10-25T00:00:00.000Z",
+//     "carbSplit": 40,
+//     "fitnessGoal": "LOSE_WEIGHT",
+//     "proteinSplit": 35,
+//     "activityLevel": "VERY_LOW",
+//     "trainingDaysPerWeek": 0
+//   },
+//   "usedRecommendedSplits": true,
+//   "metricsProfileId": "cmi7f4ug20000e5eayo0ohrdl"
+// }

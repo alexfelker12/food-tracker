@@ -1,18 +1,19 @@
 "use client"
 
-import { FormProvider, useForm } from "react-hook-form";
-
-import { profileSchema } from "@/schemas/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isDefinedError } from "@orpc/client";
+import { useMutation } from "@tanstack/react-query";
+import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import { orpc } from "@/lib/orpc";
+import { profileSchema } from "@/schemas/profileSchema";
 
 import { ProfileSteps } from "./parts/ProfileSteps";
 import { ProfileStepsContent } from "./parts/ProfileStepsContent";
 import { ProfileStepsFooter } from "./parts/ProfileStepsFooter";
 import { ProfileStepsHeader } from "./parts/ProfileStepsHeader";
-import { toast } from "sonner";
-import { ProfileSchema } from "@/schemas/types";
-import { useMutation } from "@tanstack/react-query";
-import { orpc } from "@/lib/orpc";
+import { ProfileCreateSuccess } from "./ProfileCreateSuccess";
 
 
 export function ProfileForm({ className, children, ...props }: React.ComponentProps<"form">) {
@@ -21,46 +22,59 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
     defaultValues: {
       macroSplitStep: {
         useRecommended: true,
-        fatSplit: 25,
-        carbSplit: 50,
-        proteinSplit: 25
       },
     },
     mode: "onTouched",
   })
 
-  const { mutate } = useMutation(orpc.onboard.createProfile.mutationOptions())
-
-  const onSubmit = (values: ProfileSchema) => {
-    mutate(values, {
-      // callback parameters: (data, variables, onMutateResult, context)
-      onSuccess: (data) => {
-        toast("Nutritionresult", {
-          position: "bottom-center",
-          description: (
-            <pre className="mt-2 p-4 rounded-md overflow-x-auto">
-              <code>{JSON.stringify(data, null, 2)}</code>
-            </pre>
-          ),
-          duration: 20000
-        })
-      },
-    })
-  }
+  const { mutate: createProfile, data } = useMutation(orpc.onboard.createProfile.mutationOptions({
+    // onSuccess parameters: (data, variables, onMutateResult, context)
+    onError: (error) => {
+      if (isDefinedError(error)) {
+        toast.error(error.message)
+      } else {
+        toast.error("Es gab Probleme beim Erstellen deines Profils. Versuche es nochmal!")
+      }
+    },
+  }))
 
   return (
-    <FormProvider {...form}>
-      <form
-        className="flex flex-col justify-between gap-8 size-full"
-        onSubmit={form.handleSubmit(onSubmit)}
-        {...props}
-      >
-        <ProfileSteps maxStep={4}>
-          <ProfileStepsHeader />
-          <ProfileStepsContent />
-          <ProfileStepsFooter />
-        </ProfileSteps>
-      </form>
-    </FormProvider>
+    <>
+      <FormProvider {...form}>
+        <form
+          className="flex flex-col justify-between gap-8 size-full"
+          onSubmit={form.handleSubmit((values) => createProfile(values))}
+          {...props}
+        >
+          <ProfileSteps maxStep={4}>
+            <ProfileStepsHeader />
+            <ProfileStepsContent />
+            <ProfileStepsFooter />
+          </ProfileSteps>
+        </form>
+      </FormProvider>
+
+      <ProfileCreateSuccess data={data} />
+    </>
   );
 }
+
+
+// import { AnimatedCircularProgressBar } from "@/components/ui/animated-circular-progress-bar"
+
+// type FirstNutritionResultDisplayProps = {
+
+// }
+// function FirstNutritionResultDisplay({
+
+// }: FirstNutritionResultDisplayProps) {
+//   return (
+//     <>
+//       <AnimatedCircularProgressBar
+//         value={40}
+//         gaugePrimaryColor="rgb(79 70 229)"
+//         gaugeSecondaryColor="rgba(0, 0, 0, 0.1)"
+//       />
+//     </>
+//   );
+// }

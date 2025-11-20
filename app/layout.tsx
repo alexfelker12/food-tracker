@@ -1,16 +1,6 @@
 import type { Metadata } from "next"
-import { headers } from "next/headers"
-import { Suspense } from "react"
-
-import { auth } from "@/lib/auth"
-
-import { BottomNavbar } from "@/components/layout/BottomNavbar"
-import { QueryProvider } from "@/components/providers/QueryProvider"
 import { ThemeProvider } from "@/components/providers/ThemeProvider"
-import { Toaster } from "@/components/ui/sonner"
-
 import "@/app/globals.css"
-import "@/lib/orpc.server"; // for pre-rendering
 
 // import { Geist, Geist_Mono } from "next/font/google";
 // const geistSans = Geist({
@@ -28,30 +18,27 @@ export const metadata: Metadata = {
   title: "MFoody",
   description: "Track calories and reach your fitness goals!",
   robots: {
-    index: false,
-    follow: false,
+    index: false, //* should be removed some time
+    follow: false, //* should be removed some time
   },
 }
 
-export default function AppLayout({
+
+export default function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="grid grid-rows-[1fr_auto] antialiased">
+    <html lang="de-DE" suppressHydrationWarning>
+      <body className="grid grid-rows-[auto_1fr_auto] antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <QueryProvider>
-            {children}
-            <BottomNavbar />
-            <Toaster />
-          </QueryProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

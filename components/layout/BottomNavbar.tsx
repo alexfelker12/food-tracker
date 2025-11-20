@@ -21,7 +21,7 @@ export function BottomNavbar() {
           <NavbarItems />
 
           {/* user dropdown */}
-          <Suspense fallback={<AppLoader />}>
+          <Suspense fallback={<UserDropdownLoader />}>
             <UserDropdownWrap />
           </Suspense>
         </nav>
@@ -44,7 +44,7 @@ async function UserDropdownWrap() {
   );
 }
 
-function AppLoader() {
+function UserDropdownLoader() {
   return (
     <div className="flex flex-col items-center gap-1 min-w-14">
       <div className="flex justify-center items-center size-10">

@@ -5,6 +5,7 @@ export const base = os
   .$context<{
     headers: Headers,
     session?: typeof auth.$Infer.Session // should be using AuthSession
+    // nutritionResult?: NutritionResultModel // 
   }>()
   .errors({
     RATE_LIMITED: {
