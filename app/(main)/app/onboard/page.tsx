@@ -9,7 +9,7 @@ import { FullScreenLoader } from "@/components/FullScreenLoader";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { AlertCircleIcon, FileUserIcon } from "lucide-react";
+import { AlertCircleIcon, FileUserIcon, LayoutDashboardIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Page() {
@@ -39,10 +39,7 @@ async function PageWrap() {
   // redirect(`/app?toast-msg=${encodeURIComponent("Du hast bereits ein Profil")}`)
 
   if (alreadyHasProfile) return <UserHasProfile />
-
-  return (
-    <ProfileForm />
-  );
+  return <ProfileForm />
 }
 
 function UserHasProfile() {
@@ -57,7 +54,7 @@ function UserHasProfile() {
             <Link href="/app/user"><FileUserIcon /> Zum Profil</Link>
           </Button>
           <Button asChild>
-            <Link href="/app/user"><FileUserIcon /> Zum Dashboard</Link>
+            <Link href="/app"><LayoutDashboardIcon /> Zum Dashboard</Link>
           </Button>
         </div>
       </AlertDescription>
