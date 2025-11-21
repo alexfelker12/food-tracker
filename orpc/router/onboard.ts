@@ -1,9 +1,9 @@
-import { base } from "@/orpc/middleware/base"
-import { authMiddleware } from "@/orpc/middleware/authorized"
-import { profileSchema } from "@/schemas/profileSchema"
+import { NutritionResultModel } from "@/generated/prisma/models";
+import { authMiddleware } from "@/orpc/middleware/authorized";
+import { base } from "@/orpc/middleware/base";
+import { profileSchema } from "@/schemas/profileSchema";
 import { createNutritionResultFromProfile, createProfileFromSteps } from "@/server/actions/profile";
 import z from "zod";
-import { NutritionResultModel } from "@/generated/prisma/models";
 
 export const createInitialProfile = base
   .use(authMiddleware)
