@@ -1,6 +1,6 @@
 "use client"
 
-import { BookOpenIcon, HomeIcon, LucideIcon, MoreHorizontalIcon, PlusIcon } from "lucide-react"
+import { HomeIcon, LucideIcon, NotebookIcon, NotebookPenIcon, NotebookTextIcon, PlusIcon } from "lucide-react"
 import { NavbarItem } from "./NavbarItem"
 
 
@@ -14,9 +14,10 @@ export type NavItemProps = {
 
 const navItems: NavItemProps[] = [
   { id: "home", icon: HomeIcon, label: "Start", href: "/app" },
-  { id: "journal", icon: BookOpenIcon, label: "Tagebuch", href: "/app/journal" },
-  { id: "create", icon: PlusIcon, label: "Eintrag", href: "/app/track-food", isPrimary: true },
-  { id: "more", icon: MoreHorizontalIcon, label: "Weiteres", href: "/app/more" },
+  { id: "journal", icon: NotebookTextIcon, label: "Tagebuch", href: "/app/journal" },
+  { id: "track", icon: NotebookPenIcon, label: "Eintrag", href: "/app/track", isPrimary: true },
+  // { id: "more", icon: MoreHorizontalIcon, label: "Weiteres", href: "/app/more" },
+  { id: "create", icon: PlusIcon, label: "Erstellen", href: "/app/create" },
 ]
 
 export function NavbarItems() {

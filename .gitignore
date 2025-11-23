@@ -53,3 +53,6 @@ brainstorming.yaml
 
 # prettier - for now
 .prettier*
+
+# .npmrc (not used for now)
+.npmrc

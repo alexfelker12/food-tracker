@@ -1,14 +1,14 @@
 import { db } from "@/lib/db";
-import { FoodWithPortionsSchema } from "@/schemas/food/foodSchema";
-import { z } from "zod";
+import { foodWithPortionsSchema } from "@/schemas/food/foodSchema";
+import { FoodWithPortionsSchema } from "@/schemas/types";
 
 
 //* food with portions
-interface InsertFoodPropsWithPortions extends z.infer<typeof FoodWithPortionsSchema> {
+interface InsertFoodPropsWithPortions extends FoodWithPortionsSchema {
   userId: string
 }
 export async function insertFoodWithPortions({ food, portions, userId }: InsertFoodPropsWithPortions) {
-  const { success, data } = await FoodWithPortionsSchema.safeParseAsync({ food, portions })
+  const { success, data } = await foodWithPortionsSchema.safeParseAsync({ food, portions })
 
   if (!success) return null; // parse failed -> bad request
 
@@ -38,3 +38,21 @@ export async function insertFoodWithPortions({ food, portions, userId }: InsertF
     }
   })
 }
+
+//* food listing (for now all foods - will be optimized)
+interface GetFoodListingProps {
+  search?: string
+}
+export async function getFoodListing({ search }: GetFoodListingProps) {
+  return await db.food.findMany({
+    // where: {},
+    include: {
+      portions: {
+        where: {
+          isDefault: true
+        }
+      }
+    }
+  })
+}
+

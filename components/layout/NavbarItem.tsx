@@ -42,7 +42,7 @@ export function NavbarItem({ item, prefetch }: NavbarItemProps) {
             className={cn(
               "transition-colors size-5",
               (!item.isPrimary && isActive) ? "text-foreground" : "text-muted-foreground",
-              item.isPrimary && "size-7 text-primary-foreground"
+              item.isPrimary && "size-6 text-primary-foreground"
             )}
           />
         </div>

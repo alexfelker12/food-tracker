@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ActivityLevelEnum, BodyTypeEnum, FitnessGoalEnum, GenderEnum, mergedProfileSchema, profileSchema } from "./profileSchema"
 import { activityLevelValueMapping, bodyFatPercentageValueMapping, fitnessGoalValueMapping } from "./mappings/profileSchemaMappings";
+import { foodWithPortionsSchema } from "./food/foodSchema";
 
 // Schemas
 export type ProfileSchema = z.infer<typeof profileSchema>
@@ -25,3 +26,6 @@ export type MacroSplits = {
   carbSplit: number
   proteinSplit: number
 }
+
+// Food
+export type FoodWithPortionsSchema = z.infer<typeof foodWithPortionsSchema>

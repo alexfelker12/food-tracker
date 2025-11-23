@@ -3,39 +3,39 @@ import { z } from "zod";
 
 //* food input data
 export const foodSchema = z.object({
-  name: z.string().min(1, "Gebe eine Namen für dieses Lebensmittel ein"),
+  name: z.string().min(1, "Bitte Namen angeben"),
   brand: z.string().optional(),
   kcal: z
-    .number({ error: "Gebe die Kalorien pro 100g ein" })
-    .min(0, "Menge kann nicht unter 0 sein"),
+    .number({ error: "Bitte Kalorien angeben" })
+    .min(0, "Menge zu gering"),
   fats: z
-    .number({ error: "Gebe die Fette pro 100g ein" })
-    .min(0, "Menge kann nicht unter 0 sein")
-    .max(100, "Menge kann nicht über 100g sein"),
+    .number({ error: "Bitte Fette angeben" })
+    .min(0, "Menge zu gering")
+    .max(100, "Menge zu groß"),
   carbs: z
-    .number({ error: "Gebe die Kohlenhydrate pro 100g ein" })
-    .min(0, "Menge kann nicht unter 0 sein")
-    .max(100, "Menge kann nicht über 100g sein"),
+    .number({ error: "Bitte KH angeben" })
+    .min(0, "Menge zu gering")
+    .max(100, "Menge zu groß"),
   protein: z
-    .number({ error: "Gebe die Proteine pro 100g ein" })
-    .min(0, "Menge kann nicht unter 0 sein")
-    .max(100, "Menge kann nicht über 100g sein"),
+    .number({ error: "Bitte Proteine angeben" })
+    .min(0, "Menge zu gering")
+    .max(100, "Menge zu groß"),
 })
 
 
 //* food portions
 export const foodPortionsSchema = z.array(
   z.object({
-    name: z.string().min(1, "Gebe eine Namen für diese Portion"),
+    name: z.string().min(1, "Bitte Namen angeben"),
     grams: z
-      .number({ error: "Gebe eine Portionsgröße an" })
-      .min(0, "Portion kann nicht unter 0 sein"),
+      .number({ error: "Bitte Portion angeben" })
+      .min(0, "Portion zu gering"),
     isDefault: z.boolean().default(false),
   })
 )
 
 
-export const FoodWithPortionsSchema = z.object({
+export const foodWithPortionsSchema = z.object({
   food: foodSchema,
   portions: foodPortionsSchema
 })
