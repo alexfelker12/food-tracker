@@ -25,7 +25,7 @@ export default function Page() {
 
 async function FoodListingWrap() {
   const qc = getQueryClient()
-  await qc.prefetchQuery(orpc.test.list.queryOptions())
+  await qc.prefetchQuery(orpc.food.list.queryOptions({ input: {} }))
 
   return (
     <HydrateClient client={qc}>

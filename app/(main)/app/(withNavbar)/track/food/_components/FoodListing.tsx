@@ -14,11 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 
 export function FoodListing() {
-  const { data: listing } = useSuspenseQuery(orpc.food.list.queryOptions({
-    input: {
-      search: ""
-    }
-  }))
+  const { data: listing } = useSuspenseQuery(orpc.food.list.queryOptions({ input: {} }))
 
   const getDefaultPortionData = (food: (typeof listing)[number]) => {
     const defaultPortionData = {
