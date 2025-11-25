@@ -3,8 +3,8 @@ import { z } from "zod";
 
 //* food input data
 export const foodSchema = z.object({
-  name: z.string().min(1, "Bitte Namen angeben"),
-  brand: z.string().optional(),
+  name: z.string().min(1, "Bitte Namen angeben").transform((name) => name.trim()),
+  brand: z.string().optional().transform((brand) => brand && brand.trim()),
   kcal: z
     .number({ error: "Bitte Kalorien angeben" })
     .min(0, "Menge zu gering"),
@@ -26,7 +26,7 @@ export const foodSchema = z.object({
 //* food portions
 export const foodPortionsSchema = z.array(
   z.object({
-    name: z.string().min(1, "Bitte Namen angeben"),
+    name: z.string().min(1, "Bitte Namen angeben").transform((name) => name.trim()),
     grams: z
       .number({ error: "Bitte Portion angeben" })
       .min(0, "Portion zu gering"),
