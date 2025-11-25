@@ -15,6 +15,7 @@ import NoPrefetchLink from "@/components/NoPrefetchLink"
 import { SignOutButton } from "@/components/auth/SignOutButton"
 import { useAuth } from "@/components/providers/AuthProvider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { APP_BASE_URL } from "@/lib/constants"
 
 
 export function UserDropdown({ children }: React.ComponentProps<"button">) {
@@ -46,10 +47,10 @@ export function UserDropdown({ children }: React.ComponentProps<"button">) {
         {session ?
           <>
             <DropdownMenuItem asChild>
-              <NoPrefetchLink href="/app/user"><FileUserIcon />Profil</NoPrefetchLink>
+              <NoPrefetchLink href={APP_BASE_URL + "/user"}><FileUserIcon />Profil</NoPrefetchLink>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <NoPrefetchLink href="/app/user/settings"><SettingsIcon />Einstellungen</NoPrefetchLink>
+              <NoPrefetchLink href={APP_BASE_URL + "/user/settings"}><SettingsIcon />Einstellungen</NoPrefetchLink>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />

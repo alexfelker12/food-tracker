@@ -1,27 +1,27 @@
 import { authMiddleware } from "@/orpc/middleware/authorized";
 import { base } from "@/orpc/middleware/base";
-import { getFoodListing } from "@/server/actions/food";
+import { getFoodById } from "@/server/actions/food";
 import z from "zod";
 
-export const listFood = base
+export const foodById = base
   .use(authMiddleware)
   .route({
     method: "GET",
-    path: "/food/list",
-    summary: "Gets the list of trackable foods",
+    path: "/food/get",
+    summary: "Gets a single trackable food",
     tags: ["Food"]
   })
   .input(z.object({
-    search: z.string().optional()
+    foodId: z.string()
   }))
-  .output(z.custom<Awaited<ReturnType<typeof getFoodListing>>>())
+  .output(z.custom<Awaited<ReturnType<typeof getFoodById>>>())
   .handler(async ({
-    input: { search },
+    input: { foodId },
     context: { session },
     errors
   }) => {
     if (!session) throw errors.UNAUTHORIZED();
 
-    const foodList = await getFoodListing({ search })
-    return foodList
+    const singleFood = await getFoodById({ foodId })
+    return singleFood
   })

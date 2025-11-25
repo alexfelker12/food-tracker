@@ -232,7 +232,6 @@ model FoodPortion {
   grams     Float // weight of this portion in grams
   isDefault Boolean @default(false)
 
-  journalEntry     JournalEntry[]
   portionReference PortionReference[]
 
   // prevent duplicate portion names per food
@@ -338,6 +337,8 @@ model PortionReference {
   grams Float // actual gram weight used
   label String // descriptive label for the portion used (e.g. "1/2 bar")
 
+  journalEntries JournalEntry[]
+
   @@index([foodPortionId])
   @@index([mealPortionId])
 }
@@ -362,7 +363,7 @@ model JournalEntry {
 
   // portion reference (which portion user used)
   portionId String
-  portion   FoodPortion @relation(fields: [portionId], references: [id], onDelete: Restrict)
+  portion   PortionReference @relation(fields: [portionId], references: [id], onDelete: Restrict)
 
   amount Float @default(1) // how many portions/servings user tracked
 

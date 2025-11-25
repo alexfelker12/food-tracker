@@ -21,6 +21,7 @@ import { ListPlusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
 import Link from "next/link";
+import { APP_BASE_URL } from "@/lib/constants";
 
 
 export function CreateFoodForm({ className, children, ...props }: React.ComponentProps<"form">) {
@@ -56,7 +57,7 @@ export function CreateFoodForm({ className, children, ...props }: React.Componen
         description: `${data.name} ${data.brand ? `- ${data.brand}` : ""}`,
         action: (
           <Button asChild variant="secondary">
-            <Link href={`/app/track/food/${data.id}`}>
+            <Link href={`${APP_BASE_URL}/track/food/${data.id}`}>
               Zum Lebensmittel
             </Link>
           </Button>

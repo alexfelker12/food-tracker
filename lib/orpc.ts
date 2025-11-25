@@ -16,6 +16,19 @@ const link = new RPCLink({
 
     return `${window.location.origin}/rpc`
   },
+  method: (_, path) => {
+    // Use GET for rendering requests
+    if (typeof window === 'undefined') {
+      return 'GET'
+    }
+
+    // Use GET for read-like operations
+    if (path.at(-1)?.match(/^(?:get|find|list|search)(?:[A-Z].*)?$/)) {
+      return 'GET'
+    }
+
+    return 'POST'
+  },
 })
 
 /**

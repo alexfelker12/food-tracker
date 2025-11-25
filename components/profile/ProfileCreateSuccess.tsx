@@ -4,6 +4,7 @@ import { UseMutationResult } from "@tanstack/react-query";
 
 import { NutritionResultModel } from "@/generated/prisma/models";
 
+import { APP_BASE_URL } from "@/lib/constants";
 import { LayoutDashboardIcon } from "lucide-react";
 
 import { FirstNutritionResultDisplay } from "@/components/profile/FirstNutritionResultDisplay";
@@ -20,7 +21,7 @@ export function ProfileCreateSuccess({ data }: ProfileCreateSuccessProps) {
   const router = useRouter()
 
   useEffect(() => {
-    router.prefetch("/app")
+    router.prefetch(APP_BASE_URL)
   }, [])
 
   return (
@@ -49,7 +50,7 @@ export function ProfileCreateSuccess({ data }: ProfileCreateSuccessProps) {
         {/* close dialog and link to dashboard */}
         <Button onClick={() => {
           setOpen(false)
-          setTimeout(() => router.push("/app"), 210) // let dialog close before going to /app
+          setTimeout(() => router.push(APP_BASE_URL), 210) // let dialog close before going to /app
         }}>
           <LayoutDashboardIcon /> Zum Dashboard
         </Button>

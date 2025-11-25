@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
+import { APP_BASE_URL } from "@/lib/constants"
 
 import { NavItemProps } from "./NavbarItems"
 
@@ -16,7 +17,7 @@ interface NavbarItemProps {
 export function NavbarItem({ item, prefetch }: NavbarItemProps) {
   const pathname = usePathname()
   // check if href is startpage, else if current pathname is a descendant of nav item
-  const isActive = (item.href === "/app" && pathname === "/app") || (item.href !== "/app" && pathname.startsWith(item.href))
+  const isActive = (item.href === APP_BASE_URL && pathname === APP_BASE_URL) || (item.href !== APP_BASE_URL && pathname.startsWith(item.href))
   const Icon = item.icon
 
   return (

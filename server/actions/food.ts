@@ -1,3 +1,4 @@
+import { BASE_PORTION_GRAMS, BASE_PORTION_NAME } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { foodWithPortionsSchema } from "@/schemas/food/foodSchema";
 import { FoodWithPortionsSchema } from "@/schemas/types";
@@ -26,8 +27,8 @@ export async function insertFoodWithPortions({ food, portions, userId }: InsertF
         createMany: {
           data: [
             {
-              name: "100g",
-              grams: 100,
+              name: BASE_PORTION_NAME,
+              grams: BASE_PORTION_GRAMS,
               isDefault: is100gDefault
             },
             ...data.portions // additional portions
@@ -38,6 +39,7 @@ export async function insertFoodWithPortions({ food, portions, userId }: InsertF
     }
   })
 }
+
 
 //* food listing (for now all foods - will be optimized)
 interface GetFoodListingProps {
@@ -56,3 +58,18 @@ export async function getFoodListing({ search }: GetFoodListingProps) {
   })
 }
 
+
+//* food by id
+interface GetFoodByIdProps {
+  foodId: string
+}
+export async function getFoodById({ foodId }: GetFoodByIdProps) {
+  return await db.food.findFirst({
+    where: {
+      id: foodId,
+    },
+    include: {
+      portions: true,
+    }
+  })
+}

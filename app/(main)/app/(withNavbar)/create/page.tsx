@@ -1,6 +1,7 @@
 //* maybe keep this if we need more navigation routes
 
 import { Button } from "@/components/ui/button";
+import { APP_BASE_URL } from "@/lib/constants";
 import Link from "next/link";
 
 export default function Page() {
@@ -9,13 +10,13 @@ export default function Page() {
       <div className="flex flex-col items-center gap-4">
 
         <Button asChild variant="outline">
-          <Link href="/app/create/food">
+          <Link href={APP_BASE_URL + "/create/food"}>
             Lebensmittel erstellen
           </Link>
         </Button>
 
         <Button asChild variant="outline">
-          <Link href="/app/create/meal">
+          <Link href={APP_BASE_URL + "/create/meal"}>
             Mahlzeit erstellen
           </Link>
         </Button>

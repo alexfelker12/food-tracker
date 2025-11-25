@@ -1,14 +1,12 @@
 "use client"
 
-// import React from "react";
-
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { APP_BASE_URL, BASE_PORTION_NAME } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
-import { ArrowUpRightIcon, PlusIcon } from "lucide-react";
+import { ArrowUpRightIcon } from "lucide-react";
 
 import NoPrefetchLink from "@/components/NoPrefetchLink";
-import { Button } from "@/components/ui/button";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -19,11 +17,11 @@ export function FoodListing() {
   const getDefaultPortionData = (food: (typeof listing)[number]) => {
     const defaultPortionData = {
       kcal: String(food.kcal),
-      name: "100g"
+      name: BASE_PORTION_NAME
     }
 
-    // check if 100g is not default portion
-    const defaultPortion = food.portions.find((portion) => portion.isDefault && portion.name !== "100g")
+    // check if 100 grams is not default portion
+    const defaultPortion = food.portions.find((portion) => portion.isDefault && portion.name !== BASE_PORTION_NAME)
 
     if (defaultPortion) {
       defaultPortionData.kcal = (food.kcal * (defaultPortion.grams / 100)).toFixed(0)
@@ -39,7 +37,7 @@ export function FoodListing() {
         const { kcal, name } = getDefaultPortionData(food)
         return (
           <Item key={food.id} variant="outline" size="xs" asChild>
-            <NoPrefetchLink href={`/app/track/food/${food.id}`}>
+            <NoPrefetchLink href={`${APP_BASE_URL}/track/food/${food.id}`}>
               <ItemContent>
                 <ItemTitle>{food.name}</ItemTitle>
                 <ItemDescription>{kcal} kcal - {name}, ({food.brand})</ItemDescription>

@@ -5,6 +5,7 @@ import { useState } from "react"
 import { authClient } from "@/lib/auth-client"
 import { cn } from "@/lib/utils"
 
+import { APP_BASE_URL } from "@/lib/constants"
 import { GoogleIcon } from "../icons/google-logo"
 import { Button } from "../ui/button"
 import { Spinner } from "../ui/spinner"
@@ -36,7 +37,7 @@ export const OAuthLoginButton = ({
     authClient.signIn.social({
       provider,
       callbackURL,
-      newUserCallbackURL: "/app/onboard",
+      newUserCallbackURL: APP_BASE_URL + "/onboard",
       fetchOptions: {
         //? not working as intended
         //   // ctx: SuccessContext

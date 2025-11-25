@@ -18,9 +18,12 @@ export function BottomNavbar() {
 
         {/* nav items */}
         <nav className="relative flex justify-between items-stretch p-2">
-          <NavbarItems />
+          <Suspense>
+            <NavbarItems />
+          </Suspense>
 
           {/* user dropdown */}
+          {/* <UserDropdownLoader /> */}
           <Suspense fallback={<UserDropdownLoader />}>
             <UserDropdownWrap />
           </Suspense>
@@ -48,7 +51,8 @@ function UserDropdownLoader() {
   return (
     <div className="flex flex-col items-center gap-1 min-w-14">
       <div className="flex justify-center items-center size-10">
-        <Skeleton className="rounded-full text-primary size-9" />
+        {/* <Skeleton className="rounded-full text-primary size-9" /> */}
+        <div className="bg-muted rounded-full text-primary size-9" />
       </div>
       <span className="font-medium text-muted-foreground text-xs transition-colors">Profil</span>
     </div>

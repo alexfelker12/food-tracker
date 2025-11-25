@@ -1,3 +1,4 @@
+import { APP_BASE_URL } from "@/lib/constants"
 import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -53,7 +54,7 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "maskable"
       }
     ],
-    start_url: "/app",
+    start_url: APP_BASE_URL,
     background_color: "#FFFFFF",
     display: "standalone",
     scope: "/",

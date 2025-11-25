@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { AlertCircleIcon, FileUserIcon, LayoutDashboardIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { APP_BASE_URL } from "@/lib/constants";
 
 export default function Page() {
   return (
@@ -36,7 +37,7 @@ async function PageWrap() {
   })
 
   // await new Promise(r => setTimeout(r, 20000));
-  // redirect(`/app?toast-msg=${encodeURIComponent("Du hast bereits ein Profil")}`)
+  // redirect(`${APP_BASE_URL}?toast-msg=${encodeURIComponent("Du hast bereits ein Profil")}`)
 
   if (alreadyHasProfile) return <UserHasProfile />
   return <ProfileForm />
@@ -51,10 +52,10 @@ function UserHasProfile() {
         <span>Du kannst das Onboarding nicht noch einmal durchlaufen</span>
         <div className="flex justify-between items-center w-full">
           <Button asChild variant="outline">
-            <Link href="/app/user"><FileUserIcon /> Zum Profil</Link>
+            <Link href={APP_BASE_URL + "/user"}><FileUserIcon /> Zum Profil</Link>
           </Button>
           <Button asChild>
-            <Link href="/app"><LayoutDashboardIcon /> Zum Dashboard</Link>
+            <Link href={APP_BASE_URL}><LayoutDashboardIcon /> Zum Dashboard</Link>
           </Button>
         </div>
       </AlertDescription>

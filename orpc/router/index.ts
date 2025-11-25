@@ -1,8 +1,8 @@
 import { createFood } from "@/orpc/router/food/create";
 import { createInitialProfile } from "@/orpc/router/onboard";
 import { listTests } from "@/orpc/router/test";
-import { base } from "../middleware/base";
 import { listFood } from "./food/list";
+import { foodById } from "./food/get";
 
 //! 1st
 //? 2nd
@@ -25,7 +25,7 @@ export const router = {
     create: createFood,
     // update: base, //? 2nd
     // delete: base, //? 2nd
-    // track: base //! 1st
+    get: foodById
   },
   // meal: {
   //   list: base,
@@ -37,6 +37,7 @@ export const router = {
   // journal: { // 4th
   //   list: base,
   //   day: {
+  //     track: base //! 1st
   //     today: base,
   //     get: base,
   //     update: base,

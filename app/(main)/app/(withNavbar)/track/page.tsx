@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { APP_BASE_URL } from "@/lib/constants";
 import Link from "next/link";
 
 export default function Page() {
@@ -7,13 +8,13 @@ export default function Page() {
       <div className="flex flex-col items-center gap-4">
 
         <Button asChild variant="outline">
-          <Link href="/app/track/food">
+          <Link href={APP_BASE_URL + "/track/food"}>
             Lebensmittel tracken
           </Link>
         </Button>
 
         <Button asChild variant="outline">
-          <Link href="/app/track/meal">
+          <Link href={APP_BASE_URL + "/track/meal"}>
             Mahlzeit tracken
           </Link>
         </Button>
