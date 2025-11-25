@@ -18,6 +18,7 @@ export function NavbarItem({ item, prefetch }: NavbarItemProps) {
   const pathname = usePathname()
   // check if href is startpage, else if current pathname is a descendant of nav item
   const isActive = (item.href === APP_BASE_URL && pathname === APP_BASE_URL) || (item.href !== APP_BASE_URL && pathname.startsWith(item.href))
+  const isCurrentPage = item.href === pathname
   const Icon = item.icon
 
   return (
@@ -27,7 +28,7 @@ export function NavbarItem({ item, prefetch }: NavbarItemProps) {
         href={item.href}
         prefetch={prefetch}
         onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-          if (isActive) e.preventDefault();
+          if (isCurrentPage) e.preventDefault();
         }}
         className="group/nav-item flex flex-col items-center gap-1 min-w-14"
       >
