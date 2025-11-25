@@ -53,7 +53,7 @@ export function FoodDetails({ foodId }: FoodDetailsProps) {
   return (
     <div className="space-y-2">
       <h1 className="font-semibold text-xl">{food?.name}</h1>
-      <pre className="text-sm overflow-x-auto">
+      <pre className="text-xs overflow-x-auto">
         <code>{JSON.stringify(food, null, 2)}</code>
       </pre>
     </div>
