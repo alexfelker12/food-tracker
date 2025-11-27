@@ -1,9 +1,6 @@
+import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums";
 import type {
-  ActivityLevelEnumKeys,
-  BodyTypeEnumKeys,
-  FitnessGoalEnumKeys,
   FlatProfileSchema,
-  GenderEnumKeys,
   MacroSplits,
   MappedFlatProfileSchema
 } from "../types";
@@ -12,7 +9,7 @@ import type {
 //* VALUE MAPPINGS
 //* -----------------------------
 
-export const activityLevelValueMapping: Record<ActivityLevelEnumKeys, number> = {
+export const activityLevelValueMapping: Record<ActivityLevel, number> = {
   VERY_LOW: 1.2,
   LOW: 1.35,
   MEDIUM: 1.55,
@@ -20,7 +17,7 @@ export const activityLevelValueMapping: Record<ActivityLevelEnumKeys, number> = 
   VERY_HIGH: 1.9,
 }
 
-export const fitnessGoalValueMapping: Record<FitnessGoalEnumKeys, number> = {
+export const fitnessGoalValueMapping: Record<FitnessGoal, number> = {
   QUICKLY_LOSE_WEIGHT: 0.75,
   LOSE_WEIGHT: 0.87,
   MAINTAIN: 1,
@@ -28,7 +25,7 @@ export const fitnessGoalValueMapping: Record<FitnessGoalEnumKeys, number> = {
   QUICKLY_GAIN_WEIGHT: 1.2,
 }
 
-export const bodyFatPercentageValueMapping: Record<GenderEnumKeys, Record<BodyTypeEnumKeys, number>> = {
+export const bodyFatPercentageValueMapping: Record<Gender, Record<BodyType, number>> = {
   MALE: {
     VERY_ATHLETIC: 8,
     ATHLETIC: 13,
@@ -45,7 +42,7 @@ export const bodyFatPercentageValueMapping: Record<GenderEnumKeys, Record<BodyTy
   }
 }
 
-export const recommendedBaseSplitsMapping: Record<FitnessGoalEnumKeys, MacroSplits> = {
+export const recommendedBaseSplitsMapping: Record<FitnessGoal, MacroSplits> = {
   QUICKLY_LOSE_WEIGHT: {
     fatSplit: 25,
     carbSplit: 40,

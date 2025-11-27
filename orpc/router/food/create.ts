@@ -20,8 +20,6 @@ export const createFood = base
     context: { session },
     errors
   }) => {
-    if (!session) throw errors.UNAUTHORIZED();
-
     const createdFood = await insertFoodWithPortions({ food, portions, userId: session.user.id })
 
     if (!createdFood) throw errors.BAD_REQUEST() // invalid input

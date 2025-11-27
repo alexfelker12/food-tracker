@@ -15,13 +15,7 @@ export const foodById = base
     foodId: z.string()
   }))
   .output(z.custom<Awaited<ReturnType<typeof getFoodById>>>())
-  .handler(async ({
-    input: { foodId },
-    context: { session },
-    errors
-  }) => {
-    if (!session) throw errors.UNAUTHORIZED();
-
+  .handler(async ({ input: { foodId } }) => {
     const singleFood = await getFoodById({ foodId })
     return singleFood
   })

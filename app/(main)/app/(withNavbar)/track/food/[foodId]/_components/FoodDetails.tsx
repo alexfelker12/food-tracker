@@ -1,16 +1,15 @@
 "use client"
 
-// import React from "react";
+import { useState } from "react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { BASE_PORTION_NAME } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 
-import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
-import { FoodMacroChart } from "./FoodMacroChart";
-import { BASE_PORTION_NAME } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { FoodTrackForm } from "./FoodTrackForm";
 
 
 type PortionMacrosArgs = {
@@ -23,6 +22,7 @@ export type FoodDetailsProps = {
 export function FoodDetails({ foodId }: FoodDetailsProps) {
   const { data: food } = useSuspenseQuery(orpc.food.get.queryOptions({ input: { foodId } }))
 
+  // TODO: currently, this component assumes the food actually exists (food is not null). If food does not exist, these 2 lines are wrong (initialPortion will be null/undefined):
   const defaultPortion = food?.portions.find((portion) => portion.isDefault)
   const initialPortion = defaultPortion ?? food?.portions.find((portion) => portion.name === BASE_PORTION_NAME)!
 
@@ -56,6 +56,24 @@ export function FoodDetails({ foodId }: FoodDetailsProps) {
       <pre className="text-xs overflow-x-auto">
         <code>{JSON.stringify(food, null, 2)}</code>
       </pre>
+      <Drawer>
+        <DrawerTrigger>Open</DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+            <DrawerDescription>This action cannot be undone.</DrawerDescription>
+          </DrawerHeader>
+
+          <FoodTrackForm />
+
+          <DrawerFooter>
+            <Button>Submit</Button>
+            <DrawerClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

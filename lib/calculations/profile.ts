@@ -3,6 +3,7 @@
 // TODO: adjust calcs to derive age from new birthDate field
 // TODO: heightCm and age are not used -> discuss
 
+import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums"
 import {
   activityLevelValueMapping as activityMap,
   fitnessGoalValueMapping as fitnGoalMap,
@@ -10,11 +11,7 @@ import {
   recommendedBaseSplitsMapping
 } from "@/schemas/mappings/profileSchemaMappings"
 import type {
-  ActivityLevelEnumKeys,
-  BodyTypeEnumKeys,
-  FitnessGoalEnumKeys,
   FlatProfileSchema,
-  GenderEnumKeys,
   MacroSplits,
   MappedFlatProfileSchema
 } from "@/schemas/types"
@@ -73,7 +70,7 @@ export const mappedTestData: MappedFlatProfileSchema = {
 
 //* BMR
 export type CalculateBMRProps = Pick<Required<FlatProfileSchema>, "weightKg"> & {
-  kfaMap: typeof kfaMap[GenderEnumKeys][BodyTypeEnumKeys]
+  kfaMap: typeof kfaMap[Gender][BodyType]
 }
 export function calculateBMR({ weightKg, kfaMap }: CalculateBMRProps) {
   return +(370 + 21.6 * (weightKg * (1 - kfaMap / 100))).toFixed(2)
@@ -82,7 +79,7 @@ export function calculateBMR({ weightKg, kfaMap }: CalculateBMRProps) {
 
 //* TDEE
 export type CalculateTDEEProps = Pick<Required<FlatProfileSchema>, "trainingDaysPerWeek"> & {
-  activityMap: typeof activityMap[ActivityLevelEnumKeys]
+  activityMap: typeof activityMap[ActivityLevel]
   bmr: ReturnType<typeof calculateBMR>
   tefQuota: ReturnType<typeof calculateTEFQuota>
 }
@@ -93,7 +90,7 @@ export function calculateTDEE({ trainingDaysPerWeek, activityMap, bmr, tefQuota 
 
 //* CaloryGoal
 export type CalculateCaloryGoalProps = {
-  fitnGoalMap: typeof fitnGoalMap[FitnessGoalEnumKeys]
+  fitnGoalMap: typeof fitnGoalMap[FitnessGoal]
   tdee: ReturnType<typeof calculateTDEE>
 }
 export function calculateCaloryGoal({ fitnGoalMap, tdee }: CalculateCaloryGoalProps) {

@@ -16,8 +16,6 @@ export const createInitialProfile = base
   .input(profileSchema)
   .output(z.custom<NutritionResultModel>())
   .handler(async ({ input, context: { session }, errors }) => {
-    if (!session) throw errors.UNAUTHORIZED();
-
     const initialProfile = await createProfileFromSteps({
       userProfileData: input,
       userId: session.user.id

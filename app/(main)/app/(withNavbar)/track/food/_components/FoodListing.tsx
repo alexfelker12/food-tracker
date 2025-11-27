@@ -40,7 +40,7 @@ export function FoodListing() {
             <NoPrefetchLink href={`${APP_BASE_URL}/track/food/${food.id}`}>
               <ItemContent>
                 <ItemTitle>{food.name}</ItemTitle>
-                <ItemDescription>{kcal} kcal - {name}, ({food.brand})</ItemDescription>
+                <ItemDescription>{kcal} kcal - {name}{food.brand && `, (${food.brand})`}</ItemDescription>
               </ItemContent>
               <ItemActions>
                 <ArrowUpRightIcon />

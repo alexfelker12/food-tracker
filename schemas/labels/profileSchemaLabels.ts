@@ -1,15 +1,15 @@
-import { ActivityLevelEnumKeys, BodyTypeEnumKeys, FitnessGoalEnumKeys, GenderEnumKeys } from "../types";
+import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums";
 
 //* -----------------------------
 //* LABELS
 //* -----------------------------
 
-export const genderLabels: Record<GenderEnumKeys, string> = {
+export const genderLabels: Record<Gender, string> = {
   MALE: "Männlich",
   FEMALE: "Weiblich",
 }
 
-export const bodyTypeLabels: Record<BodyTypeEnumKeys, string> = {
+export const bodyTypeLabels: Record<BodyType, string> = {
   VERY_ATHLETIC: "Sehr athletisch",
   ATHLETIC: "Athletisch",
   AVERAGE: "Durchschnittlich",
@@ -17,7 +17,7 @@ export const bodyTypeLabels: Record<BodyTypeEnumKeys, string> = {
   MORE_OVERWEIGHT: "Stark übergewichtig",
 }
 
-export const fitnessGoalLabels: Record<FitnessGoalEnumKeys, string> = {
+export const fitnessGoalLabels: Record<FitnessGoal, string> = {
   QUICKLY_LOSE_WEIGHT: "Schnell abnehmen",
   LOSE_WEIGHT: "Abnehmen",
   MAINTAIN: "Halten",
@@ -25,7 +25,7 @@ export const fitnessGoalLabels: Record<FitnessGoalEnumKeys, string> = {
   QUICKLY_GAIN_WEIGHT: "Schnell zunehmen",
 }
 
-export const activityLevelLabels: Record<ActivityLevelEnumKeys, string> = {
+export const activityLevelLabels: Record<ActivityLevel, string> = {
   VERY_LOW: "Sehr niedrig",
   LOW: "niedrig",
   MEDIUM: "mittel",

@@ -1,11 +1,8 @@
-import { auth } from "@/lib/auth";
 import { os } from "@orpc/server";
 
 export const base = os
   .$context<{
     headers: Headers,
-    session?: typeof auth.$Infer.Session // should be using AuthSession
-    // nutritionResult?: NutritionResultModel // 
   }>()
   .errors({
     RATE_LIMITED: {

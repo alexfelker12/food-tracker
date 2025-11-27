@@ -15,13 +15,7 @@ export const listFood = base
     search: z.string().optional()
   }))
   .output(z.custom<Awaited<ReturnType<typeof getFoodListing>>>())
-  .handler(async ({
-    input: { search },
-    context: { session },
-    errors
-  }) => {
-    if (!session) throw errors.UNAUTHORIZED();
-
+  .handler(async ({ input: { search } }) => {
     const foodList = await getFoodListing({ search })
     return foodList
   })

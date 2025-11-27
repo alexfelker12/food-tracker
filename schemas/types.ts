@@ -1,24 +1,19 @@
+import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums";
 import { z } from "zod";
-import { ActivityLevelEnum, BodyTypeEnum, FitnessGoalEnum, GenderEnum, mergedProfileSchema, profileSchema } from "./profileSchema"
-import { activityLevelValueMapping, bodyFatPercentageValueMapping, fitnessGoalValueMapping } from "./mappings/profileSchemaMappings";
 import { foodWithPortionsSchema } from "./food/foodSchema";
+import { activityLevelValueMapping, bodyFatPercentageValueMapping, fitnessGoalValueMapping } from "./mappings/profileSchemaMappings";
+import { mergedProfileSchema, profileSchema } from "./profileSchema";
+import { journalEntrySchema } from "./journal/journalEntrySchema";
 
 // Schemas
 export type ProfileSchema = z.infer<typeof profileSchema>
 export type FlatProfileSchema = z.infer<typeof mergedProfileSchema>
 
 export type MappedFlatProfileSchema = Omit<Required<FlatProfileSchema>, "bodyType" | "fitnessGoal" | "activityLevel"> & {
-  kfaMap: typeof bodyFatPercentageValueMapping[GenderEnumKeys][BodyTypeEnumKeys]
-  activityMap: typeof activityLevelValueMapping[ActivityLevelEnumKeys]
-  fitnGoalMap: typeof fitnessGoalValueMapping[FitnessGoalEnumKeys]
+  kfaMap: typeof bodyFatPercentageValueMapping[Gender][BodyType]
+  activityMap: typeof activityLevelValueMapping[ActivityLevel]
+  fitnGoalMap: typeof fitnessGoalValueMapping[FitnessGoal]
 }
-
-
-// FieldKeys
-export type GenderEnumKeys = typeof GenderEnum.enum[keyof typeof GenderEnum.enum]
-export type ActivityLevelEnumKeys = typeof ActivityLevelEnum.enum[keyof typeof ActivityLevelEnum.enum]
-export type FitnessGoalEnumKeys = typeof FitnessGoalEnum.enum[keyof typeof FitnessGoalEnum.enum]
-export type BodyTypeEnumKeys = typeof BodyTypeEnum.enum[keyof typeof BodyTypeEnum.enum]
 
 // misc
 export type MacroSplits = {
@@ -29,3 +24,6 @@ export type MacroSplits = {
 
 // Food
 export type FoodWithPortionsSchema = z.infer<typeof foodWithPortionsSchema>
+
+// Journal entry
+export type JournalEntrySchema = z.infer<typeof journalEntrySchema>

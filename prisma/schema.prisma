@@ -182,9 +182,6 @@ model NutritionResult {
   metricsProfileId String
   metricsProfile   MetricsProfile @relation(fields: [metricsProfileId], references: [id], onDelete: Cascade)
 
-  // provides information about open and used calories for a JournalDay
-  journalDay JournalDay[]
-
   // one result per profile per date
   @@unique([metricsProfileId, date])
   @@index([metricsProfileId])
@@ -207,7 +204,7 @@ model Food {
   kcal    Float
   fats    Float
   carbs   Float
-  protein Float
+  protein Float //? maybe fix someday? missed plural form here (protein*s*) ...
 
   // created by
   userId String
@@ -215,8 +212,8 @@ model Food {
 
   // relations
   portions       FoodPortion[]
-  journalEntries JournalEntry[]
   mealIngredient MealIngredient[]
+  journalEntries JournalEntry[]
 
   @@index([name])
   @@index([brand])
@@ -224,7 +221,8 @@ model Food {
 
 // defines one or more portion sizes for a food (e.g. 1 bar = 40g)
 model FoodPortion {
-  id     String @id @default(cuid())
+  id String @id @default(cuid())
+
   foodId String
   food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
 
@@ -284,7 +282,8 @@ model MealIngredient {
 
 // defines meal-specific portion sizes (e.g. "1 plate" = 250g)
 model MealPortion {
-  id     String @id @default(cuid())
+  id String @id @default(cuid())
+
   mealId String
   meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
 
@@ -302,7 +301,7 @@ model MealPortion {
 //* JOURNAL TABLES
 //* -----------------------------
 
-enum MealType {
+enum IntakeTime {
   BREAKFAST
   LUNCH
   DINNER
@@ -317,10 +316,6 @@ model JournalDay {
 
   journalEntries JournalEntry[]
 
-  // caloryGoal is being used to calculate open calories for a JournalDay
-  nutritionResultId String
-  nutritionResult   NutritionResult @relation(fields: [nutritionResultId], references: [id])
-
   @@id(name: "journalDayId", fields: [userId, date])
   @@index([userId, date])
 }
@@ -330,12 +325,13 @@ model PortionReference {
   id String @id @default(cuid())
 
   foodPortionId String?
-  foodPortion   FoodPortion? @relation(fields: [foodPortionId], references: [id], onDelete: Cascade)
+  foodPortion   FoodPortion? @relation(fields: [foodPortionId], references: [id], onDelete: SetNull)
   mealPortionId String?
-  mealPortion   MealPortion? @relation(fields: [mealPortionId], references: [id], onDelete: Cascade)
+  mealPortion   MealPortion? @relation(fields: [mealPortionId], references: [id], onDelete: SetNull)
 
-  grams Float // actual gram weight used
-  label String // descriptive label for the portion used (e.g. "1/2 bar")
+  portionName   String // name of the portion used (e.g. "1/2 bar" | "1 plate")
+  portionGrams  Float // portion weight
+  portionAmount Float // how many portions user tracked
 
   journalEntries JournalEntry[]
 
@@ -345,10 +341,10 @@ model PortionReference {
 
 // represents a logged item (food or meal) in the daily journal
 model JournalEntry {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  mealType  MealType @default(BREAKFAST)
+  id         String     @id @default(cuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  intakeTime IntakeTime @default(BREAKFAST)
 
   // link to journal day
   journalDayUserId String
@@ -364,8 +360,6 @@ model JournalEntry {
   // portion reference (which portion user used)
   portionId String
   portion   PortionReference @relation(fields: [portionId], references: [id], onDelete: Restrict)
-
-  amount Float @default(1) // how many portions/servings user tracked
 
   @@index([journalDayUserId, journalDayDate])
   @@index([foodId])

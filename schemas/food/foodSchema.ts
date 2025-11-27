@@ -3,8 +3,14 @@ import { z } from "zod";
 
 //* food input data
 export const foodSchema = z.object({
-  name: z.string().min(1, "Bitte Namen angeben").transform((name) => name.trim()),
-  brand: z.string().optional().transform((brand) => brand && brand.trim()),
+  name: z
+    .string()
+    .min(1, "Bitte Namen angeben")
+    .transform((name) => name.trim()),
+  brand: z
+    .string()
+    .optional()
+    .transform((brand) => brand && brand.trim()),
   kcal: z
     .number({ error: "Bitte Kalorien angeben" })
     .min(0, "Menge zu gering"),
@@ -21,16 +27,30 @@ export const foodSchema = z.object({
     .min(0, "Menge zu gering")
     .max(100, "Menge zu groß"),
 })
+//? add this sometime, to ensure macro values correctly add up the the provided calories / 100g
+// .refine(
+//   (data) => {
+//     const kcalSum = (data.fats * 9) + (data.carbs * 4) + (data.protein * 4)
+//     //* check if macro values add up to calories with a 3 kcal tolerance
+//     return (data.kcal < kcalSum + 3) && (data.kcal > kcalSum - 3)
+//   },
+//   "Die Makronährstoffsumme weicht von der angegebenen Kalorien-Zahl ab"
+// )
 
 
 //* food portions
 export const foodPortionsSchema = z.array(
   z.object({
-    name: z.string().min(1, "Bitte Namen angeben").transform((name) => name.trim()),
+    name: z
+      .string()
+      .min(1, "Bitte Namen angeben")
+      .transform((name) => name.trim()),
     grams: z
       .number({ error: "Bitte Portion angeben" })
       .min(0, "Portion zu gering"),
-    isDefault: z.boolean().default(false),
+    isDefault: z
+      .boolean()
+      .default(false),
   })
 )
 
@@ -39,23 +59,6 @@ export const foodWithPortionsSchema = z.object({
   food: foodSchema,
   portions: foodPortionsSchema
 })
-
-//* maybe us this?
-// export const BodyDataStepSchema = z.object({
-//   heightCm: z
-//     .number({ error: "Bitte gib deine Körpergröße an" })
-//     .min(100, "Körpergröße zu niedrig")
-//     .max(250, "Körpergröße zu hoch"),
-//   weightKg: z
-//     .number({ error: "Bitte gib dein Gewicht an" })
-//     .min(30, "Gewicht zu niedrig")
-//     .max(250, "Gewicht zu hoch"),
-//   trainingDaysPerWeek: z
-//     .number({ error: "Bitte gib an, wie oft du trainierst" })
-//     .int()
-//     .min(0, "Mindestens 0 Trainingstage möglich")
-//     .max(7, "Maximal 7 Trainingstage möglich"),
-// })
 
 
 //* use this to create a check, if the macro values add up to the calories
