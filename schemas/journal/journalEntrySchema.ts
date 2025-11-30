@@ -24,8 +24,6 @@ export const journalEntrySchema = z.object({
     .min(1, "Mindestens einen Tag auswählen")
     .max(7, "Maximal 7 Tage auswählbar"),
   portionId: z.string(),
-  portionName: z.string(), // will be added through "watch"
-  portionGrams: z.number(), // will be added through "watch"
   portionAmount: z
     .number({ error: "Bitte Portionsmenge angeben" })
     .min(0, "Menge zu gering"),

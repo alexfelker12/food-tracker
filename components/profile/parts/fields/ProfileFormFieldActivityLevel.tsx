@@ -6,7 +6,7 @@ import { ActivityLevelEnum } from "@/schemas/profileSchema";
 import { ProfileSchema } from "@/schemas/types";
 
 import { activityLevelLabels } from "@/schemas/labels/profileSchemaLabels";
-import { EnumField } from "./EnumField";
+import { EnumField } from "@/components/form-fields/EnumField";
 
 
 export function ProfileFormFieldActivityLevel() {

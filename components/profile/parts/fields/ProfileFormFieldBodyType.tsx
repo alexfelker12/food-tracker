@@ -6,7 +6,7 @@ import { BodyTypeEnum } from "@/schemas/profileSchema";
 import { ProfileSchema } from "@/schemas/types";
 
 import { bodyTypeLabels } from "@/schemas/labels/profileSchemaLabels";
-import { EnumField } from "./EnumField";
+import { EnumField } from "@/components/form-fields/EnumField";
 
 
 export function ProfileFormFieldBodyType() {

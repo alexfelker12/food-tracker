@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { ProfileSchema } from "@/schemas/types";
 
-import { DateField } from "./DateField";
+import { DateField } from "@/components/form-fields/DateField";
 
 
 export function ProfileFormFieldBirthDate() {

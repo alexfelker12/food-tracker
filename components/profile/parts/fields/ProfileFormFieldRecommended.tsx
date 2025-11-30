@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Controller, useFormContext } from "react-hook-form";
 
@@ -12,6 +12,7 @@ import { LucideIcon, SlidersHorizontalIcon, SparklesIcon } from "lucide-react";
 
 import { Field, FieldLabel, FieldTitle } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 
 const recommendedSwitcherItems: {
   id: "recommended" | "custom"

@@ -7,7 +7,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { MacroSplitsStepSchema } from "@/schemas/profileSchema";
 import { ProfileSchema } from "@/schemas/types";
 
-import { LockIcon, LockOpenIcon, MoveRightIcon } from "lucide-react";
+import { LockIcon, LockOpenIcon } from "lucide-react";
 
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { Slider } from "@/components/ui/slider";

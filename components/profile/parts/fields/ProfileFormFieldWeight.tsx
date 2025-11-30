@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { ProfileSchema } from "@/schemas/types";
 
-import { NumField } from "./NumField";
+import { NumField } from "@/components/form-fields/NumField";
 
 
 export function ProfileFormFieldWeight() {

@@ -14,11 +14,11 @@ import { useProfileSteps } from "./ProfileSteps";
 export function ProfileStepsFooter() {
   const { currentStep, stepBack, stepForward, maxStep } = useProfileSteps()
 
-  const createProfileState = useMutationState({
+  const onboardCreateProfileState = useMutationState({
     filters: { mutationKey: orpc.onboard.createProfile.mutationKey() },
     select: (mutation) => mutation.state.status === "pending"
   })
-  const buttonsDisabled = createProfileState.length > 0 ? createProfileState[createProfileState.length - 1] : false
+  const buttonsDisabled = onboardCreateProfileState.length > 0 ? onboardCreateProfileState[onboardCreateProfileState.length - 1] : false
 
   return (
     <div className="flex justify-between">

@@ -333,7 +333,7 @@ model PortionReference {
   portionGrams  Float // portion weight
   portionAmount Float // how many portions user tracked
 
-  journalEntries JournalEntry[]
+  journalEntries JournalEntry[] // @relation(onDelete: Cascade)
 
   @@index([foodPortionId])
   @@index([mealPortionId])

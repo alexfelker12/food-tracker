@@ -43,28 +43,48 @@ export function EnumField<TEnum extends string>({
         </FieldDescription>
         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
       </FieldContent>
-      <Select
-        name={field.name}
-        value={field.value ?? ""}
-        onValueChange={(value) => {
-          field.onChange(value)
-          field.onBlur() // trigger onBlur at onChange event (level): onBlur on SelectTrigger triggers validation before selection because of focus change into select options
-        }}
-      >
-        <SelectTrigger
-          id={field.name}
-          aria-invalid={fieldState.invalid}
-        >
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent position="popper">
-          {options.map((option) => (
-            <SelectItem key={option} value={option}>
-              {labels[option]}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+
+      <EnumFieldInput
+        field={field}
+        fieldState={fieldState}
+        options={options}
+        labels={labels}
+        placeholder={placeholder}
+      />
+
     </Field>
   );
 }
+
+interface EnumFieldInputProps extends Pick<EnumFieldProps<string>, "field" | "fieldState" | "options" | "labels" | "placeholder"> { }
+export function EnumFieldInput({
+  field, fieldState,
+  options, labels,
+  placeholder
+}: EnumFieldInputProps) {
+  return (
+    <Select
+      name={field.name}
+      value={field.value ?? ""}
+      onValueChange={(value) => {
+        field.onChange(value)
+        field.onBlur() // trigger onBlur at onChange event (level): onBlur on SelectTrigger triggers validation before selection because of focus change into select options
+      }}
+    >
+      <SelectTrigger
+        id={field.name}
+        aria-invalid={fieldState.invalid}
+      >
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent position="popper">
+        {options.map((option) => (
+          <SelectItem key={option} value={option}>
+            {labels[option]}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+

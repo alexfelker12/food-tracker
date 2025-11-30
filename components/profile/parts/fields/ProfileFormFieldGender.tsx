@@ -6,7 +6,7 @@ import { GenderEnum } from "@/schemas/profileSchema";
 import { ProfileSchema } from "@/schemas/types";
 
 import { genderLabels } from "@/schemas/labels/profileSchemaLabels";
-import { EnumField } from "./EnumField";
+import { EnumField } from "@/components/form-fields/EnumField";
 
 
 export function ProfileFormFieldGender() {

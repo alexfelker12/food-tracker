@@ -10,6 +10,7 @@ import { orpc } from "@/lib/orpc";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { FoodTrackForm } from "./FoodTrackForm";
+import { Separator } from "@/components/ui/separator";
 
 
 type PortionMacrosArgs = {
@@ -22,24 +23,26 @@ export type FoodDetailsProps = {
 export function FoodDetails({ foodId }: FoodDetailsProps) {
   const { data: food } = useSuspenseQuery(orpc.food.get.queryOptions({ input: { foodId } }))
 
-  // TODO: currently, this component assumes the food actually exists (food is not null). If food does not exist, these 2 lines are wrong (initialPortion will be null/undefined):
-  const defaultPortion = food?.portions.find((portion) => portion.isDefault)
-  const initialPortion = defaultPortion ?? food?.portions.find((portion) => portion.name === BASE_PORTION_NAME)!
+  if (!food) return null;
 
-  const [portionData, setPortionData] = useState([
-    {
-      macro: "fats",
-      kcal: 275,
-    },
-    {
-      macro: "carbs",
-      kcal: 200,
-    },
-    {
-      macro: "proteins",
-      kcal: 187,
-    },
-  ])
+  // // TODO: currently, this component assumes the food actually exists (food is not null). If food does not exist, these 2 lines are wrong (initialPortion will be null/undefined):
+  // const defaultPortion = food?.portions.find((portion) => portion.isDefault)
+  // const initialPortion = defaultPortion ?? food?.portions.find((portion) => portion.name === BASE_PORTION_NAME)!
+
+  // const [portionData, setPortionData] = useState([
+  //   {
+  //     macro: "fats",
+  //     kcal: 275,
+  //   },
+  //   {
+  //     macro: "carbs",
+  //     kcal: 200,
+  //   },
+  //   {
+  //     macro: "proteins",
+  //     kcal: 187,
+  //   },
+  // ])
 
   // TODO use form here (or better within a child component) to track a food
 
@@ -53,27 +56,18 @@ export function FoodDetails({ foodId }: FoodDetailsProps) {
   return (
     <div className="space-y-2">
       <h1 className="font-semibold text-xl">{food?.name}</h1>
-      <pre className="text-xs overflow-x-auto">
+      {/* <pre className="text-xs overflow-x-auto">
         <code>{JSON.stringify(food, null, 2)}</code>
-      </pre>
-      <Drawer>
-        <DrawerTrigger>Open</DrawerTrigger>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-            <DrawerDescription>This action cannot be undone.</DrawerDescription>
-          </DrawerHeader>
+      </pre> */}
 
-          <FoodTrackForm />
+      <Separator />
 
-          <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+      <h2>Lebensmittel Tracken</h2>
+
+      <FoodTrackForm
+        consumable={food}
+        consumableType="FOOD"
+      />
     </div>
   );
 }

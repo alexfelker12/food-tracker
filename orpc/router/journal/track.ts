@@ -21,12 +21,14 @@ export const trackFood = base
     context: { session },
     errors
   }) => {
+    console.log("begin procedure")
     const createdEntries = await createJournalEntry({
       userId: session.user.id,
       ...schemaProps
     })
 
-    if (!createdEntries) throw errors.BAD_REQUEST() // invalid input
+    if (!createdEntries) throw errors.BAD_REQUEST() // invalid input/portion not found
+    console.log("entries were created")
 
     return createdEntries.length > 1
       ? { count: createdEntries.length }

@@ -1,4 +1,3 @@
-import { FoodFindFirstArgs, MealFindFirstArgs } from "@/generated/prisma/models";
 import { db } from "@/lib/db";
 import { journalEntrySchema } from "@/schemas/journal/journalEntrySchema";
 import { JournalEntrySchema } from "@/schemas/types";
@@ -12,13 +11,18 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
   const { success, data } = await journalEntrySchema.safeParseAsync(schemaProps)
   if (!success) return null; // parse failed -> bad request
 
-  const { consumableId, consumableType, daysToTrack, intakeTime, portionId, portionName, portionGrams, portionAmount } = data
+  const { consumableId, consumableType, daysToTrack, intakeTime, portionId, portionAmount } = data
 
-  const consumablePayload: FoodFindFirstArgs | MealFindFirstArgs = {
+  const portion = await db.foodPortion.findFirst({
     where: {
-      id: consumableId
+      id: portionId,
+      foodId: consumableId
     }
-  }
+  })
+
+  if (!portion) return null // portion does not exist -> bad request
+
+  const { name: portionName, grams: portionGrams } = portion
 
   //* because of the unability of using nested creates in 'createMany()' entries will be created in parellel and awaited together. 'Promise.all()' expects every promise to resolve. In case of any error, successful queries will not be returned. 'Promise.allSettled()' always resolves with information about rejected (failed) queries, giving more control
   //? handle failed queries: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
@@ -49,12 +53,16 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
           //* discriminate between consumable type to set correct consumable id
           ...(consumableType === "FOOD"
             ? {
-              connect: {
-                food: consumablePayload
+              food: {
+                connect: {
+                  id: consumableId
+                }
               }
             } : {
-              connect: {
-                meal: consumablePayload
+              meal: {
+                connect: {
+                  id: consumableId
+                }
               }
             }
           ),
@@ -72,7 +80,7 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
 }
 
 
-// //* food listing (for now all foods - will be optimized)
+// // food listing (for now all foods - will be optimized)
 // interface GetFoodListingProps {
 //   search?: string
 // }
@@ -90,7 +98,7 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
 // }
 
 
-// //* food by id
+// // food by id
 // interface GetFoodByIdProps {
 //   foodId: string
 // }
