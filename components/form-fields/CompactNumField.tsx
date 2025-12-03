@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Input } from "../ui/input";
 
 
 interface CompactNumFieldProps extends React.ComponentProps<typeof Field> {
@@ -54,18 +55,23 @@ export function CompactNumField({
   );
 }
 
-interface CompactNumFieldInputProps extends Pick<CompactNumFieldProps, "field" | "fieldState" | "min" | "max" | "placeholder"> { }
+interface CompactNumFieldInputProps extends Pick<CompactNumFieldProps, "field" | "fieldState">, React.ComponentProps<typeof Input> {
+  asInput?: boolean
+}
 export function CompactNumFieldInput({
   field, fieldState,
   min = 0, max = 999,
-  placeholder
+  placeholder, asInput,
+  className, ...props
 }: CompactNumFieldInputProps) {
-  if (min > max) return null; // input logic not executable if max is bigger than min
+  if (min > max) return null; // input logic not executable if min is bigger than max
+
+  const InputComp = asInput ? Input : InputGroupInput // both components use <Input /> under the hood, but InputGroupInput gets addition attributes/classnames 
 
   return (
-    <InputGroupInput
+    <InputComp
       id={field.name}
-      className="text-right"
+      className={cn("text-right", className)}
       aria-invalid={fieldState.invalid}
       type="number"
       placeholder={placeholder}
@@ -78,11 +84,12 @@ export function CompactNumFieldInput({
         const numValue = +value
         const onChangeValue = value === "" || isNaN(numValue)
           ? null
-          : +(Math.min(Math.max(numValue, min), max).toFixed(2))
+          : +(Math.min(Math.max(numValue, +min), +max).toFixed(2))
         field.onChange(onChangeValue)
         if (fieldState.isTouched) field.onBlur() // trigger onBlur at onChange event (level): onBlur triggers validation "onInput"
       }}
       onFocus={(e) => e.target.select()}
+      {...props}
     />
   );
 }

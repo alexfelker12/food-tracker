@@ -25,6 +25,6 @@ export const journalEntrySchema = z.object({
     .max(7, "Maximal 7 Tage auswählbar"),
   portionId: z.string(),
   portionAmount: z
-    .number({ error: "Bitte Portionsmenge angeben" })
+    .number({ error: "Bitte angeben" })
     .min(0, "Menge zu gering"),
 })

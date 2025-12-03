@@ -15,22 +15,18 @@ export const trackFood = base
     tags: ["Journal"]
   })
   .input(journalEntrySchema)
-  .output(z.custom<JournalEntry | BatchPayload>())
+  .output(z.custom<BatchPayload>())
   .handler(async ({
     input: { ...schemaProps },
     context: { session },
     errors
   }) => {
-    console.log("begin procedure")
     const createdEntries = await createJournalEntry({
       userId: session.user.id,
       ...schemaProps
     })
 
     if (!createdEntries) throw errors.BAD_REQUEST() // invalid input/portion not found
-    console.log("entries were created")
 
-    return createdEntries.length > 1
-      ? { count: createdEntries.length }
-      : createdEntries[0]
+    return { count: createdEntries.length }
   })

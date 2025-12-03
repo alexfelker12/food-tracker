@@ -333,7 +333,8 @@ model PortionReference {
   portionGrams  Float // portion weight
   portionAmount Float // how many portions user tracked
 
-  journalEntries JournalEntry[] // @relation(onDelete: Cascade)
+  journalEntryId String       @unique
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
 
   @@index([foodPortionId])
   @@index([mealPortionId])
@@ -358,8 +359,7 @@ model JournalEntry {
   meal   Meal?   @relation(fields: [mealId], references: [id], onDelete: Restrict)
 
   // portion reference (which portion user used)
-  portionId String
-  portion   PortionReference @relation(fields: [portionId], references: [id], onDelete: Restrict)
+  portion PortionReference?
 
   @@index([journalDayUserId, journalDayDate])
   @@index([foodId])

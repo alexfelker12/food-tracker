@@ -1,8 +1,15 @@
-import { FullScreenLoader } from "@/components/FullScreenLoader";
+import { Suspense } from "react";
+
+import { APP_BASE_URL } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
-import { Suspense } from "react";
+import { ChevronLeftIcon } from "lucide-react";
+
+import { BackButton } from "@/components/BackButton";
+import { FullScreenLoader } from "@/components/FullScreenLoader";
+
 import { FoodDetails, FoodDetailsProps } from "./_components/FoodDetails";
+
 
 export default async function Page({
   params,
@@ -11,12 +18,23 @@ export default async function Page({
 }) {
   const { foodId } = await params
 
+
+  // TODO add a ellipsis to the top right for users to go to update page
+  // -> {APP_BASE_URL + "/track/food/[foodId]/update"}
+  //* probably will just show the current create food form with a different onSubmit
+
   return (
     <main className="flex justify-center p-4 h-full">
       <div className="flex flex-col gap-6 w-full">
-        <div className="space-y-1">
-          {/* <h1 className="font-semibold text-xl">Lebesmittel tracken</h1> */}
-          {/* <p className="text-muted-foreground text-sm">Suche nach einem Lebensmittel und klicke auf das "+" um dieses zu deinem Tagebuch hinzuzufügen</p> */}
+        <div className="flex items-center gap-4">
+          <BackButton
+            referrerPath={APP_BASE_URL + '/track/food' as `/${string}`}
+            size="icon-sm"
+            variant="secondary"
+          >
+            <ChevronLeftIcon />
+          </BackButton>
+          <h1 className="font-bold text-xl">Lebesmittel tracken</h1>
         </div>
 
         <Suspense fallback={<FullScreenLoader />}>

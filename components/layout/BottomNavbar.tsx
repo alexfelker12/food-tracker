@@ -23,10 +23,10 @@ export function BottomNavbar() {
           </Suspense>
 
           {/* user dropdown */}
-          {/* <UserDropdownLoader /> */}
-          <Suspense fallback={<UserDropdownLoader />}>
+          <UserDropdownLoader />
+          {/* <Suspense fallback={<UserDropdownLoader />}>
             <UserDropdownWrap />
-          </Suspense>
+          </Suspense> */}
         </nav>
       </div>
     </header>

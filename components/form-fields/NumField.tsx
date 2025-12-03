@@ -64,7 +64,7 @@ export function NumFieldInput({
   min = 0, max = 999,
   placeholder
 }: NumFieldInputProps) {
-  if (min > max) return null; // input logic not executable if max is bigger than min
+  if (min > max) return null; // input logic not executable if min is bigger than max
 
   return (
     <InputGroupInput

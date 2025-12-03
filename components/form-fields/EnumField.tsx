@@ -16,10 +16,11 @@ interface EnumFieldProps<TEnum extends string> extends React.ComponentProps<type
   labels: Record<TEnum, string>
   field: ControllerRenderProps<any, any>
   fieldState: ControllerFieldState
+  compact?: boolean
 }
 
 export function EnumField<TEnum extends string>({
-  label, description, placeholder, // text elements
+  label, description, placeholder, compact, // text elements
   options, labels, // enum data
   field, fieldState, // Controller-render props
   orientation = "horizontal", className, ...props // Field props
@@ -30,15 +31,16 @@ export function EnumField<TEnum extends string>({
       data-invalid={fieldState.invalid}
       className={cn(
         "",
+        compact && "items-center",
         className
       )}
       {...props}
     >
-      <FieldContent>
+      <FieldContent className={cn(compact && "gap-1 self-center justify-center")}>
         <FieldLabel htmlFor={field.name}>
           {label}
         </FieldLabel>
-        <FieldDescription>
+        <FieldDescription className={cn(compact && "sr-only")}>
           {description}
         </FieldDescription>
         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
