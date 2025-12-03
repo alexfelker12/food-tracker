@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 
 
 interface CompactNumFieldProps extends React.ComponentProps<typeof Field> {
