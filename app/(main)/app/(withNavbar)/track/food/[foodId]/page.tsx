@@ -34,7 +34,7 @@ export default async function Page({
           >
             <ChevronLeftIcon />
           </BackButton>
-          <h1 className="font-bold text-xl">Lebesmittel tracken</h1>
+          <h1 className="font-bold text-2xl">Lebesmittel tracken</h1>
         </div>
 
         <Suspense fallback={<FullScreenLoader />}>

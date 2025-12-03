@@ -40,35 +40,31 @@ export function FoodMacros({ consumable }: FoodMacrosProps) {
   })
 
   return (
-    <div className="space-y-2">
-      <p className="text-muted-foreground text-sm">Makronährwerte der ausgewählten Portionsmenge:</p>
+    <div className="flex justify-between items-center gap-2 h-10">
+      <div className="flex flex-col flex-1 gap-1 text-center">
+        <span className="text-muted-foreground text-xs">Kalorien</span>
+        <span>{portionData.kcal} kcal</span>
+      </div>
 
-      <div className="flex justify-between items-center gap-2 h-10">
-        <div className="flex flex-col flex-1 gap-1 text-center">
-          <span className="text-muted-foreground text-xs">Kalorien</span>
-          <span>{portionData.kcal} kcal</span>
-        </div>
+      <Separator orientation="vertical" className="h-4/5!" />
 
-        <Separator orientation="vertical" className="h-4/5!" />
+      <div className="flex flex-col flex-1 gap-1 text-center">
+        <span className="text-muted-foreground text-xs">Fette</span>
+        <span>{portionData.fats} g</span>
+      </div>
 
-        <div className="flex flex-col flex-1 gap-1 text-center">
-          <span className="text-muted-foreground text-xs">Fette</span>
-          <span>{portionData.fats} g</span>
-        </div>
+      <Separator orientation="vertical" className="h-4/5!" />
 
-        <Separator orientation="vertical" className="h-4/5!" />
+      <div className="flex flex-col flex-1 gap-1 text-center">
+        <span className="text-muted-foreground text-xs">Kohlenhydrate</span>
+        <span>{portionData.carbs} g</span>
+      </div>
 
-        <div className="flex flex-col flex-1 gap-1 text-center">
-          <span className="text-muted-foreground text-xs">Kohlenhydrate</span>
-          <span>{portionData.carbs} g</span>
-        </div>
+      <Separator orientation="vertical" className="h-4/5!" />
 
-        <Separator orientation="vertical" className="h-4/5!" />
-
-        <div className="flex flex-col flex-1 gap-1 text-center">
-          <span className="text-muted-foreground text-xs">Proteine</span>
-          <span>{portionData.proteins} g</span>
-        </div>
+      <div className="flex flex-col flex-1 gap-1 text-center">
+        <span className="text-muted-foreground text-xs">Proteine</span>
+        <span>{portionData.proteins} g</span>
       </div>
     </div>
   );

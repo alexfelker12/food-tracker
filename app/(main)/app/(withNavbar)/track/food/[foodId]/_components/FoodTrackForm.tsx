@@ -103,9 +103,12 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
       >
         <FieldGroup className="gap-4">
 
-          <FoodMacros
-            consumable={consumable}
-          />
+          <div className="space-y-2">
+            <p className="text-muted-foreground text-sm">Makronährwerte der ausgewählten Portionsmenge:</p>
+            <FoodMacros
+              consumable={consumable}
+            />
+          </div>
 
           <FieldSeparator />
 
@@ -196,7 +199,7 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
                 data-invalid={fieldState.invalid}
               >
                 <FieldContent className="gap-1">
-                  <FieldLabel htmlFor={field.name}>Mehrere Tage tracken</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>Für mehrere Tage tracken</FieldLabel>
                   <FieldDescription className="sr-only">Tracke heute und bis zu den nächsten 6 Tagen</FieldDescription>
                 </FieldContent>
 
