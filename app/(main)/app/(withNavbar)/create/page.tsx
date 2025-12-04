@@ -1,8 +1,9 @@
-//* maybe keep this if we need more navigation routes
+import Link from "next/link";
+
+import { APP_BASE_URL } from "@/lib/constants";
 
 import { Button } from "@/components/ui/button";
-import { APP_BASE_URL } from "@/lib/constants";
-import Link from "next/link";
+
 
 export default function Page() {
   return (

@@ -69,3 +69,15 @@ export function getAge(dateOrDateString: string | Date) {
   }
   return age;
 }
+
+
+// Source - https://stackoverflow.com/a/29774197
+// Posted by Darth Egregious, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-12-04, License - CC BY-SA 4.0
+//* adjusted to use as a function
+export function get_yyyymmdd_date(date: Date) {
+  const offset = date.getTimezoneOffset()
+  const adjustedISOdate = new Date(date.getTime() - (offset * 60 * 1000))
+  return adjustedISOdate.toISOString().split('T')[0]
+}
+
