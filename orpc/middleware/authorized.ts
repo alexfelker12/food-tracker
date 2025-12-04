@@ -13,6 +13,7 @@ export const authMiddleware = base
     return next({
       context: {
         session: {
+          // https://www.better-auth.com/docs/concepts/session-management#customizing-session-response
           session: sessionData.session, // TODO: adjust data that gets passed into context. Should not be too big for performance reasons
           user: sessionData.user
         }

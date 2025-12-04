@@ -1,4 +1,3 @@
-
 import { LogInIcon } from "lucide-react";
 
 import NoPrefetchLink from "@/components/NoPrefetchLink";
