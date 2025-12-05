@@ -8,12 +8,13 @@ import { listFood } from "@/orpc/router/food/list";
 
 //* journal
 import { trackFood } from "@/orpc/router/journal/track";
+import { listJournalDays } from "./journal/list";
 
 
 // 0 implement track food functionality
-// ^ currently here
 //! 1st
 //? 2nd
+// ^ currently here
 //* 3rd
 //* 4th
 // 5th
@@ -45,10 +46,10 @@ export const router = {
   //   delete: base,
   // },
   journal: {
-    //   list: base, //? 2nd <--- navigating through days where user tracked
+    list: listJournalDays,
     track: trackFood
     //   day: {
-    //     get: base, //! 1st <--- for now just show specific day to implement journal day view
+    //     get: base, //? 2nd <--- for now just show specific day to implement journal day view
     //   },
     //   entry: {
     //     update: base, //* 4th <--- mutate journal entries

@@ -80,22 +80,15 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
 }
 
 
-// // food listing (for now all foods - will be optimized)
-// interface GetFoodListingProps {
-//   search?: string
-// }
-// export async function getFoodListing({ search }: GetFoodListingProps) {
-//   return await db.food.findMany({
-//     // where: {},
-//     include: {
-//       portions: {
-//         where: {
-//           isDefault: true
-//         }
-//       }
-//     }
-//   })
-// }
+// journal day listing (for now all days - will be optimized)
+interface GetJournalDaysProps {
+  userId: string
+}
+export async function getJournalDays({ userId }: GetJournalDaysProps) {
+  return await db.journalDay.findMany({
+    where: { userId }
+  })
+}
 
 
 // // food by id

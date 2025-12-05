@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 
+import { orpc } from "@/lib/orpc";
+import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
+
 import { FullScreenLoader } from "@/components/FullScreenLoader";
 
 import { JournalCalendar } from "./_components/JournalCalendar";
-import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 
 
 export default function Page() {
@@ -20,24 +20,13 @@ export default function Page() {
   );
 }
 
-// TODO: create procedure for getting journal days
 async function PageWrap() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
-
-  if (!session) return null;
-
-  const journalDays = await db.journalDay.findMany({
-    where: {
-      userId: session.user.id
-    }
-  })
+  const qc = getQueryClient()
+  await qc.prefetchQuery(orpc.journal.list.queryOptions({ input: {} }))
 
   return (
-    <JournalCalendar
-      journalDays={journalDays}
-    />
-  );
+    <HydrateClient client={qc}>
+      <JournalCalendar />
+    </HydrateClient>
+  )
 }
-

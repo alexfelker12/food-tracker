@@ -1,22 +1,24 @@
 "use client"
 
+import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { de } from "react-day-picker/locale";
+
+import { APP_BASE_URL } from "@/lib/constants";
+import { orpc } from "@/lib/orpc";
+import { cn, get_yyyymmdd_date } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { JournalDay } from "@/generated/prisma/client";
-import { APP_BASE_URL } from "@/lib/constants";
-import { cn, get_yyyymmdd_date } from "@/lib/utils";
-import Link from "next/link";
 
 
-interface JournalCalendarProps {
-  journalDays: JournalDay[]
-}
-export function JournalCalendar({ journalDays }: JournalCalendarProps) {
+// interface JournalCalendarProps {}
+export function JournalCalendar() {
+  const { data: journalDays } = useSuspenseQuery(orpc.journal.list.queryOptions({ input: {} }))
+
   const [open, setOpen] = useState(false)
   const selectedDateRef = useRef<Date>(undefined)
 

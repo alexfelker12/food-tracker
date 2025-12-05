@@ -1,4 +1,3 @@
-import { JournalEntry } from "@/generated/prisma/client";
 import { BatchPayload } from "@/generated/prisma/internal/prismaNamespace";
 import { authMiddleware } from "@/orpc/middleware/authorized";
 import { base } from "@/orpc/middleware/base";
