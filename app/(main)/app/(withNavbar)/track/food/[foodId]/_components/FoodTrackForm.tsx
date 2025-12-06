@@ -52,7 +52,8 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
     mode: "onTouched",
   })
 
-
+  // TODO: multiple days tracking not working?!?!
+  // ? does seem to work, didn't do so one time -> observe (and fix)
 
   //* create food mutation
   const { mutate: trackConsumable, isPending } = useMutation(orpc.journal.track.mutationOptions({

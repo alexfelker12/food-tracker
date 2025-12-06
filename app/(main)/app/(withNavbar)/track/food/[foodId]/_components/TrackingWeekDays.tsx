@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { ControllerFieldState, ControllerRenderProps } from "react-hook-form";
 
-import { cn } from "@/lib/utils";
+import { cn, get_yyyymmdd_date } from "@/lib/utils";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -63,7 +63,7 @@ export function TrackingWeekDays({
         )}
         spacing={0.5}
         // map from Date to String and back
-        value={field.value?.map((date: Date) => date.toISOString()) ?? []}
+        value={field.value?.map((date: Date) => get_yyyymmdd_date(date)) ?? []}
         onValueChange={(dates) => {
           field.onChange(dates.map((date) => new Date(date)))
         }}
@@ -77,7 +77,7 @@ export function TrackingWeekDays({
             <div key={key} className="flex flex-col items-center gap-1.5">
               <span className="text-muted-foreground text-sm">{weekDayName}.</span>
               <ToggleGroupItem
-                value={day.toISOString()}
+                value={get_yyyymmdd_date(day)}
                 aria-label={`Tracke für den ${date}`}
                 className="justify-center items-center rounded-full size-9"
               >
