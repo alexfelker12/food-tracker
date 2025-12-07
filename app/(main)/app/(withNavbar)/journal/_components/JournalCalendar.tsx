@@ -12,7 +12,7 @@ import { cn, get_yyyymmdd_date } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 
 // interface JournalCalendarProps {}
@@ -103,10 +103,9 @@ function SelectedJournalDayDialog({ selectedDate, ...props }: SelectedJournalDay
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{germanDate}</DialogTitle>
-          {/* <DialogDescription>
-            This action cannot be undone. This will permanently delete your account
-            and remove your data from our servers.
-          </DialogDescription> */}
+          <DialogDescription className="sr-only">
+            Kurzer Überblick über das Tracking für diesen Tag
+          </DialogDescription>
         </DialogHeader>
         <div>
           display journal day data here

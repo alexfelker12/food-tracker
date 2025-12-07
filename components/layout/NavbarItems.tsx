@@ -15,7 +15,7 @@ export type NavItemProps = {
 
 const navItems: NavItemProps[] = [
   { id: "home", icon: HomeIcon, label: "Start", href: APP_BASE_URL },
-  { id: "journal", icon: NotebookTextIcon, label: "Tagebuch", href: APP_BASE_URL + "/journal/today" as `/${string}` },
+  { id: "journal", icon: NotebookTextIcon, label: "Tagebuch", href: APP_BASE_URL + "/journal" as `/${string}` },
   { id: "track", icon: NotebookPenIcon, label: "Eintrag", href: APP_BASE_URL + "/track" as `/${string}`, isPrimary: true },
   // { id: "more", icon: MoreHorizontalIcon, label: "Weiteres", href: APP_BASE_URL + "/more" as `/${string}` },
   { id: "create", icon: PlusIcon, label: "Erstellen", href: APP_BASE_URL + "/create" as `/${string}` },

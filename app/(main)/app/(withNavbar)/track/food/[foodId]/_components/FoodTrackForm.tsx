@@ -13,7 +13,6 @@ import { BASE_PORTION_NAME } from "@/lib/constants"
 import { orpc } from "@/lib/orpc"
 import { PlusIcon, XIcon } from "lucide-react"
 
-import { CompactNumFieldInput } from "@/components/form-fields/CompactNumField"
 import { EnumField } from "@/components/form-fields/EnumField"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -23,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 // import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 import { Spinner } from "@/components/ui/spinner"
 
+import { NumFieldInput } from "@/components/form-fields/NumField"
 import { FoodMacros } from "./FoodMacros"
 import { TrackingWeekDays } from "./TrackingWeekDays"
 
@@ -36,24 +36,18 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
   const defaultPortion = consumable.portions.find((portion) => portion.isDefault)
   const initialPortion = defaultPortion ?? consumable.portions.find((portion) => portion.name === BASE_PORTION_NAME)!
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
   //* main form
   const form = useForm({
     resolver: zodResolver(journalEntrySchema),
     defaultValues: {
       consumableId: consumable?.id,
       consumableType,
-      daysToTrack: [today],
+      daysToTrack: [new Date()],
       portionId: initialPortion.id,
       portionAmount: 1
     },
     mode: "onTouched",
   })
-
-  // TODO: multiple days tracking not working?!?!
-  // ? does seem to work, didn't do so one time -> observe (and fix)
 
   //* create food mutation
   const { mutate: trackConsumable, isPending } = useMutation(orpc.journal.track.mutationOptions({
@@ -147,7 +141,7 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
                   </FieldContent>
                   <ButtonGroup>
                     <InputGroup>
-                      <CompactNumFieldInput
+                      <NumFieldInput
                         field={field}
                         fieldState={fieldState}
                         placeholder={"Anzahl" as `${number}`}

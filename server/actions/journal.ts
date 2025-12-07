@@ -1,3 +1,4 @@
+import { BASE_PORTION_NAME } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { journalEntrySchema } from "@/schemas/journal/journalEntrySchema";
 import { JournalEntrySchema } from "@/schemas/types";
@@ -8,29 +9,47 @@ interface CreateJournalEntryProps extends JournalEntrySchema {
   userId: string
 }
 export async function createJournalEntry({ userId, ...schemaProps }: CreateJournalEntryProps) {
+  //* 1. check if data is in correct shape
   const { success, data } = await journalEntrySchema.safeParseAsync(schemaProps)
   if (!success) return null; // parse failed -> bad request
 
   const { consumableId, consumableType, daysToTrack, intakeTime, portionId, portionAmount } = data
 
-  const portion = await db.foodPortion.findFirst({
+  //* 2. get the food with the chosen portion to track 
+  const food = await db.food.findFirst({
     where: {
-      id: portionId,
-      foodId: consumableId
+      id: consumableId,
+    },
+    include: {
+      portions: {
+        where: {
+          id: portionId
+        }
+      }
     }
   })
 
-  if (!portion) return null // portion does not exist -> bad request
+  // bad request if both couldn't be found
+  if (!food || food.portions.length !== 1) return null // portion does not exist -> bad request
 
-  const { name: portionName, grams: portionGrams } = portion
+  const { name, brand, kcal, fats, carbs, protein } = food
+  const { name: portionName, grams: portionGrams } = food.portions[0]
 
-  //* because of the unability of using nested creates in 'createMany()' entries will be created in parellel and awaited together. 'Promise.all()' expects every promise to resolve. In case of any error, successful queries will not be returned. 'Promise.allSettled()' always resolves with information about rejected (failed) queries, giving more control
+  //* 3. calculate final macro values since entries are completely static. No calc in frontend needed
+  const finalKcal = +((kcal * (portionGrams / 100)) * portionAmount).toFixed(0)
+  const finalFats = +((fats * (portionGrams / 100)) * portionAmount).toFixed(1)
+  const finalCarbs = +((carbs * (portionGrams / 100)) * portionAmount).toFixed(1)
+  const finalProteins = +((protein * (portionGrams / 100)) * portionAmount).toFixed(1)
+
+
+  //* 4. create journal entries
+  // because of the unability of using nested creates in 'createMany()' entries will be created in parellel and awaited together. 'Promise.all()' expects every promise to resolve. In case of any error, successful queries will not be returned. 'Promise.allSettled()' always resolves with information about rejected (failed) queries, giving more control
   //? handle failed queries: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
   const journalEntries = await Promise.allSettled(
     daysToTrack.map((date) => //* daysToTrack length -> amount of create queries
       db.journalEntry.create({
         data: {
-          //* connectOrCreate journal day
+          //* 4.1 connectOrCreate journal day
           journalDay: {
             connectOrCreate: {
               where: {
@@ -39,42 +58,58 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
               create: { userId, date }
             }
           },
-          //* portion reference
-          portion: {
+          //* 4.2 create consumable reference
+          // discriminate between consumable type to set correct consumable fields
+          consumableReference: {
             create: {
-              // discriminate between consumable type to set correct consumable portionId
               ...(consumableType === "FOOD"
-                ? { foodPortionId: portionId }
-                : { mealPortionId: portionId }
+                ? {
+                  food: {
+                    connect: {
+                      id: consumableId
+                    }
+                  },
+                  foodPortion: {
+                    connect: {
+                      id: portionId
+                    }
+                  },
+                } : {
+                  meal: {
+                    connect: {
+                      id: consumableId
+                    }
+                  },
+                  mealPortion: {
+                    connect: {
+                      id: portionId
+                    }
+                  },
+                }
               ),
-              portionName, portionGrams, portionAmount
             }
           },
-          //* discriminate between consumable type to set correct consumable id
-          ...(consumableType === "FOOD"
-            ? {
-              food: {
-                connect: {
-                  id: consumableId
-                }
-              }
-            } : {
-              meal: {
-                connect: {
-                  id: consumableId
-                }
-              }
-            }
-          ),
-          //* intake time
-          intakeTime
+          //* 4.3 fill out scalar fields
+          intakeTime,
+          name,
+          brand,
+          // portionName only when base portion was not used (for change compatability)
+          portionName: portionName !== BASE_PORTION_NAME ? portionName : undefined,
+          portionAmount,
+          kcal: finalKcal,
+          fats: finalFats,
+          carbs: finalCarbs,
+          proteins: finalProteins,
         }
       })
     )
   )
     //* only return fulfilled queries
     //? maybe collect rejected queries and pass them along fulfilled ones? (on hold)
-    .then((results) => results.flatMap((result) => result.status === "fulfilled" ? result.value : []))
+    .then((results) => results.flatMap((result) => {
+      // if (result.status === "rejected") console.log(result.reason);
+      return result.status === "fulfilled" ? result.value : []
+    }))
 
   return journalEntries
 }
@@ -91,17 +126,24 @@ export async function getJournalDays({ userId }: GetJournalDaysProps) {
 }
 
 
-// // food by id
-// interface GetFoodByIdProps {
-//   foodId: string
-// }
-// export async function getFoodById({ foodId }: GetFoodByIdProps) {
-//   return await db.food.findFirst({
-//     where: {
-//       id: foodId,
-//     },
-//     include: {
-//       portions: true,
-//     }
-//   })
-// }
+// journalDay by date
+interface GetJournalDayWithEntriesProps {
+  userId: string
+  date: Date
+}
+export async function getJournalDayWithEntries({ userId, date }: GetJournalDayWithEntriesProps) {
+  return await db.journalDay.findUnique({
+    where: {
+      journalDayId: {
+        userId, date
+      }
+    },
+    include: {
+      journalEntries: { // with entries
+        include: {
+          consumableReference: true
+        }
+      }
+    }
+  })
+}

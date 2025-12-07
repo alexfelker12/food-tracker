@@ -29,7 +29,8 @@ export default async function Page({
   //* if param is "today" create formatted string to use for incoming procedures
   if (journalDayDate === "today") journalDay = get_yyyymmdd_date(new Date());
 
-  const germanDate = (new Date(journalDay)).toLocaleDateString("de-DE", {
+  const thisDate = new Date(journalDay)
+  const germanDate = thisDate.toLocaleDateString("de-DE", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric"
@@ -49,22 +50,23 @@ export default async function Page({
           <h1 className="font-bold text-2xl">{germanDate}</h1>
         </div>
 
-        {/* <Suspense fallback={<FullScreenLoader />}>
-          <JournalDayWrap foodId={foodId} />
-        </Suspense> */}
+        <Suspense fallback={<FullScreenLoader />}>
+          <JournalDayWrap date={thisDate} />
+        </Suspense>
       </div>
     </main>
   );
 }
 
-// TODO: create procedure, to get journal entries
-async function JournalDayWrap({ journalDay }: JournalDayProps) {
+async function JournalDayWrap({ date }: JournalDayProps) {
   const qc = getQueryClient()
-  // await qc.prefetchQuery(orpc..queryOptions({ input: {  } }))
+  await qc.prefetchQuery(orpc.journal.day.get.queryOptions({
+    input: { date }
+  }))
 
   return (
     <HydrateClient client={qc}>
-      <JournalDay journalDay={journalDay} />
+      <JournalDay date={date} />
     </HydrateClient>
   )
 }

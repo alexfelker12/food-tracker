@@ -5,17 +5,20 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 
 import { Separator } from "@/components/ui/separator";
+import { JournalDayEmpty } from "./JournalDayEmpty";
 
 
 export type JournalDayProps = {
-  journalDay: string
+  date: Date
 }
-export function JournalDay({ journalDay }: JournalDayProps) {
-  // const { data:  } = useSuspenseQuery(orpc..queryOptions({
-  //   input: {  },
-  // }))
+export function JournalDay({ date }: JournalDayProps) {
+  const { data: journalDayWithEntries } = useSuspenseQuery(orpc.journal.day.get.queryOptions({
+    input: { date }
+  }))
 
-  // if (!food) return <FoodNotFound />
+  console.log("journalDayWithEntries:", journalDayWithEntries)
+
+  if (!journalDayWithEntries) return <JournalDayEmpty journalDayDate={date} />
 
   return (
     <div className="space-y-2">

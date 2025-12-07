@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Input } from "@/components/ui/input";
 
 
 interface NumFieldProps extends React.ComponentProps<typeof Field> {
@@ -15,13 +16,14 @@ interface NumFieldProps extends React.ComponentProps<typeof Field> {
   unit: string
   min?: number
   max?: number
+  step?: number
   field: ControllerRenderProps<any, any>
   fieldState: ControllerFieldState
 }
 
 export function NumField({
   label, description, placeholder, unit, // text elements
-  min, max, // value range check
+  min, max, step, // value range check
   field, fieldState, // Controller-render props
   orientation = "horizontal", className, ...props // Field props
 }: NumFieldProps) {
@@ -51,6 +53,7 @@ export function NumField({
           placeholder={placeholder}
           min={min}
           max={max}
+          step={step}
         />
         <InputGroupAddon align="inline-end">{unit}</InputGroupAddon>
       </InputGroup>
@@ -58,16 +61,21 @@ export function NumField({
   );
 }
 
-interface NumFieldInputProps extends Pick<NumFieldProps, "field" | "fieldState" | "min" | "max" | "placeholder"> { }
+interface NumFieldInputProps extends Pick<NumFieldProps, "field" | "fieldState">, React.ComponentProps<typeof Input> {
+  asInput?: boolean
+}
 export function NumFieldInput({
   field, fieldState,
-  min = 0, max = 999,
-  placeholder
+  min = 0, max = 999, step = 0.01,
+  placeholder, asInput,
+  className, ...props
 }: NumFieldInputProps) {
   if (min > max) return null; // input logic not executable if min is bigger than max
 
+  const InputComp = asInput ? Input : InputGroupInput // both components use <Input /> under the hood, but InputGroupInput gets addition attributes/classnames 
+
   return (
-    <InputGroupInput
+    <InputComp
       id={field.name}
       className={cn(
         "text-right flex-none max-w-[68px]",
@@ -76,10 +84,12 @@ export function NumFieldInput({
         //   : (field.value || +placeholder) > 9
         //     ? "max-w-9"
         //     : "max-w-7"
+        className
       )}
       type="number"
       min={min}
       max={max}
+      step={step}
       placeholder={placeholder}
       aria-invalid={fieldState.invalid}
       {...field}
@@ -89,11 +99,12 @@ export function NumFieldInput({
         const numValue = +value
         const onChangeValue = value === "" || isNaN(numValue)
           ? null
-          : Math.min(Math.max(numValue, min), max)
+          : Math.min(Math.max(numValue, +min), +max)
         field.onChange(onChangeValue)
         if (fieldState.isTouched) field.onBlur() // trigger onBlur at onChange event (level): onBlur triggers validation "onInput"
       }}
       onFocus={(e) => e.target.select()}
+      {...props}
     />
   );
 }

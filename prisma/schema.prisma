@@ -207,13 +207,13 @@ model Food {
   protein Float //? maybe fix someday? missed plural form here (protein*s*) ...
 
   // created by
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // relations
-  portions       FoodPortion[]
-  mealIngredient MealIngredient[]
-  journalEntries JournalEntry[]
+  portions             FoodPortion[]
+  mealIngredient       MealIngredient[]
+  consumableReferences ConsumableReference[]
 
   @@index([name])
   @@index([brand])
@@ -230,7 +230,7 @@ model FoodPortion {
   grams     Float // weight of this portion in grams
   isDefault Boolean @default(false)
 
-  portionReference PortionReference[]
+  consumableReference ConsumableReference[]
 
   // prevent duplicate portion names per food
   @@unique([foodId, name])
@@ -251,13 +251,13 @@ model Meal {
   description String?
 
   // created by
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // relations
-  ingredients    MealIngredient[]
-  portions       MealPortion[]
-  journalEntries JournalEntry[]
+  ingredients          MealIngredient[]
+  portions             MealPortion[]
+  consumableReferences ConsumableReference[]
 
   @@index([userId])
   @@index([name])
@@ -291,7 +291,7 @@ model MealPortion {
   grams     Float
   isDefault Boolean @default(false)
 
-  portionReference PortionReference[]
+  consumableReference ConsumableReference[]
 
   // prevent duplicate portion names per meal
   @@unique([mealId, name])
@@ -320,24 +320,26 @@ model JournalDay {
   @@index([userId, date])
 }
 
-// represents a mapping between food/meal portions and journal entries
-model PortionReference {
+// represents a (loose) reference to the track food/meal with its portion
+// if food/meal or the portion is not trackable anymore, data will fall back to defaults
+model ConsumableReference {
   id String @id @default(cuid())
 
+  // reference to either food/foodPortion or meal/mealPortion (both optional but one required logically)
+  foodId        String?
+  food          Food?        @relation(fields: [foodId], references: [id], onDelete: Restrict)
   foodPortionId String?
   foodPortion   FoodPortion? @relation(fields: [foodPortionId], references: [id], onDelete: SetNull)
+
+  mealId        String?
+  meal          Meal?        @relation(fields: [mealId], references: [id], onDelete: Restrict)
   mealPortionId String?
   mealPortion   MealPortion? @relation(fields: [mealPortionId], references: [id], onDelete: SetNull)
-
-  portionName   String // name of the portion used (e.g. "1/2 bar" | "1 plate")
-  portionGrams  Float // portion weight
-  portionAmount Float // how many portions user tracked
 
   journalEntryId String       @unique
   journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
 
-  @@index([foodPortionId])
-  @@index([mealPortionId])
+  @@index([journalEntryId])
 }
 
 // represents a logged item (food or meal) in the daily journal
@@ -352,16 +354,20 @@ model JournalEntry {
   journalDayDate   DateTime   @db.Date
   journalDay       JournalDay @relation(fields: [journalDayUserId, journalDayDate], references: [userId, date], onDelete: Cascade)
 
-  // reference to either food or meal (both optional but one required logically)
-  foodId String?
-  food   Food?   @relation(fields: [foodId], references: [id], onDelete: Restrict)
-  mealId String?
-  meal   Meal?   @relation(fields: [mealId], references: [id], onDelete: Restrict)
+  //* historical snapshot of food data/macros 
+  name     String
+  brand    String?
+  // final macro values calculated with portion data/amount
+  kcal     Float
+  fats     Float
+  carbs    Float
+  proteins Float
 
-  // portion reference (which portion user used)
-  portion PortionReference?
+  // portion data
+  portionName   String?
+  portionAmount Float
+
+  consumableReference ConsumableReference?
 
   @@index([journalDayUserId, journalDayDate])
-  @@index([foodId])
-  @@index([mealId])
 }
