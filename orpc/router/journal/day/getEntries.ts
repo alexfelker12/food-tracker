@@ -3,11 +3,11 @@ import { base } from "@/orpc/middleware/base";
 import { getJournalDayWithEntries } from "@/server/actions/journal";
 import z from "zod";
 
-export const journalDayByDate = base
+export const journalDayEntriesByDate = base
   .use(authMiddleware)
   .route({
     method: "GET",
-    path: "/journal/day/get",
+    path: "/journal/day/entries",
     summary: "Gets a journal day with it's journal entries",
     tags: ["Journal", "Day"]
   })

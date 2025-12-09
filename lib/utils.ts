@@ -81,3 +81,8 @@ export function get_yyyymmdd_date(date: Date) {
   return adjustedISOdate.toISOString().split('T')[0]
 }
 
+
+// formats number to german decimal number format, e.g.: 1.234,56
+export function getGermanNumber(number: number) {
+  return new Intl.NumberFormat("de-DE", { style: "decimal" }).format(number)
+}

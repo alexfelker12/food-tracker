@@ -147,3 +147,61 @@ export async function getJournalDayWithEntries({ userId, date }: GetJournalDayWi
     }
   })
 }
+
+
+// open macros and calories for a journalDay by date
+interface GetJournalDayMacrosProps {
+  userId: string
+  date: Date
+}
+export async function getJournalDayMacros({ userId, date }: GetJournalDayMacrosProps) {
+  const latestNutritionResult = db.nutritionResult.findFirst({
+    where: {
+      metricsProfile: {
+        userId
+      },
+      date: {
+        lte: date
+      }
+    },
+    orderBy: {
+      date: "desc"
+    }
+  })
+
+  const currentMacros = db.journalEntry.aggregate({
+    where: { journalDay: { userId, date } },
+    _sum: {
+      kcal: true,
+      fats: true,
+      carbs: true,
+      proteins: true
+    }
+  })
+
+  const openMacros = await Promise
+    .all([latestNutritionResult, currentMacros])
+    .then(([nutritionResult, { _sum: { kcal, fats, carbs, proteins } }]) => {
+      if (!nutritionResult) return null; // can't calculate calories and macros if no calory goal was created
+
+      const { caloryGoal, amountFats, amountCarbs, amountProtein } = nutritionResult
+
+      return {
+        availableMacros: {
+          kcal: caloryGoal,
+          fats: amountFats,
+          carbs: amountCarbs,
+          proteins: amountProtein,
+        },
+        openMacros: {
+          kcal: +(caloryGoal - (kcal || 0)).toFixed(0),
+          fats: +(amountFats - (fats || 0)).toFixed(1),
+          carbs: +(amountCarbs - (carbs || 0)).toFixed(1),
+          proteins: +(amountProtein - (proteins || 0)).toFixed(1),
+        }
+      }
+    })
+
+  return openMacros
+}
+

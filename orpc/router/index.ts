@@ -8,15 +8,16 @@ import { listFood } from "@/orpc/router/food/list";
 
 //* journal
 import { trackFood } from "@/orpc/router/journal/track";
-import { journalDayByDate } from "./journal/day/get";
+import { journalDayEntriesByDate } from "./journal/day/getEntries";
 import { listJournalDays } from "./journal/list";
+import { journalDayMacrosByDate } from "./journal/day/getMacros";
 
 
 // 0 implement track food functionality
 //! 1st
 //? 2nd
-// ^ currently here
 //* 3rd
+// ^ currently here
 //* 4th
 // 5th
 //// 6th
@@ -29,15 +30,15 @@ export const router = {
   //// decide on which "widget" or generally which data to show on start/dashboard screen
   // },
   // profile: {
-  //   get: base, //* 3rd <--- get current profile data
-  //   update: base //* 3rd <--- update profile to get updated nutritionResult
+  //   get: base, //* 4th <--- get current profile data
+  //   update: base //* 4th <--- update profile to get updated nutritionResult
   // },
   food: {
     list: listFood,
     get: foodById,
     create: createFood,
-    // update: base, //* 4th <--- mutate food data
-    // delete: base, //* 4th <--- mutate food data
+    // update: base, // 5th <--- mutate food data
+    // delete: base, // 5th <--- mutate food data
   },
   // meal: { //// 6th <--- meal feature
   //   list: base,
@@ -50,11 +51,14 @@ export const router = {
     list: listJournalDays,
     track: trackFood,
     day: {
-      get: journalDayByDate, //? 2nd <--- for now just show specific day to implement journal day view
+      getEntries: journalDayEntriesByDate,
+      getMacros: journalDayMacrosByDate,
     },
     //   entry: {
-    //     update: base, //* 4th <--- mutate journal entries
-    //     delete: base, //* 4th <--- mutate journal entries
+    //     update: base, // 5th <--- mutate journal entries
+    //     delete: base, //* 3rd <--- mutate journal entries
+    //     retrack: base, // 5th <--- mutate journal entries
+    //     move: base, // 5th <--- mutate journal entries
     //   }
   },
 }
