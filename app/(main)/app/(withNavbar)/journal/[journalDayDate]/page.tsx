@@ -1,15 +1,17 @@
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { APP_BASE_URL, journalDayRegex } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
+import { get_yyyymmdd_date } from "@/lib/utils";
+
 import { ChevronLeftIcon } from "lucide-react";
 
 import { BackButton } from "@/components/BackButton";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
+
 import { JournalDay, JournalDayProps } from "./_components/JournalDay";
-import { redirect } from "next/navigation";
-import { get_yyyymmdd_date } from "@/lib/utils";
 
 
 export default async function Page({
