@@ -3,6 +3,8 @@ import { base } from "@/orpc/middleware/base";
 import { getJournalDayWithEntries } from "@/server/actions/journal";
 import z from "zod";
 
+type ProcedureReturnType = Awaited<ReturnType<typeof getJournalDayWithEntries>>
+export type JournalDayEntriesByDateReturn = NonNullable<ProcedureReturnType>
 export const journalDayEntriesByDate = base
   .use(authMiddleware)
   .route({
@@ -14,7 +16,7 @@ export const journalDayEntriesByDate = base
   .input(z.object({
     date: z.date()
   }))
-  .output(z.custom<Awaited<ReturnType<typeof getJournalDayWithEntries>>>())
+  .output(z.custom<ProcedureReturnType>())
   .handler(async ({
     input: { date },
     context: { session },

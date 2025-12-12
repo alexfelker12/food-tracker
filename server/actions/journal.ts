@@ -121,7 +121,12 @@ interface GetJournalDaysProps {
 }
 export async function getJournalDays({ userId }: GetJournalDaysProps) {
   return await db.journalDay.findMany({
-    where: { userId }
+    where: {
+      userId,
+      journalEntries: {
+        some: {}
+      }
+    }
   })
 }
 
@@ -136,6 +141,9 @@ export async function getJournalDayWithEntries({ userId, date }: GetJournalDayWi
     where: {
       journalDayId: {
         userId, date
+      },
+      journalEntries: {
+        some: {}
       }
     },
     include: {
@@ -205,3 +213,17 @@ export async function getJournalDayMacros({ userId, date }: GetJournalDayMacrosP
   return openMacros
 }
 
+
+// delete journal entry by id
+interface DeleteJournalEntryProps {
+  userId: string
+  journalEntryId: string
+}
+export async function deleteJournalEntry({ userId, journalEntryId }: DeleteJournalEntryProps) {
+  return await db.journalEntry.delete({
+    where: {
+      id: journalEntryId,
+      journalDayUserId: userId
+    }
+  })
+}

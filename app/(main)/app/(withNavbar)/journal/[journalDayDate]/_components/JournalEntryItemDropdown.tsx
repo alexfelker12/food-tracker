@@ -1,19 +1,26 @@
 "use client"
 
+import { isDefinedError } from "@orpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
 import { type IntakeTime } from "@/generated/prisma/client";
-import { IntakeTime as intakeTimeEnum } from "@/generated/prisma/enums"
+import { IntakeTime as intakeTimeEnum } from "@/generated/prisma/enums";
+import { orpc } from "@/lib/orpc";
 
 import { EllipsisVerticalIcon, PencilIcon, Trash2Icon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Spinner } from "@/components/ui/spinner";
 
 
-type JournalEntryItemActionsProps = {
+type JournalEntryItemDropdownProps = {
   currentIntakeTime: IntakeTime
   journalEntryId: string
 }
-export function JournalEntryItemActions({ currentIntakeTime, journalEntryId }: JournalEntryItemActionsProps) {
+export function JournalEntryItemDropdown({ currentIntakeTime, journalEntryId }: JournalEntryItemDropdownProps) {
+  const qc = useQueryClient()
 
   const handleRetracking = (intakeTime: IntakeTime) => {
     console.log("retracking for:", intakeTime)
@@ -28,9 +35,28 @@ export function JournalEntryItemActions({ currentIntakeTime, journalEntryId }: J
   }
 
   const handleDelete = () => {
-    console.log("deleting entry:", journalEntryId)
+    deleteEntry({ journalEntryId })
   }
 
+  const { mutate: deleteEntry, isPending: isDeletePending } = useMutation(orpc.journal.entry.delete.mutationOptions({
+    onError: (error) => {
+      if (isDefinedError(error)) {
+        toast.error(error.message)
+      } else {
+        toast.error("Es gab Probleme beim Löschen")
+      }
+    },
+    // onSuccess parameters: (data, variables, onMutateResult, context)
+    onSuccess: ({ name }) => {
+      toast.success(`${name} wurde gelöscht`)
+      qc.invalidateQueries({
+        queryKey: [["journal", "day"]]
+      })
+    }
+  }))
+
+
+  const actionPending = isDeletePending
 
   return (
     <DropdownMenu>
@@ -86,7 +112,9 @@ export function JournalEntryItemActions({ currentIntakeTime, journalEntryId }: J
         <DropdownMenuItem onSelect={handleEdit}><PencilIcon /> Bearbeiten</DropdownMenuItem>
 
         {/* delete entry from journal (day) */}
-        <DropdownMenuItem onSelect={handleDelete} variant="destructive"><Trash2Icon /> Löschen</DropdownMenuItem>
+        <DropdownMenuItem onSelect={handleDelete} variant="destructive" disabled={actionPending}>
+          {isDeletePending ? <Spinner /> : <Trash2Icon />} Löschen
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

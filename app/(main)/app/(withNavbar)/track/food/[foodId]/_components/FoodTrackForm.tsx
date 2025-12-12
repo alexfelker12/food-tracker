@@ -36,13 +36,16 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
   const defaultPortion = consumable.portions.find((portion) => portion.isDefault)
   const initialPortion = defaultPortion ?? consumable.portions.find((portion) => portion.name === BASE_PORTION_NAME)!
 
+  const today = new Date()
+  today.setHours(5, 0, 0, 0)
+
   //* main form
   const form = useForm({
     resolver: zodResolver(journalEntrySchema),
     defaultValues: {
       consumableId: consumable?.id,
       consumableType,
-      daysToTrack: [new Date()],
+      daysToTrack: [today],
       portionId: initialPortion.id,
       portionAmount: 1
     },

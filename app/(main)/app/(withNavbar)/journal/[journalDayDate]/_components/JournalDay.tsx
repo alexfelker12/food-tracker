@@ -4,13 +4,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { orpc } from "@/lib/orpc";
 
-import { JournalEntry } from "@/generated/prisma/client";
 import { IntakeTime as intakeTimeEnum, type IntakeTime } from "@/generated/prisma/enums";
 
 import { Accordion } from "@/components/ui/accordion";
 
 import { JournalDayEmpty } from "./JournalDayEmpty";
 import { JournalEntryGroup } from "./JournalEntryGroup";
+import { JournalDayJournalEntries } from "./JournalEntryActions/JournalEntryContext";
 
 
 export type JournalDayProps = {
@@ -21,10 +21,12 @@ export function JournalDay({ date }: JournalDayProps) {
     input: { date }
   }))
 
+  //TODO: handle background fetch loading state from invalidating queries
+
   if (!journalDayWithEntries) return <JournalDayEmpty journalDayDate={date} />
 
   //* group journal entries by their intake time
-  const journalEntryGroups: Record<IntakeTime, JournalEntry[]> = {
+  const journalEntryGroups: Record<IntakeTime, JournalDayJournalEntries> = {
     BREAKFAST: [],
     LUNCH: [],
     DINNER: [],
@@ -45,10 +47,30 @@ export function JournalDay({ date }: JournalDayProps) {
       type="multiple"
       defaultValue={defaultOpenIntakeTimes}
     >
-      <JournalEntryGroup label="Frühstück" value={intakeTimeEnum.BREAKFAST} journalEntries={journalEntryGroups.BREAKFAST} />
-      <JournalEntryGroup label="Mittagessen" value={intakeTimeEnum.LUNCH} journalEntries={journalEntryGroups.LUNCH} />
-      <JournalEntryGroup label="Abendessen" value={intakeTimeEnum.DINNER} journalEntries={journalEntryGroups.DINNER} />
-      <JournalEntryGroup label="Snacks" value={intakeTimeEnum.SNACKS} journalEntries={journalEntryGroups.SNACKS} />
+      {/* breakfast */}
+      <JournalEntryGroup
+        label="Frühstück"
+        value={intakeTimeEnum.BREAKFAST}
+        journalEntries={journalEntryGroups.BREAKFAST}
+      />
+      {/* lunch */}
+      <JournalEntryGroup
+        label="Mittagessen"
+        value={intakeTimeEnum.LUNCH}
+        journalEntries={journalEntryGroups.LUNCH}
+      />
+      {/* dinner */}
+      <JournalEntryGroup
+        label="Abendessen"
+        value={intakeTimeEnum.DINNER}
+        journalEntries={journalEntryGroups.DINNER}
+      />
+      {/* snacks */}
+      <JournalEntryGroup
+        label="Snacks"
+        value={intakeTimeEnum.SNACKS}
+        journalEntries={journalEntryGroups.SNACKS}
+      />
     </Accordion>
   );
 }
