@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 import { type CalculateRecommendedBodyTypeSplitsProps, calculateRecommendedSplitsByBodyType } from "@/lib/calculations/profile";
 import { cn } from "@/lib/utils";
@@ -33,12 +33,7 @@ const recommendedSwitcherItems: {
 }]
 
 export function ProfileFormFieldRecommended() {
-  const { control, setValue, getValues } = useFormContext<ProfileSchema>();
-
-  const calcRecommendedData = {
-    bodyType: getValues("bodyDataStep.bodyType"),
-    fitnessGoal: getValues("fitnessProfileStep.fitnessGoal")
-  }
+  const { control, setValue, watch } = useFormContext<ProfileSchema>();
 
   const applyRecommendedValues = ({ bodyType, fitnessGoal }: Partial<CalculateRecommendedBodyTypeSplitsProps>) => {
     if (!bodyType || !fitnessGoal) return
@@ -49,9 +44,13 @@ export function ProfileFormFieldRecommended() {
     setValue("macroSplitStep.proteinSplit", proteinSplit)
   }
 
+  const [bodyType, fitnessGoal, useRecommended] = watch(
+    ["bodyDataStep.bodyType", "fitnessProfileStep.fitnessGoal", "macroSplitStep.useRecommended"]
+  )
+
   useEffect(() => {
-    applyRecommendedValues(calcRecommendedData)
-  }, [])
+    if (useRecommended) applyRecommendedValues({ bodyType, fitnessGoal })
+  }, [bodyType, fitnessGoal, useRecommended])
 
   return (
     <Controller
@@ -68,7 +67,7 @@ export function ProfileFormFieldRecommended() {
             field.onChange(recommendedSelected)
             field.onBlur()
 
-            if (recommendedSelected) applyRecommendedValues(calcRecommendedData)
+            // if (recommendedSelected) applyRecommendedValues(calcRecommendedData)
           }}
           className="gap-2 grid-cols-2"
         >

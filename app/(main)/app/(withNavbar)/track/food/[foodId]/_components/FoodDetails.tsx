@@ -22,8 +22,8 @@ export function FoodDetails({ foodId }: FoodDetailsProps) {
   return (
     <div className="space-y-2">
       <div>
-        <h2 className="font-semibold text-xl">{food?.name}</h2>
-        <p className="text-base text-muted-foreground">{food?.brand}</p>
+        <h2 className="font-semibold text-xl">{food.name}</h2>
+        {food.brand && <p className="text-base text-muted-foreground">{food.brand}</p>}
       </div>
 
       <Separator />

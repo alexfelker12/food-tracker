@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { ControllerFieldState, ControllerRenderProps } from "react-hook-form";
 
-import { cn, get_yyyymmdd_date } from "@/lib/utils";
+import { cn, get_yyyymmdd_date, getGermanDate } from "@/lib/utils";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -41,11 +41,7 @@ export function TrackingWeekDays({
   }
 
   const toDate = (date: Date) => {
-    return date.toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    })
+    return getGermanDate(date)
   }
 
 

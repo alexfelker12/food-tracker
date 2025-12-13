@@ -12,7 +12,7 @@ import { cn, get_yyyymmdd_date } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 
 // interface JournalCalendarProps {}
@@ -111,11 +111,13 @@ function SelectedJournalDayDialog({ selectedDate, ...props }: SelectedJournalDay
           display journal day data here
         </div>
         <DialogFooter>
-          <Button asChild variant="outline">
-            <Link href={APP_BASE_URL + "/journal/" + yyyymmdd_date}>
-              Gehe zum Tag
-            </Link>
-          </Button>
+          <DialogClose asChild>
+            <Button asChild variant="outline">
+              <Link href={APP_BASE_URL + "/journal/" + yyyymmdd_date}>
+                Gehe zum Tag
+              </Link>
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

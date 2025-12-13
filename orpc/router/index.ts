@@ -1,5 +1,9 @@
+//* onboard
+import { createInitialProfile } from "@/orpc/router/onboard";
+
 //* profile
-import { createInitialProfile } from "@/orpc/profile/onboard";
+import { getProfile } from "@/orpc/router/profile/get";
+import { updateProfile } from "@/orpc/router/profile/update";
 
 //* food
 import { createFood } from "@/orpc/router/food/create";
@@ -8,32 +12,30 @@ import { listFood } from "@/orpc/router/food/list";
 
 //* journal
 import { trackFood } from "@/orpc/router/journal/track";
-import { journalDayEntriesByDate } from "./journal/day/getEntries";
-import { journalDayMacrosByDate } from "./journal/day/getMacros";
-import { deleteEntry } from "./journal/entry/deleteEntry";
-import { listJournalDays } from "./journal/list";
+import { journalDayEntriesByDate } from "@/orpc/router/journal/day/getEntries";
+import { journalDayMacrosByDate } from "@/orpc/router/journal/day/getMacros";
+import { deleteEntry } from "@/orpc/router/journal/entry/deleteEntry";
+import { listJournalDays } from "@/orpc/router/journal/list";
 
 
 // 0 implement track food functionality
 //! 1st
 //? 2nd
 //* 3rd
-// ^ currently here
 //* 4th
+// ^ currently here
 // 5th
 //// 6th
 
 export const router = {
-  onboard: {
-    createProfile: createInitialProfile
-  },
   // dashboard: { // 5th
   //// decide on which "widget" or generally which data to show on start/dashboard screen
   // },
-  // profile: {
-  //   get: base, //* 4th <--- get current profile data
-  //   update: base //* 4th <--- update profile to get updated nutritionResult
-  // },
+  onboard: createInitialProfile,
+  profile: {
+    get: getProfile, //* 4th <--- get current profile data
+    update: updateProfile //* 4th <--- update profile to get updated nutritionResult
+  },
   food: {
     list: listFood,
     get: foodById,
@@ -56,10 +58,10 @@ export const router = {
       getMacros: journalDayMacrosByDate,
     },
     entry: {
-      //     update: base, // 5th <--- mutate journal entries
-      delete: deleteEntry, //* 3rd <--- mutate journal entries
       //     retrack: base, // 5th <--- mutate journal entries
       //     move: base, // 5th <--- mutate journal entries
+      //     update: base, // 5th <--- mutate journal entries
+      delete: deleteEntry,
     }
   },
 }

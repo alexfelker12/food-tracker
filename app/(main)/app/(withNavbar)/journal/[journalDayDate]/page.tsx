@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { APP_BASE_URL, journalDayRegex } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
-import { get_yyyymmdd_date } from "@/lib/utils";
+import { get_yyyymmdd_date, getGermanDate } from "@/lib/utils";
 
 import { ChevronLeftIcon } from "lucide-react";
 
@@ -34,11 +34,7 @@ export default async function Page({
   if (journalDayDate === "today") journalDay = get_yyyymmdd_date(new Date());
 
   const thisDate = new Date(journalDay)
-  const germanDate = thisDate.toLocaleDateString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  })
+  const germanDate = getGermanDate(thisDate)
 
   return (
     <main className="flex justify-center p-4 h-full">

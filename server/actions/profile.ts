@@ -1,116 +1,88 @@
-import { MetricsProfileModel } from "@/generated/prisma/models";
-import { calculateBMR, calculateCaloryGoal, calculateRecommendedSplitsByBodyType, calculateTDEE, calculateTEFQuota, calculateTotalSplitValues, calculateWaterDemand } from "@/lib/calculations/profile";
 import { db } from "@/lib/db";
-import { flatProfileSchemaMapping } from "@/schemas/mappings/profileSchemaMappings";
-import { profileSchema } from "@/schemas/profileSchema";
-import { FlatProfileSchema, ProfileSchema } from "@/schemas/types";
+
+import { changedProfileCalculation, ChangedProfileCalculationProps } from "../helpers/changedProfileCalculation";
 
 
 //* steps profile
-interface CreateProfileFromStepsProps {
-  userProfileData: ProfileSchema
+interface getUserProfileProps {
   userId: string
 }
-export async function createProfileFromSteps({ userProfileData, userId }: CreateProfileFromStepsProps) {
-  const hasProfile = await db.metricsProfile.findFirst({
-    where: {
-      userId
-    }
-  })
-
-  if (hasProfile) return "has profile";
-
-  const { success, data } = await profileSchema.safeParseAsync(userProfileData)
-
-  if (!success) return "parsing error"; // parse failed -> bad request
-
-  const {
-    userDataStep,
-    bodyDataStep,
-    fitnessProfileStep,
-    macroSplitStep: { useRecommended, ...partialMacroSplitStep }
-  } = data
-
-  return await db.metricsProfile.create({
-    data: {
-      ...userDataStep,
-      ...bodyDataStep,
-      ...fitnessProfileStep,
-      ...partialMacroSplitStep,
+export async function getUserProfile({ userId }: getUserProfileProps) {
+  const profileWithNutritionResult = await db.metricsProfile.findFirst({
+    where: { userId },
+    include: {
+      nutritionResult: {
+        orderBy: { date: "desc" },
+        take: 1, // ^ get latest nutritionResult
+        omit: { profileSnapshot: true } // not needed for profile display
+      },
       user: {
-        connect: {
-          id: userId
+        select: {
+          name: true,
+          displayUsername: true
         }
       }
     }
   })
+
+  if (!profileWithNutritionResult || profileWithNutritionResult.nutritionResult.length !== 1) return null
+
+  const { nutritionResult, ...rest } = profileWithNutritionResult
+  const currentNutritionResult = profileWithNutritionResult.nutritionResult[0] // allowed because we explicitly check if nutritionResult has a length of 1
+
+  //* return a object which includes the latest nutritionResult data as an object instead of an array 
+  return {
+    ...rest,
+    nutritionResult: currentNutritionResult
+  }
 }
 
 
-//* flat profile
-interface createProfileFromMergedProps {
-  userProfileData: FlatProfileSchema
+//* update profile
+interface UpdateUserProfileProps extends Pick<ChangedProfileCalculationProps, "profileData"> {
   userId: string
 }
-export async function createProfileFromMerged({ }: createProfileFromMergedProps) { }
-
-
-//* create nutrition result
-interface CreateNutritionResultFromProfileProps {
-  profileData: MetricsProfileModel,
-  useRecommended: boolean
-}
-export async function createNutritionResultFromProfile({ profileData, useRecommended }: CreateNutritionResultFromProfileProps) {
-  const { id, userId, ...actualProfileData } = profileData
-  const { weightKg, fitnGoalMap, activityMap, trainingDaysPerWeek, kfaMap, proteinSplit, fatSplit, carbSplit } = flatProfileSchemaMapping({ ...actualProfileData, useRecommended })
-
-  const bmr = calculateBMR({ weightKg, kfaMap })
-  const tefQuota = calculateTEFQuota({ carbSplit, fatSplit, proteinSplit })
-  const tdee = calculateTDEE({ activityMap, bmr, tefQuota, trainingDaysPerWeek })
-  const caloryGoal = calculateCaloryGoal({ fitnGoalMap, tdee })
-  const waterDemand = calculateWaterDemand({ trainingDaysPerWeek, weightKg })
-
-  let finalProteinSplit = proteinSplit
-  let finalFatSplit = fatSplit
-  let finalCarbSplit = carbSplit
-  if (useRecommended) {
-    const {
-      proteinSplit: recProteinSplit,
-      fatSplit: recFatSplit,
-      carbSplit: recCarbSplit
-    } = calculateRecommendedSplitsByBodyType({
-      bodyType: profileData.bodyType,
-      fitnessGoal: profileData.fitnessGoal
-    })
-
-    finalProteinSplit = recProteinSplit
-    finalFatSplit = recFatSplit
-    finalCarbSplit = recCarbSplit
-  }
-
-  const { amountCarbs, amountFats, amountProtein } = calculateTotalSplitValues({
-    caloryGoal,
-    proteinSplit: finalProteinSplit,
-    fatSplit: finalFatSplit,
-    carbSplit: finalCarbSplit,
-  })
-
-  return await db.nutritionResult.create({
+export async function updateUserProfile({
+  userId,
+  profileData,
+}: UpdateUserProfileProps) {
+  return await db.metricsProfile.update({
+    where: {
+      userId
+    },
     data: {
-      bmr,
-      tdee,
-      caloryGoal,
-      tefQuota,
-      waterDemand,
-      // gram amounts from splits
-      amountCarbs,
-      amountFats,
-      amountProtein,
-      // snapshot/extra data
-      profileSnapshot: actualProfileData,
-      usedRecommendedSplits: useRecommended,
+      ...profileData
+    }
+  })
+}
+
+
+//* create nutrition result from updated 
+interface UpsertNutritionResultFromProfileChangeProps extends ChangedProfileCalculationProps {
+  metricsProfileId: string
+  updateDay: Date
+}
+export async function upsertNutritionResultFromProfileChange({
+  metricsProfileId,
+  updateDay: date,
+  profileData,
+  useRecommended
+}: UpsertNutritionResultFromProfileChangeProps) {
+  const { ...nutritionData } = await changedProfileCalculation({ profileData, useRecommended })
+
+  return await db.nutritionResult.upsert({
+    where: {
+      metricsProfileId_date: {
+        metricsProfileId, date
+      }
+    },
+    update: {
+      ...nutritionData,
       // connect to metricsProfile (id)
-      metricsProfile: { connect: { id } }
+    },
+    create: {
+      ...nutritionData,
+      metricsProfile: { connect: { id: metricsProfileId } }
     }
   })
 }

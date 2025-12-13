@@ -12,7 +12,7 @@ export function ProfileStepsHeader() {
   const { currentStep, toStep, maxStep } = useProfileSteps()
 
   const onboardCreateProfileState = useMutationState({
-    filters: { mutationKey: orpc.onboard.createProfile.mutationKey() },
+    filters: { mutationKey: orpc.onboard.mutationKey() },
     select: (mutation) => mutation.state.status === "pending"
   })
   const buttonsDisabled = onboardCreateProfileState.length > 0 ? onboardCreateProfileState[onboardCreateProfileState.length - 1] : false

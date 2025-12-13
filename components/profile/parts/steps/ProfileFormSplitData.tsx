@@ -14,7 +14,7 @@ export function ProfileFormSplitData() {
 
       <FieldGroup>
         <ProfileFormFieldRecommended />
-        <ProfileFormFieldMacroSplits />
+        <ProfileFormFieldMacroSplits initialRecommended={true} />
       </FieldGroup>
     </FieldSet>
   );

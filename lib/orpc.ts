@@ -27,6 +27,16 @@ const link = new RPCLink({
       return 'GET'
     }
 
+    // Use PUT for update operations
+    if (path.at(-1)?.match(/^(?:update)(?:[A-Z].*)?$/)) {
+      return 'PUT'
+    }
+
+    // Use DELETE for delete operations
+    if (path.at(-1)?.match(/^(?:delete)(?:[A-Z].*)?$/)) {
+      return 'DELETE'
+    }
+
     return 'POST'
   },
 })

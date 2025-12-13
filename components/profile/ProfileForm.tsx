@@ -27,7 +27,7 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
     mode: "onTouched",
   })
 
-  const { mutate: createProfile, data } = useMutation(orpc.onboard.createProfile.mutationOptions({
+  const { mutate: createProfile, data } = useMutation(orpc.onboard.mutationOptions({
     // onSuccess parameters: (data, variables, onMutateResult, context)
     onError: (error) => {
       if (isDefinedError(error)) {

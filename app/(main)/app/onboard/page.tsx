@@ -45,11 +45,11 @@ async function PageWrap() {
 
 function UserHasProfile() {
   return (
-    <Alert className="p-3 [&>svg]:size-4.5">
+    <Alert className="p-3 max-w-md [&>svg]:size-4.5">
       <AlertCircleIcon />
       <AlertTitle className="text-lg leading-normal">Du hast bereits ein Profil!</AlertTitle>
       <AlertDescription className="flex flex-col items-end gap-4">
-        <span>Du kannst das Onboarding nicht noch einmal durchlaufen</span>
+        <span className="w-full text-start">Du kannst das Onboarding nicht noch einmal durchlaufen</span>
         <div className="flex justify-between items-center w-full">
           <Button asChild variant="outline">
             <Link href={APP_BASE_URL + "/user"}><FileUserIcon /> Zum Profil</Link>

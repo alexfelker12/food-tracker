@@ -86,3 +86,12 @@ export function get_yyyymmdd_date(date: Date) {
 export function getGermanNumber(number: number) {
   return new Intl.NumberFormat("de-DE", { style: "decimal" }).format(number)
 }
+
+// formats date to german date format, e.g.: 18.07.2025
+export function getGermanDate(date: Date) {
+  return date.toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  })
+}
