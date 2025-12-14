@@ -9,7 +9,7 @@ import { cn, get_yyyymmdd_date, getGermanDate } from "@/lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 
-interface CompactNumFieldProps extends React.ComponentProps<"div"> {
+interface TrackingWeekDaysProps extends React.ComponentProps<"div"> {
   field: ControllerRenderProps<any, any>
   fieldState: ControllerFieldState
 }
@@ -17,7 +17,7 @@ interface CompactNumFieldProps extends React.ComponentProps<"div"> {
 export function TrackingWeekDays({
   field, fieldState, // Controller-render props
   className, ...props // Field props
-}: CompactNumFieldProps) {
+}: TrackingWeekDaysProps) {
   const trackingDays = useMemo(() => {
     return Array.from({ length: 7 }).map((_, index) => {
       const date = new Date()

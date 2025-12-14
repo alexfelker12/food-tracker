@@ -43,7 +43,7 @@ export function CompactNumField({
         <FieldDescription className="sr-only">{description}</FieldDescription>
         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
       </div>
-      <InputGroup className="flex-1">
+      <InputGroup className="w-fit">
         <NumFieldInput
           field={field}
           fieldState={fieldState}

@@ -4,10 +4,13 @@ import { Suspense } from "react";
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { JournalDayMacros } from "./journal/[journalDayDate]/_components/JournalDayMacros"; // move to @/components?
+import { CaloryRangeWidget } from "./_components/CaloryRangeWidget";
+import { DateToday } from "./_components/DateToday";
 
 
 export default function Page() {
@@ -16,18 +19,20 @@ export default function Page() {
       <div className="flex flex-col flex-1 items-center gap-4 [&>section]:w-full">
 
         <section className="flex justify-between gap-4" aria-description="App Kopfzeile">
-          <div></div>
+          <div className="size-9"></div>
           <h1 className="font-bold text-2xl text-primary" aria-label="Titel">MFoody</h1>
-          <div></div>
+          <ThemeToggle />
         </section>
 
         <section className="gap-2 grid" aria-description="Startseite - Dashboard Widgets">
           <div role="presentation">
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-between items-end gap-4">
               <h2 className="font-semiboldbold text-xl">Heute</h2>
 
               {/* <div></div> maybe notifications? */}
-              <div></div>
+              <Suspense>
+                <DateToday />
+              </Suspense>
             </div>
 
             <Separator />
@@ -35,6 +40,10 @@ export default function Page() {
 
           <Suspense fallback={<Skeleton className="w-full h-[110px]" />}>
             <OpenMacrosWidgetWrap />
+          </Suspense>
+
+          <Suspense fallback={<Skeleton className="w-full h-[135px]" />}>
+            <CaloryRangeWidgetWrap />
           </Suspense>
         </section>
 
@@ -59,3 +68,15 @@ async function OpenMacrosWidgetWrap() {
     </HydrateClient>
   )
 }
+
+async function CaloryRangeWidgetWrap() {
+  const qc = getQueryClient()
+  await qc.prefetchQuery(orpc.dashboard.kcalRange.queryOptions())
+
+  return (
+    <HydrateClient client={qc}>
+      <CaloryRangeWidget />
+    </HydrateClient>
+  )
+}
+

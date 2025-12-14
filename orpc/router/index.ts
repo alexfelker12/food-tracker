@@ -17,24 +17,28 @@ import { journalDayMacrosByDate } from "@/orpc/router/journal/day/getMacros";
 import { deleteEntry } from "@/orpc/router/journal/entry/deleteEntry";
 import { listJournalDays } from "@/orpc/router/journal/list";
 
+//* dashboard
+import { getKcalRange } from "@/orpc/router/dashboard/kcalRange";
+
 
 // 0 implement track food functionality
 //! 1st
 //? 2nd
 //* 3rd
 //* 4th
-// ^ currently here
 // 5th
+// ^ currently here
 //// 6th
 
 export const router = {
-  // dashboard: { // 5th
-  //// decide on which "widget" or generally which data to show on start/dashboard screen
-  // },
+  dashboard: { // 5th
+    // decide on which "widget" or generally which data to show on start/dashboard screen
+    kcalRange: getKcalRange
+  },
   onboard: createInitialProfile,
   profile: {
-    get: getProfile, //* 4th <--- get current profile data
-    update: updateProfile //* 4th <--- update profile to get updated nutritionResult
+    get: getProfile,
+    update: updateProfile
   },
   food: {
     list: listFood,
