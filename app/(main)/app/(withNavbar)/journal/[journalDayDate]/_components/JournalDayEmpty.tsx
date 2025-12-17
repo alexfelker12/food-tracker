@@ -17,7 +17,7 @@ type JournalDayEmptyProps = {
 export function JournalDayEmpty({ journalDayDate }: JournalDayEmptyProps) {
   const dateParam = get_yyyymmdd_date(journalDayDate)
   return (
-    <Empty>
+    <Empty className="border">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <ListXIcon />

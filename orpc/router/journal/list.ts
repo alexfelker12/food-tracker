@@ -1,9 +1,13 @@
-import { JournalDay } from "@/generated/prisma/client";
-import { authMiddleware } from "@/orpc/middleware/authorized";
-import { base } from "@/orpc/middleware/base";
-import { getJournalDays } from "@/server/actions/journal";
 import z from "zod";
 
+import { authMiddleware } from "@/orpc/middleware/authorized";
+import { base } from "@/orpc/middleware/base";
+
+import { getJournalDays } from "@/server/actions/journal";
+
+
+type ProcedureReturnType = Awaited<ReturnType<typeof getJournalDays>>
+export type ListJournalDaysType = NonNullable<ProcedureReturnType>
 export const listJournalDays = base
   .use(authMiddleware)
   .route({
@@ -13,13 +17,17 @@ export const listJournalDays = base
     tags: ["Journal"]
   })
   // .input(journalEntrySchema)
-  .output(z.custom<JournalDay[]>())
+  .output(z.custom<ProcedureReturnType>())
   .handler(async ({
     // input: { ...schemaProps },
     context: { session },
-    // errors
+    errors
   }) => {
-    return await getJournalDays({
+    const journalDays = await getJournalDays({
       userId: session.user.id,
     })
+
+    if (!journalDays) throw errors.FORBIDDEN()
+
+    return journalDays
   })

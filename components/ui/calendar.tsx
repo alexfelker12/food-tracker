@@ -17,7 +17,7 @@ function Calendar({
   showOutsideDays = true,
   captionLayout = "label",
   buttonVariant = "ghost",
-  formatters,
+  // formatters,
   components,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
@@ -35,11 +35,11 @@ function Calendar({
         className
       )}
       captionLayout={captionLayout}
-      formatters={{
-        formatMonthDropdown: (date) =>
-          date.toLocaleString("default", { month: "short" }),
-        ...formatters,
-      }}
+      // formatters={{
+      //   formatMonthDropdown: (date) =>
+      //     date.toLocaleString("default", { month: "short" }),
+      //   ...formatters,
+      // }}
       classNames={{
         root: cn("w-fit", defaultClassNames.root),
         months: cn(
@@ -96,7 +96,7 @@ function Calendar({
           defaultClassNames.week_number_header
         ),
         week_number: cn(
-          "text-[0.8rem] text-muted-foreground select-none",
+          "text-[0.8rem] text-muted-foreground select-none [&>div]:size-full",
           defaultClassNames.week_number
         ),
         day: cn(

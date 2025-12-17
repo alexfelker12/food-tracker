@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { APP_BASE_URL, journalDayRegex } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
-import { get_yyyymmdd_date, getGermanDate } from "@/lib/utils";
+import { cn, get_yyyymmdd_date, getGermanDate } from "@/lib/utils";
 
 import { ChevronLeftIcon } from "lucide-react";
 
@@ -14,6 +14,8 @@ import { Spinner } from "@/components/ui/spinner";
 
 import { JournalDay, JournalDayProps } from "./_components/JournalDay";
 import { JournalDayMacros } from "./_components/JournalDayMacros";
+import { JournalDayPicker } from "./_components/JournalDayPicker";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 
 export default async function Page({
@@ -43,19 +45,32 @@ export default async function Page({
         <div className="flex justify-between items-center">
           <BackButton
             referrerPath={APP_BASE_URL + '/journal' as `/${string}`}
-            size="icon-sm"
+            size="icon"
             variant="secondary"
           >
             <ChevronLeftIcon />
           </BackButton>
-          <h1 className="font-bold text-2xl">{germanDate}</h1>
-          <div className="size-8"></div>
+
+          <Suspense fallback={
+            <div className={cn(
+              buttonVariants({ variant: "secondary" }),
+              "font-semibold text-lg text-muted-foreground select-none"
+            )}>
+              <Spinner className="size-4.5" />
+              <span className="mt-0.5 leading-none">{germanDate}</span>
+            </div>
+          }>
+            <JournalDayPickerWrap date={thisDate} />
+          </Suspense>
+
+          <div className="size-9"></div>
         </div>
 
-        <div className="flex flex-col flex-1 gap-4 has-data-[slot=empty]:gap-0">
+        <div className="flex flex-col flex-1 gap-4">
           <Suspense fallback={<Skeleton className="w-full h-[110px]" />}>
             <JournalDayMacroWrap date={thisDate} />
           </Suspense>
+
           <Suspense fallback={<div className="place-items-center grid w-full h-40">
             <Spinner className="text-primary size-6" />
           </div>}>
@@ -93,6 +108,20 @@ async function JournalDayMacroWrap({ date }: JournalDayProps) {
     </HydrateClient>
   )
 }
+
+async function JournalDayPickerWrap({ date }: JournalDayProps) {
+  const qc = getQueryClient()
+  await qc.prefetchQuery(orpc.journal.list.queryOptions({
+    input: { date }
+  }))
+
+  return (
+    <HydrateClient client={qc}>
+      <JournalDayPicker date={date} />
+    </HydrateClient>
+  )
+}
+
 
 // function Loader() {
 //   return (

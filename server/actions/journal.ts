@@ -120,14 +120,29 @@ interface GetJournalDaysProps {
   userId: string
 }
 export async function getJournalDays({ userId }: GetJournalDaysProps) {
-  return await db.journalDay.findMany({
+  const firstNutritionResult = await db.nutritionResult.findFirst({
+    where: { metricsProfile: { userId }, },
+    orderBy: { date: "asc" },
+  })
+
+  if (!firstNutritionResult) return null;
+
+  const journalDays = await db.journalDay.findMany({
     where: {
       userId,
       journalEntries: {
         some: {}
+      },
+      date: {
+        gte: firstNutritionResult.date
       }
     }
   })
+
+  return {
+    journalDays,
+    minDate: firstNutritionResult.date
+  }
 }
 
 
