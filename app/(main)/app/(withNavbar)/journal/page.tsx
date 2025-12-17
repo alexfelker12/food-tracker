@@ -11,10 +11,17 @@ import { JournalCalendarView } from "./_components/JournalCalendarView";
 export default function Page() {
   return (
     <main className="flex justify-center items-center h-full">
-      <div className="flex flex-col items-center gap-4 p-4 w-full">
-        <Suspense fallback={<FullScreenLoader />}>
-          <PageWrap />
-        </Suspense>
+      <div className="flex flex-col items-center gap-6 p-4 size-full">
+        <div className="space-y-1">
+          <h1 className="font-semibold text-xl">Tagebuch</h1>
+          <p className="text-muted-foreground text-sm">Dies ist eine Übersicht deiner tracking Tage. Sie soll dir auf einen Blick die Tage kennzeichnen, an denen du Kalorien getrackt hast</p>
+        </div>
+
+        <div className="flex flex-1 items-center w-full">
+          <Suspense fallback={<FullScreenLoader />}>
+            <PageWrap />
+          </Suspense>
+        </div>
       </div>
     </main>
   );
