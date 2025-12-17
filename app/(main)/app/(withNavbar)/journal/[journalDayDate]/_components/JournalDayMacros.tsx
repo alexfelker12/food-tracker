@@ -3,7 +3,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { orpc } from "@/lib/orpc";
-import { getGermanNumber } from "@/lib/utils";
+import { cn, getGermanNumber } from "@/lib/utils";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -17,10 +17,10 @@ export function JournalDayMacros({ date }: JournalDayMacrosProps) {
     input: { date }
   }))
 
-  const openKcal = getGermanNumber(openMacros.kcal)
-  const openFats = getGermanNumber(openMacros.fats)
-  const openCarbs = getGermanNumber(openMacros.carbs)
-  const openProteins = getGermanNumber(openMacros.proteins)
+  const openKcal = openMacros.kcal === 0 ? "-" : getGermanNumber(openMacros.kcal)
+  const openFats = openMacros.fats === 0 ? "-" : getGermanNumber(openMacros.fats)
+  const openCarbs = openMacros.carbs === 0 ? "-" : getGermanNumber(openMacros.carbs)
+  const openProteins = openMacros.proteins === 0 ? "-" : getGermanNumber(openMacros.proteins)
 
   return (
     <Card className="gap-3 py-4 pb-3">
@@ -48,17 +48,26 @@ export function JournalDayMacros({ date }: JournalDayMacrosProps) {
           <div className="flex flex-1 items-center gap-1 h-full">
             <div className="flex flex-col flex-1 gap-1 text-center">
               <span className="text-muted-foreground text-xs">Kohlenhydrate</span>
-              <span>{openCarbs} <span className="text-muted-foreground text-xs">g</span></span>
+              <span>{openCarbs} <span className={cn(
+                "text-muted-foreground text-xs",
+                openMacros.carbs === 0 && "hidden"
+              )}>g</span></span>
             </div>
 
             <div className="flex flex-col flex-1 gap-1 text-center">
               <span className="text-muted-foreground text-xs">Fette</span>
-              <span>{openFats} <span className="text-muted-foreground text-xs">g</span></span>
+              <span>{openFats} <span className={cn(
+                "text-muted-foreground text-xs",
+                openMacros.fats === 0 && "hidden"
+              )}>g</span></span>
             </div>
 
             <div className="flex flex-col flex-1 gap-1 text-center">
               <span className="text-muted-foreground text-xs">Proteine</span>
-              <span>{openProteins} <span className="text-muted-foreground text-xs">g</span></span>
+              <span>{openProteins} <span className={cn(
+                "text-muted-foreground text-xs",
+                openMacros.proteins === 0 && "hidden"
+              )}>g</span></span>
             </div>
           </div>
 

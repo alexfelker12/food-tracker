@@ -205,7 +205,20 @@ export async function getJournalDayMacros({ userId, date }: GetJournalDayMacrosP
   const openMacros = await Promise
     .all([latestNutritionResult, currentMacros])
     .then(([nutritionResult, { _sum: { kcal, fats, carbs, proteins } }]) => {
-      if (!nutritionResult) return null; // can't calculate calories and macros if no calory goal was created
+      if (!nutritionResult) return {
+        availableMacros: {
+          kcal: 0,
+          fats: 0,
+          carbs: 0,
+          proteins: 0,
+        },
+        openMacros: {
+          kcal: 0,
+          fats: 0,
+          carbs: 0,
+          proteins: 0,
+        }
+      }; // can't calculate calories and macros if no calory goal was created - just return "-"
 
       const { caloryGoal, amountFats, amountCarbs, amountProtein } = nutritionResult
 

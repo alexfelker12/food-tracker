@@ -18,14 +18,10 @@ export const journalDayMacrosByDate = base
   .handler(async ({
     input: { date },
     context: { session },
-    errors
+    // errors
   }) => {
-    const openMacros = await getJournalDayMacros({
+    return await getJournalDayMacros({
       userId: session.user.id,
       date
     })
-
-    if (!openMacros) throw errors.FORBIDDEN()
-
-    return openMacros
   })

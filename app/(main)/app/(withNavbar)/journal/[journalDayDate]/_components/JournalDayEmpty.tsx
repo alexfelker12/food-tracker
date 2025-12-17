@@ -24,7 +24,7 @@ export function JournalDayEmpty({ journalDayDate }: JournalDayEmptyProps) {
         </EmptyMedia>
         <EmptyTitle>Hier ist nichts...</EmptyTitle>
         <EmptyDescription>
-          Du hast für diesen Tag bisher keine Lebensmittel oder Mahlzeiten getrackt
+          Du hast für diesen Tag keine Lebensmittel oder Mahlzeiten getrackt
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
