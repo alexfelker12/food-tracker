@@ -11,7 +11,7 @@ import { UserDropdown } from "./UserDropdown"
 
 export function BottomNavbar() {
   return (
-    <header className="right-0 bottom-0 left-0 z-50 sticky p-2">
+    <header className="right-0 bottom-0 left-0 z-50 sticky p-2 pt-0">
       <div className="relative">
         {/* backgrund blur */}
         <div className="absolute inset-0 bg-background/80 shadow-lg backdrop-blur-xl border border-border rounded-md" />
@@ -23,7 +23,7 @@ export function BottomNavbar() {
           </Suspense>
 
           {/* user dropdown */}
-          {/* <UserDropdownLoader /> */}
+          {/* <UserDropdownMock /> */}
           <Suspense fallback={<UserDropdownLoader />}>
             <UserDropdownWrap />
           </Suspense>
@@ -38,8 +38,6 @@ async function UserDropdownWrap() {
     headers: await headers()
   })
 
-  console.log("fetched session in wrap")
-
   return (
     <AuthProvider initialSession={sessionPromise}>
       <UserDropdown />
@@ -52,7 +50,17 @@ function UserDropdownLoader() {
     <div className="flex flex-col items-center gap-1 min-w-14">
       <div className="flex justify-center items-center size-10">
         <Skeleton className="rounded-full text-primary size-9" />
-        {/* <div className="bg-muted rounded-full text-primary size-9" /> */}
+      </div>
+      <span className="font-medium text-muted-foreground text-xs transition-colors">Profil</span>
+    </div>
+  );
+}
+
+function UserDropdownMock() {
+  return (
+    <div className="flex flex-col items-center gap-1 min-w-14">
+      <div className="flex justify-center items-center size-10">
+        <div className="bg-muted rounded-full text-primary size-9" />
       </div>
       <span className="font-medium text-muted-foreground text-xs transition-colors">Profil</span>
     </div>
