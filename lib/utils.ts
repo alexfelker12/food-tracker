@@ -95,3 +95,14 @@ export function getGermanDate(date: Date) {
     year: "numeric"
   })
 }
+
+
+// -- Source - https://stackoverflow.com/a/70276893
+// -- Posted by Zenik
+// -- Retrieved 2025-12-19, License - CC BY-SA 4.0
+//* adjusted function name
+export function offsetDate(date: Date) {
+  return new Date(
+    Date.parse(date.toUTCString()) - date.getTimezoneOffset() * 60000
+  );
+}

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { de } from "react-day-picker/locale";
 import { ControllerFieldState, ControllerRenderProps } from "react-hook-form";
 
-import { cn } from "@/lib/utils";
+import { cn, getGermanDate, offsetDate } from "@/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -75,7 +75,7 @@ export function DateFieldInput({
           className="justify-between font-normal"
         >
           {field.value
-            ? <span>{field.value.toLocaleDateString()}</span>
+            ? <span>{getGermanDate(field.value)}</span>
             : <span className="text-muted-foreground">{placeholder}</span>
           }
           <ChevronDownIcon className="opacity-50 text-muted-foreground" />
@@ -89,7 +89,8 @@ export function DateFieldInput({
           onMonthChange={(month) => setSelectedMonth(month)}
           selected={field.value}
           onSelect={(date) => {
-            field.onChange(date ?? null)
+            const changedDate = date ? offsetDate(date) : null // uses offset calculation to pass correct date. Prisma @db.Date converts the date to one day behind with default dates from the day picker component
+            field.onChange(changedDate)
             field.onBlur()
             setOpen(false)
             //? maybe reset selected month to today's month if user unselects current selection?
