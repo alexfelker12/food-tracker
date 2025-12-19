@@ -68,7 +68,7 @@ export async function upsertNutritionResultFromProfileChange({
   profileData,
   useRecommended
 }: UpsertNutritionResultFromProfileChangeProps) {
-  const { ...nutritionData } = await changedProfileCalculation({ profileData, useRecommended })
+  const { ...nutritionData } = changedProfileCalculation({ profileData, useRecommended })
 
   return await db.nutritionResult.upsert({
     where: {

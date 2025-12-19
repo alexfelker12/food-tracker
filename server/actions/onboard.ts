@@ -64,7 +64,7 @@ export async function createNutritionResultFromProfile({
   profileData,
   useRecommended
 }: CreateNutritionResultFromProfileProps) {
-  const nutritionData = await changedProfileCalculation({ profileData, useRecommended })
+  const nutritionData = changedProfileCalculation({ profileData, useRecommended })
 
   return await db.nutritionResult.create({
     data: {

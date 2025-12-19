@@ -6,10 +6,10 @@ import { flatProfileSchemaMapping } from "@/schemas/mappings/profileSchemaMappin
 
 //* create nutrition result
 export interface ChangedProfileCalculationProps {
-  profileData: Omit<MetricsProfileModel, "id" | "userId"> //TODO: correct profile type
+  profileData: Omit<MetricsProfileModel, "id" | "userId">
   useRecommended: boolean
 }
-export async function changedProfileCalculation({ profileData, useRecommended }: ChangedProfileCalculationProps) {
+export function changedProfileCalculation({ profileData, useRecommended }: ChangedProfileCalculationProps) {
   const { weightKg, fitnGoalMap, activityMap, trainingDaysPerWeek, kfaMap, proteinSplit, fatSplit, carbSplit } = flatProfileSchemaMapping({ ...profileData, useRecommended })
 
   const bmr = calculateBMR({ weightKg, kfaMap })
@@ -50,9 +50,9 @@ export async function changedProfileCalculation({ profileData, useRecommended }:
     tefQuota,
     waterDemand,
     // gram amounts from splits
-    amountCarbs,
-    amountFats,
-    amountProtein,
+    amountCarbs: +(amountCarbs.toFixed(0)),
+    amountFats: +(amountFats.toFixed(0)),
+    amountProtein: +(amountProtein.toFixed(0)),
     // snapshot/extra data
     profileSnapshot: profileData,
     usedRecommendedSplits: useRecommended,

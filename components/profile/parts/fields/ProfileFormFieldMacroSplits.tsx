@@ -2,16 +2,13 @@
 
 import { useState } from "react";
 
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 import { MacroSplitsStepSchema } from "@/schemas/profileSchema";
 import { ProfileSchema } from "@/schemas/types";
 
-import { LockIcon, LockOpenIcon } from "lucide-react";
-
-import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
-import { Slider } from "@/components/ui/slider";
-import { Toggle } from "@/components/ui/toggle";
+import { MacroSplitField } from "./macro-splits/MacroSplitField";
+import { changedProfileCalculation } from "@/server/helpers/changedProfileCalculation";
 
 
 type SplitLabel = keyof typeof MacroSplitsStepSchema.shape
@@ -21,15 +18,12 @@ interface ProfileFormFieldMacroSplitsProps {
 }
 export function ProfileFormFieldMacroSplits({ initialRecommended }: ProfileFormFieldMacroSplitsProps) {
   const { control, formState, setValue, getValues, watch } = useFormContext<ProfileSchema>();
-
+  const [unlockedSplit, setUnlockedSplit] = useState<SplitLabel>("carbSplit") // default carbSplit locked
   const useRecommended = watch("macroSplitStep.useRecommended", initialRecommended)
-
-  const [unlockedSplit, setUnLockedSplit] = useState<SplitLabel>("carbSplit") // default carbSplit locked
 
   //* intercepts slider value change to check, if open sliders value sums up to more than 100
   //* -> dont allow change if so
   const handleSliderValueChange = (changedSplitKey: SplitLabel, slideChangeValue: number) => {
-    if (useRecommended) return; // disable change functionality when using recommendedValues
     // const stepValues = getValues(["macroSplitStep.fatSplit", "macroSplitStep.carbSplit", "macroSplitStep.proteinSplit"])
     const { fatSplit, carbSplit, proteinSplit } = getValues("macroSplitStep")
     const stepValues = { fatSplit, carbSplit, proteinSplit }
@@ -53,14 +47,35 @@ export function ProfileFormFieldMacroSplits({ initialRecommended }: ProfileFormF
     }
   }
 
-  const getLockIcon = (label: SplitLabel) => {
-    return label === unlockedSplit ? <LockOpenIcon className="size-3.5" /> : <LockIcon className="size-3.5" />
-  }
+
+  //* actual gram amount of split values
+  const { amountFats, amountCarbs, amountProtein } = useWatch({
+    control,
+    compute: (data: ProfileSchema) => {
+      const {
+        userDataStep,
+        bodyDataStep,
+        fitnessProfileStep,
+        macroSplitStep: { useRecommended, ...partialMacroSplitStep }
+      } = data
+
+      return changedProfileCalculation({
+        profileData: {
+          ...userDataStep,
+          ...bodyDataStep,
+          ...fitnessProfileStep,
+          ...partialMacroSplitStep,
+        },
+        useRecommended
+      })
+    },
+  });
+
 
   // derived state
-  const fatsUnlocked = unlockedSplit === "fatSplit" || useRecommended
-  const carbsUnlocked = unlockedSplit === "carbSplit" || useRecommended
-  const proteinsUnlocked = unlockedSplit === "proteinSplit" || useRecommended
+  const fatsUnlocked = unlockedSplit === "fatSplit"
+  const carbsUnlocked = unlockedSplit === "carbSplit"
+  const proteinsUnlocked = unlockedSplit === "proteinSplit"
 
   return (
     <div className="space-y-8">
@@ -71,50 +86,25 @@ export function ProfileFormFieldMacroSplits({ initialRecommended }: ProfileFormF
           name="macroSplitStep.fatSplit"
           control={control}
           render={({ field, fieldState }) => (
-            <Field className="gap-1.5" orientation="vertical" data-invalid={fieldState.invalid}>
+            <MacroSplitField
+              label="Fettverteilung"
+              description="Stelle deine gewünschte Makroverteilung für Fette ein. Du kannst den Slider entsperren, sodass sich der Wert automatisch an die übrigen Prozente angleicht."
+              splitUnlocked={fatsUnlocked}
+              useRecommended={useRecommended}
 
-              <FieldContent className="gap-1">
+              value={[field.value]}
+              onValueChange={(value) => {
+                if (fatsUnlocked) return;
+                if (handleSliderValueChange("fatSplit", value[0])) field.onChange(value[0]);
+              }}
+              onPressedChange={() => {
+                if (!fatsUnlocked) setUnlockedSplit("fatSplit")
+              }}
+              splitGramAmount={amountFats}
 
-                <FieldLabel id="macroSplitStep" className="flex justify-between gap-2 w-full">
-                  <span>Fettverteilung</span>
-                  <span className="inline-flex items-center gap-2 text-muted-foreground">
-                    <span>{field.value}%</span>
-                    {/* <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-secondary-foreground">{150}g</span> */}
-                  </span>
-                </FieldLabel>
-
-                <FieldDescription className="sr-only">
-                  Stelle deine gewünschte Makroverteilung für Fette ein
-                </FieldDescription>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-              </FieldContent>
-
-              <div className="flex gap-3 h-8">
-                <Slider
-                  value={[field.value]}
-                  onValueChange={(value) => {
-                    if (fatsUnlocked) return;
-                    if (handleSliderValueChange("fatSplit", value[0])) field.onChange(value[0]);
-                  }}
-                  aria-invalid={fieldState.invalid}
-                  className="w-full transition-opacity"
-                  aria-label="Price Range"
-                  aria-describedby="macroSplitStep"
-                  disabled={fatsUnlocked}
-                />
-                {/* only show when not using recommended values */}
-                {!useRecommended && <Toggle
-                  aria-label="Sperre Fette"
-                  pressed={fatsUnlocked}
-                  onPressedChange={() => { if (!fatsUnlocked) setUnLockedSplit("fatSplit") }}
-                  size="sm"
-                >
-                  {getLockIcon("fatSplit")}
-                </Toggle>}
-              </div>
-
-            </Field>
+              field={field}
+              fieldState={fieldState}
+            />
           )}
         />
 
@@ -123,51 +113,25 @@ export function ProfileFormFieldMacroSplits({ initialRecommended }: ProfileFormF
           name="macroSplitStep.carbSplit"
           control={control}
           render={({ field, fieldState }) => (
-            <Field className="gap-1.5" orientation="vertical" data-invalid={fieldState.invalid}>
+            <MacroSplitField
+              label="Kohlenhydratverteilung"
+              description="Stelle deine gewünschte Makroverteilung für Kohlenhydrate ein. Du kannst den Slider entsperren, sodass sich der Wert automatisch an die übrigen Prozente angleicht."
+              splitUnlocked={carbsUnlocked}
+              useRecommended={useRecommended}
 
-              <FieldContent className="gap-1">
+              value={[field.value]}
+              onValueChange={(value) => {
+                if (carbsUnlocked) return;
+                if (handleSliderValueChange("carbSplit", value[0])) field.onChange(value[0]);
+              }}
+              onPressedChange={() => {
+                if (!carbsUnlocked) setUnlockedSplit("carbSplit")
+              }}
+              splitGramAmount={amountCarbs}
 
-                <FieldLabel id="macroSplitStep.carbSplit" className="flex justify-between gap-2 w-full">
-                  <span>Kohlenhydratverteilung</span>
-                  <span className="inline-flex items-center gap-2 text-muted-foreground">
-                    <span>{field.value}%</span>
-                    {/* <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-secondary-foreground">{150}g</span> */}
-                  </span>
-                </FieldLabel>
-
-                <FieldDescription className="sr-only">
-                  Stelle deine gewünschte Makroverteilung für Kohlenhydrate ein
-                </FieldDescription>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-              </FieldContent>
-
-              <div className="flex gap-3 h-8">
-                <Slider
-                  value={[field.value]}
-                  onValueChange={(value) => {
-                    if (carbsUnlocked) return
-                    field.onChange(value[0])
-                    if (handleSliderValueChange("carbSplit", value[0])) field.onChange(value[0]);
-                  }}
-                  aria-invalid={fieldState.invalid}
-                  className="w-full transition-opacity"
-                  aria-label="Price Range"
-                  aria-describedby="macroSplitStep.carbSplit"
-                  disabled={carbsUnlocked}
-                />
-                {/* only show when not using recommended values */}
-                {!useRecommended && <Toggle
-                  aria-label="Sperre Kohlenhydrate"
-                  pressed={carbsUnlocked}
-                  onPressedChange={() => { if (!carbsUnlocked) setUnLockedSplit("carbSplit") }}
-                  size="sm"
-                >
-                  {getLockIcon("carbSplit")}
-                </Toggle>}
-              </div>
-
-            </Field>
+              field={field}
+              fieldState={fieldState}
+            />
           )}
         />
 
@@ -176,51 +140,25 @@ export function ProfileFormFieldMacroSplits({ initialRecommended }: ProfileFormF
           name="macroSplitStep.proteinSplit"
           control={control}
           render={({ field, fieldState }) => (
-            <Field className="gap-1.5" orientation="vertical" data-invalid={fieldState.invalid}>
+            <MacroSplitField
+              label="Proteinverteilung"
+              description="Stelle deine gewünschte Makroverteilung für Proteine ein. Du kannst den Slider entsperren, sodass sich der Wert automatisch an die übrigen Prozente angleicht."
+              splitUnlocked={proteinsUnlocked}
+              useRecommended={useRecommended}
 
-              <FieldContent className="gap-1">
+              value={[field.value]}
+              onValueChange={(value) => {
+                if (proteinsUnlocked) return;
+                if (handleSliderValueChange("proteinSplit", value[0])) field.onChange(value[0]);
+              }}
+              onPressedChange={() => {
+                if (!proteinsUnlocked) setUnlockedSplit("proteinSplit")
+              }}
+              splitGramAmount={amountProtein}
 
-                <FieldLabel id="macroSplitStep.proteinSplit" className="flex justify-between gap-2 w-full">
-                  <span>Proteinverteilung</span>
-                  <span className="inline-flex items-center gap-2 text-muted-foreground">
-                    <span>{field.value}%</span>
-                    {/* <MoveRightIcon aria-description="ergibt wert" />
-                    <span className="text-secondary-foreground">{150}g</span> */}
-                  </span>
-                </FieldLabel>
-
-                <FieldDescription className="sr-only">
-                  Stelle deine gewünschte Makroverteilung für Proteine ein
-                </FieldDescription>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-              </FieldContent>
-
-              <div className="flex gap-3 h-8">
-                <Slider
-                  value={[field.value]}
-                  onValueChange={(value) => {
-                    if (proteinsUnlocked) return
-                    field.onChange(value[0])
-                    if (handleSliderValueChange("proteinSplit", value[0])) field.onChange(value[0]);
-                  }}
-                  aria-invalid={fieldState.invalid}
-                  className="w-full transition-opacity"
-                  aria-label="Price Range"
-                  aria-describedby="macroSplitStep.proteinSplit"
-                  disabled={proteinsUnlocked}
-                />
-                {/* only show when not using recommended values */}
-                {!useRecommended && <Toggle
-                  aria-label="Sperre Proteine"
-                  pressed={proteinsUnlocked}
-                  onPressedChange={() => { if (!proteinsUnlocked) setUnLockedSplit("proteinSplit") }}
-                  size="sm"
-                >
-                  {getLockIcon("proteinSplit")}
-                </Toggle>}
-              </div>
-
-            </Field>
+              field={field}
+              fieldState={fieldState}
+            />
           )}
         />
 

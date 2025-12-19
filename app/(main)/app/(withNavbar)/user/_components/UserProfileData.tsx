@@ -69,21 +69,21 @@ export function UserProfileData() {
           <span>{profile.nutritionResult.usedRecommendedSplits ? "Ja" : "Nein"}</span>
         </ProfileData>
         {/* split percent from profile & absolute from nutrition result */}
-        <ProfileData className="gap-2 grid grid-cols-[1fr_auto_auto_auto] grid-row-3 text-end">
-          <span className="text-muted-foreground text-start">Fette</span>
+        <ProfileData className="gap-2 grid grid-cols-[1fr_auto_auto_auto] grid-row-3 text-end text-muted-foreground">
+          <span className="text-start">Fette</span>
           <span>{profile.fatSplit} %</span>
-          <span className="text-muted-foreground">-</span>
-          <span>{profile.nutritionResult.amountFats}g</span>
+          <span>-</span>
+          <span className="text-secondary-foreground">{profile.nutritionResult.amountFats}g</span>
 
-          <span className="text-muted-foreground text-start">Kohlenhydrate</span>
+          <span className="text-start">Kohlenhydrate</span>
           <span>{profile.carbSplit} %</span>
-          <span className="text-muted-foreground">-</span>
-          <span>{profile.nutritionResult.amountCarbs}g</span>
+          <span>-</span>
+          <span className="text-secondary-foreground">{profile.nutritionResult.amountCarbs}g</span>
 
-          <span className="text-muted-foreground text-start">Proteine</span>
+          <span className="text-start">Proteine</span>
           <span>{profile.proteinSplit} %</span>
-          <span className="text-muted-foreground">-</span>
-          <span>{profile.nutritionResult.amountProtein}g</span>
+          <span>-</span>
+          <span className="text-secondary-foreground">{profile.nutritionResult.amountProtein}g</span>
         </ProfileData>
       </ProfileDataSection>
 
