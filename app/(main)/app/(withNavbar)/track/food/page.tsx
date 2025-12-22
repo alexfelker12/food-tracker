@@ -1,8 +1,12 @@
+import { Suspense } from "react";
+
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
-import { Suspense } from "react";
-import { FoodItemSkeleton, FoodListing } from "./_components/FoodListing";
+
+import { FoodListingSkeleton } from "./_components/FoodListing";
 import { FoodSearch } from "./_components/FoodSearch";
+import { FoodTrackingHistory } from "./_components/FoodTrackingHistory";
+
 
 export default function Page() {
   return (
@@ -13,31 +17,25 @@ export default function Page() {
           {/* <p className="text-muted-foreground text-sm">Suche nach einem Lebensmittel und klicke auf das "+" um dieses zu deinem Tagebuch hinzuzufügen</p> */}
         </div>
 
-        <FoodSearch />
+        <FoodSearch>
+          {/* render as children to enable Suspense loading */}
+          <Suspense fallback={<FoodListingSkeleton />}>
+            <FoodTrackingHistoryWrap />
+          </Suspense>
+        </FoodSearch>
 
-        <Suspense fallback={<Loader />}>
-          <FoodListingWrap />
-        </Suspense>
       </div>
-    </main>
+    </main >
   );
 }
 
-async function FoodListingWrap() {
+async function FoodTrackingHistoryWrap() {
   const qc = getQueryClient()
-  await qc.prefetchQuery(orpc.food.list.queryOptions({ input: {} }))
+  await qc.prefetchQuery(orpc.journal.history.listPastWeek.queryOptions())
 
   return (
     <HydrateClient client={qc}>
-      <FoodListing />
+      <FoodTrackingHistory />
     </HydrateClient>
   )
-}
-
-function Loader() {
-  return (
-    <div className="flex flex-col gap-1.5">
-      {Array.from({ length: 3 }).map((_, index) => <FoodItemSkeleton key={index} />)}
-    </div>
-  );
 }

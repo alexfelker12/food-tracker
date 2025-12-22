@@ -19,6 +19,7 @@ import { listJournalDays } from "@/orpc/router/journal/list";
 
 //* dashboard
 import { getKcalRange } from "@/orpc/router/dashboard/kcalRange";
+import { listPastWeekJournalEntryFoods } from "./journal/history/listPastWeek";
 
 
 // 0 implement track food functionality
@@ -66,6 +67,9 @@ export const router = {
       //     move: base, // 5th <--- mutate journal entries
       //     update: base, // 5th <--- mutate journal entries
       delete: deleteEntry,
+    },
+    history: {
+      listPastWeek: listPastWeekJournalEntryFoods
     }
   },
 }

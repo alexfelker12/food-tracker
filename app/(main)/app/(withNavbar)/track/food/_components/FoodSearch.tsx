@@ -1,46 +1,71 @@
 "use client"
 
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
-import { cn } from "@/lib/utils";
-import { SearchIcon, XIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
-export function FoodSearch() {
+import { HistoryIcon, SearchCheckIcon } from "lucide-react";
+
+import { CommandRaw } from "@/components/ui/command";
+
+import { FoodListing } from "./FoodListing";
+import { FoodSearchContext } from "./FoodSearchContext";
+import { FoodSearchInput } from "./FoodSearchInput";
+import { FoodListingLabel } from "./FoodListingLabel";
+import { cn } from "@/lib/utils";
+
+
+export function FoodSearch({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const [input, setInput] = useState("")
   const [search, setSearch] = useState("")
-  const inputRef = useRef<HTMLInputElement>(null)
+  const enabled = search.length > 0
 
   return (
-    <div className="">
-      <InputGroup>
-        <InputGroupAddon>
-          <SearchIcon />
-        </InputGroupAddon>
+    <FoodSearchContext.Provider value={{
+      input, setInput,
+      search, setSearch,
+      enabled,
+    }}>
+      <CommandRaw
+        className="gap-4 bg-transparent"
+        // prevent cmdk keyboard navigation to mimic basic links listing accessibility
+        onKeyDown={(e) => {
+          if (["ArrowUp", "ArrowDown", "Enter", "Home", "End"].includes(e.key)) {
+            e.preventDefault()
+            e.stopPropagation()
+          }
+        }}
+      >
 
-        <InputGroupInput
-          ref={inputRef}
-          value={search}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setSearch(e.target.value)
-          }}
-          placeholder="Lebensmittel suchen..."
-        />
+        {/* has CommandInput inside */}
+        <FoodSearchInput />
 
-        <InputGroupAddon align="inline-end">
-          <InputGroupButton
-            onClick={() => {
-              setSearch("")
-              inputRef.current?.focus()
-            }}
-            size="icon-xs"
-            className={cn("",
-              search === "" && "opacity-0! pointer-events-none",
+        <div className="relative space-y-2">
+
+          <FoodListingLabel
+            classname={cn(
+              "opacity-100 transition-[opacity,scale] duration-150 scale-y-100",
+              enabled && "opacity-0 scale-y-50"
             )}
-            disabled={search === ""}
-          >
-            <XIcon />
-          </InputGroupButton>
-        </InputGroupAddon>
-      </InputGroup>
-    </div>
+            labelLeft={<><HistoryIcon /> <span className="leading-none">Verlauf</span></>}
+            labelRight="letzte 7 Tage"
+          />
+          <FoodListingLabel
+            classname={cn("top-0 left-0 absolute opacity-0 w-full transition-[opacity,scale] duration-150 scale-y-50",
+              enabled && "opacity-100 scale-y-100"
+            )}
+            labelLeft={<><SearchCheckIcon /> <span className="leading-none">Suche</span></>}
+          />
+
+          {enabled
+            ? <FoodListing />
+            : children
+          }
+        </div>
+
+      </CommandRaw>
+    </FoodSearchContext.Provider>
   );
 }

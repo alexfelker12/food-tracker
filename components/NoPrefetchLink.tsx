@@ -8,8 +8,6 @@ export default function NoPrefetchLink({
     <Link
       prefetch={prefetch ?? false}
       {...props}
-    >
-      {props.children}
-    </Link>
+    />
   );
 }

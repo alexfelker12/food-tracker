@@ -1,5 +1,6 @@
 import { BASE_PORTION_NAME } from "@/lib/constants";
 import { db } from "@/lib/db";
+import { get_yyyymmdd_date } from "@/lib/utils";
 import { journalEntrySchema } from "@/schemas/journal/journalEntrySchema";
 import { JournalEntrySchema } from "@/schemas/types";
 
@@ -254,4 +255,59 @@ export async function deleteJournalEntry({ userId, journalEntryId }: DeleteJourn
       journalDayUserId: userId
     }
   })
+}
+
+
+// foods tracked in the last 7 days for a user
+interface PastWeekJournalEntryFoodsProps {
+  userId: string
+}
+export async function pastWeekJournalEntryFoods({ userId }: PastWeekJournalEntryFoodsProps) {
+  //* create a date object with a date one week ago to set as minimum date for the query
+  const weekAgo = new Date()
+  weekAgo.setDate(weekAgo.getDate() - 7)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  //* find all journal entries in the past 7 days until today
+  const pastWeekJournalEntries = await db.journalEntry.findMany({
+    where: {
+      journalDayUserId: userId,
+      journalDayDate: {
+        gt: weekAgo,
+        lte: today
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
+    },
+    include: {
+      consumableReference: {
+        select: {
+          food: {
+            include: {
+              portions: {
+                where: {
+                  isDefault: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+
+  //* use a Set to create an array with unique foods
+  const distinctFoodIds = new Set<string>()
+  const distinctFoods: NonNullable<NonNullable<typeof pastWeekJournalEntries[0]["consumableReference"]>["food"]>[] = []
+  pastWeekJournalEntries.forEach((journalEntry) => {
+    const food = journalEntry.consumableReference?.food
+    if (!food) return;
+
+    if (!distinctFoodIds.has(food.id)) distinctFoods.push(food)
+    distinctFoodIds.add(food.id)
+  })
+
+  return distinctFoods
 }
