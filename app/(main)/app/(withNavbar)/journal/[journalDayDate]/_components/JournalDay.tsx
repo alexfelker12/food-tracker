@@ -6,8 +6,6 @@ import { orpc } from "@/lib/orpc";
 
 import { IntakeTime as intakeTimeEnum } from "@/generated/prisma/enums";
 
-import { Accordion } from "@/components/ui/accordion";
-
 import { JournalEntryGroup } from "./JournalEntryGroup";
 
 
@@ -21,17 +19,9 @@ export function JournalDay({ date }: JournalDayProps) {
 
   //TODO: handle background fetch loading state from invalidating queries
 
-  //* check for length to default open intake times that have at least one entry
-  const defaultOpenIntakeTimes = Object
-    .values(intakeTimeEnum)
-    .flatMap((group) => groupedJournalEntries[group].length > 0 ? group : [])
-
   {/* journal entries grouped by intaketime */ }
   return (
-    <Accordion
-      type="multiple"
-      defaultValue={defaultOpenIntakeTimes}
-    >
+    <div className="space-y-6">
       {/* breakfast */}
       <JournalEntryGroup
         label="Frühstück"
@@ -56,6 +46,6 @@ export function JournalDay({ date }: JournalDayProps) {
         value={intakeTimeEnum.SNACKS}
         journalEntries={groupedJournalEntries.SNACKS}
       />
-    </Accordion>
+    </div>
   );
 }

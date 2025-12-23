@@ -109,7 +109,7 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
     //* only return fulfilled queries
     //? maybe collect rejected queries and pass them along fulfilled ones? (on hold)
     .then((results) => results.flatMap((result) => {
-      // if (result.status === "rejected") console.log(result.reason);
+      if (result.status === "rejected") console.log(result.reason);
       return result.status === "fulfilled" ? result.value : []
     }))
 

@@ -312,7 +312,7 @@ enum IntakeTime {
 // represents a (loose) reference to the track food/meal with its portion
 // if food/meal or the portion is not trackable anymore, data will fall back to defaults
 model ConsumableReference {
-  // id String @id @default(cuid())
+  id String @id @default(cuid())
 
   // reference to either food/foodPortion or meal/mealPortion (both optional but one required logically)
   foodId        String?
@@ -327,8 +327,6 @@ model ConsumableReference {
 
   journalEntryId String       @unique
   journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
-
-  @@id([journalEntryId]) // use journal entry as id since every JournalEntry has its own ConsumableReference
 }
 
 // represents a logged item (food or meal) in the daily journal

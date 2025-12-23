@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useMutationState } from "@tanstack/react-query";
 
 import { BASE_PORTION_GRAMS } from "@/lib/constants";
+import { getGermanNumber } from "@/lib/utils";
 
 import { EllipsisVerticalIcon } from "lucide-react";
 
@@ -37,6 +38,11 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
     filters: { mutationKey: [["journal", "entry"]] },
     select: (mutation) => mutation.state.status === "pending"
   }).some((pending) => pending) // TODO: check if some is correct, else use length based 
+
+  //* german format macro values
+  const foodFats = getGermanNumber(journalEntry.fats)
+  const foodCarbs = getGermanNumber(journalEntry.carbs)
+  const foodProteins = getGermanNumber(journalEntry.proteins)
 
   return (
     <JournalEntryContext.Provider value={{
@@ -72,11 +78,11 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
           <CollapsibleContent className="w-full">
             <ItemFooter className="flex-col items-start gap-1 pt-2">
               <div className="flex justify-between items-center w-full">
-                <span>Fette: {journalEntry.fats} g</span>
-                <span>Kohlenhydrate: {journalEntry.carbs} g</span>
-                <span>Proteine: {journalEntry.proteins} g</span>
+                <span>Kohlenhydrate: {foodCarbs} g</span>
+                <span>Fette: {foodFats} g</span>
+                <span>Proteine: {foodProteins} g</span>
               </div>
-              {journalEntry.brand && <span className="text-muted-foreground">Marke: ({journalEntry.brand})</span>}
+              {journalEntry.brand && <span className="text-muted-foreground">Marke: {journalEntry.brand}</span>}
             </ItemFooter>
           </CollapsibleContent>
 

@@ -25,7 +25,7 @@ export function JournalDayMacros({ date }: JournalDayMacrosProps) {
   return (
     <Card className="gap-3 py-4 pb-3">
       <CardHeader className="gap-0 px-4">
-        <CardTitle className="text-center text-lg leading-none">Offene Nährwerte</CardTitle>
+        <CardTitle className="text-center text-xl leading-none">Offene Nährwerte</CardTitle>
         <CardDescription className="sr-only">Zeigt die offenen Kalorien und Makrowerte für diesen Tag an</CardDescription>
         {/* <CardAction>
           <Button asChild variant="outline" size="icon">
