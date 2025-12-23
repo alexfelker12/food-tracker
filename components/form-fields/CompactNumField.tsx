@@ -52,7 +52,7 @@ export function CompactNumField({
           max={max}
           step={step}
         />
-        <InputGroupAddon align="inline-end">{unit}</InputGroupAddon>
+        <InputGroupAddon align="inline-end" className="text-nowrap">{unit}</InputGroupAddon>
       </InputGroup>
     </Field>
   );
