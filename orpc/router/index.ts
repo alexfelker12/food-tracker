@@ -12,7 +12,7 @@ import { listFood } from "@/orpc/router/food/list";
 
 //* journal
 import { trackFood } from "@/orpc/router/journal/track";
-import { journalDayEntriesByDate } from "@/orpc/router/journal/day/getEntries";
+import { journalEntriesByDate } from "@/orpc/router/journal/day/getEntries";
 import { journalDayMacrosByDate } from "@/orpc/router/journal/day/getMacros";
 import { deleteEntry } from "@/orpc/router/journal/entry/deleteEntry";
 import { listJournalDays } from "@/orpc/router/journal/list";
@@ -59,7 +59,7 @@ export const router = {
     list: listJournalDays,
     track: trackFood,
     day: {
-      getEntries: journalDayEntriesByDate,
+      getEntries: journalEntriesByDate,
       getMacros: journalDayMacrosByDate,
     },
     entry: {

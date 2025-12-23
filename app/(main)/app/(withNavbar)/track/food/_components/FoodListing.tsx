@@ -8,7 +8,7 @@ import { useInView } from 'react-intersection-observer';
 import { orpc } from "@/lib/orpc";
 import { FoodListingType } from "@/orpc/router/food/list";
 
-import { SearchCheckIcon, SearchSlashIcon, SearchXIcon } from "lucide-react";
+import { SearchSlashIcon, SearchXIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -16,7 +16,6 @@ import { ItemGroup } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 
 import { FoodItemSkeleton, FoodListingItem } from "./FoodListingItem";
-import { FoodListingLabel } from "./FoodListingLabel";
 import { useFoodSearch } from "./FoodSearchContext";
 
 

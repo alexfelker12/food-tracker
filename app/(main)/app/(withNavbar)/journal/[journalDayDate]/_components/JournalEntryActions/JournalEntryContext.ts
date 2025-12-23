@@ -1,11 +1,10 @@
 "use client"
 
 import { createContext, use } from "react";
-import { JournalDayEntriesByDateReturn } from "@/orpc/router/journal/day/getEntries";
+import { JournalEntriesByDateReturn } from "@/orpc/router/journal/day/getEntries";
 
 
-export type JournalDayJournalEntries = JournalDayEntriesByDateReturn["journalEntries"]
-export type JournalDayJournalEntry = JournalDayJournalEntries[number]
+export type JournalDayJournalEntry = JournalEntriesByDateReturn[number]
 type JournalEntryContextType = {
   journalEntry: JournalDayJournalEntry
   closeMainDrawer: () => void

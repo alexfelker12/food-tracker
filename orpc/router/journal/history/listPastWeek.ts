@@ -3,7 +3,7 @@ import z from "zod";
 import { authMiddleware } from "@/orpc/middleware/authorized";
 import { base } from "@/orpc/middleware/base";
 
-import { getJournalDays, pastWeekJournalEntryFoods } from "@/server/actions/journal";
+import { pastWeekJournalEntryFoods } from "@/server/actions/journal";
 
 
 type ProcedureReturnType = Awaited<ReturnType<typeof pastWeekJournalEntryFoods>>

@@ -1,16 +1,21 @@
-import { authMiddleware } from "@/orpc/middleware/authorized";
-import { base } from "@/orpc/middleware/base";
-import { getJournalDayWithEntries } from "@/server/actions/journal";
 import z from "zod";
 
-type ProcedureReturnType = Awaited<ReturnType<typeof getJournalDayWithEntries>>
-export type JournalDayEntriesByDateReturn = NonNullable<ProcedureReturnType>
-export const journalDayEntriesByDate = base
+import { authMiddleware } from "@/orpc/middleware/authorized";
+import { base } from "@/orpc/middleware/base";
+
+import { getGroupedJournalEntries, getJournalEntriesByDate } from "@/server/actions/journal";
+
+
+type ProcedureReturnType = Awaited<ReturnType<typeof getGroupedJournalEntries>>
+export type GroupedJournalEntriesReturn = ProcedureReturnType
+export type JournalEntriesByDateReturn = Awaited<ReturnType<typeof getJournalEntriesByDate>>
+
+export const journalEntriesByDate = base
   .use(authMiddleware)
   .route({
     method: "GET",
     path: "/journal/day/entries",
-    summary: "Gets a journal day with it's journal entries",
+    summary: "Gets journal entries by date, grouped by intake time",
     tags: ["Journal", "Day"]
   })
   .input(z.object({
@@ -22,8 +27,12 @@ export const journalDayEntriesByDate = base
     context: { session },
     // errors
   }) => {
-    return await getJournalDayWithEntries({
+    const allJournalEntriesByDate = await getJournalEntriesByDate({
       userId: session.user.id,
       date
+    })
+
+    return await getGroupedJournalEntries({
+      journalEntries: allJournalEntriesByDate
     })
   })

@@ -1,8 +1,11 @@
-import { BASE_PORTION_NAME } from "@/lib/constants";
-import { db } from "@/lib/db";
-import { get_yyyymmdd_date } from "@/lib/utils";
 import { journalEntrySchema } from "@/schemas/journal/journalEntrySchema";
 import { JournalEntrySchema } from "@/schemas/types";
+
+import { IntakeTime } from "@/generated/prisma/enums";
+
+import { BASE_PORTION_NAME } from "@/lib/constants";
+import { db } from "@/lib/db";
+import { offsetDate } from "@/lib/utils";
 
 
 //* food with portions
@@ -50,13 +53,11 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
     daysToTrack.map((date) => //* daysToTrack length -> amount of create queries
       db.journalEntry.create({
         data: {
-          //* 4.1 connectOrCreate journal day
-          journalDay: {
-            connectOrCreate: {
-              where: {
-                journalDayId: { userId, date },
-              },
-              create: { userId, date }
+          //* 4.1 create reference to date and user
+          date,
+          user: {
+            connect: {
+              id: userId
             }
           },
           //* 4.2 create consumable reference
@@ -128,16 +129,17 @@ export async function getJournalDays({ userId }: GetJournalDaysProps) {
 
   if (!firstNutritionResult) return null;
 
-  const journalDays = await db.journalDay.findMany({
+  const journalDays = await db.journalEntry.findMany({
     where: {
       userId,
-      journalEntries: {
-        some: {}
-      },
       date: {
         gte: firstNutritionResult.date
       }
-    }
+    },
+    distinct: "date",
+    select: {
+      date: true,
+    },
   })
 
   return {
@@ -147,29 +149,40 @@ export async function getJournalDays({ userId }: GetJournalDaysProps) {
 }
 
 
-// journalDay by date
-interface GetJournalDayWithEntriesProps {
+// journal entries by date
+interface GetJournalEntriesByDateProps {
   userId: string
   date: Date
 }
-export async function getJournalDayWithEntries({ userId, date }: GetJournalDayWithEntriesProps) {
-  return await db.journalDay.findUnique({
+export async function getJournalEntriesByDate({ userId, date }: GetJournalEntriesByDateProps) {
+  return await db.journalEntry.findMany({
     where: {
-      journalDayId: {
-        userId, date
-      },
-      journalEntries: {
-        some: {}
-      }
+      userId,
+      date
     },
     include: {
-      journalEntries: { // with entries
-        include: {
-          consumableReference: true
-        }
-      }
+      consumableReference: true
     }
   })
+}
+
+// grouped journal entries
+interface GetGroupedJournalEntriesProps {
+  journalEntries: Awaited<ReturnType<typeof getJournalEntriesByDate>>
+}
+export async function getGroupedJournalEntries({ journalEntries }: GetGroupedJournalEntriesProps) {
+  //* group journal entries by their intake time
+  const journalEntryGroups: Record<IntakeTime, typeof journalEntries> = {
+    BREAKFAST: [],
+    LUNCH: [],
+    DINNER: [],
+    SNACKS: []
+  }
+  journalEntries.forEach((entry) => {
+    journalEntryGroups[entry.intakeTime].push(entry)
+  })
+
+  return journalEntryGroups
 }
 
 
@@ -194,7 +207,7 @@ export async function getJournalDayMacros({ userId, date }: GetJournalDayMacrosP
   })
 
   const currentMacros = db.journalEntry.aggregate({
-    where: { journalDay: { userId, date } },
+    where: { userId, date },
     _sum: {
       kcal: true,
       fats: true,
@@ -252,7 +265,7 @@ export async function deleteJournalEntry({ userId, journalEntryId }: DeleteJourn
   return await db.journalEntry.delete({
     where: {
       id: journalEntryId,
-      journalDayUserId: userId
+      userId
     }
   })
 }
@@ -266,16 +279,18 @@ export async function pastWeekJournalEntryFoods({ userId }: PastWeekJournalEntry
   //* create a date object with a date one week ago to set as minimum date for the query
   const weekAgo = new Date()
   weekAgo.setDate(weekAgo.getDate() - 7)
+  const weekAgoDate = offsetDate(weekAgo)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
+  const todayDate = offsetDate(today)
 
   //* find all journal entries in the past 7 days until today
   const pastWeekJournalEntries = await db.journalEntry.findMany({
     where: {
-      journalDayUserId: userId,
-      journalDayDate: {
-        gt: weekAgo,
-        lte: today
+      userId,
+      date: {
+        gt: weekAgoDate,
+        lte: todayDate
       }
     },
     orderBy: {

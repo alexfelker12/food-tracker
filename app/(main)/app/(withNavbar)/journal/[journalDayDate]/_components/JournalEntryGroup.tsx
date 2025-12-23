@@ -1,12 +1,14 @@
 "use client"
 
 import { IntakeTime } from "@/generated/prisma/client";
+
+import { JournalEntriesByDateReturn } from "@/orpc/router/journal/day/getEntries";
+
 import { cn } from "@/lib/utils";
 
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ItemGroup } from "@/components/ui/item";
 
-import { JournalDayJournalEntries } from "./JournalEntryActions/JournalEntryContext";
 import { JournalEntryItem } from "./JournalEntryItem";
 import { JournalEntryGroupEmpty } from "./JournalEntryGroupEmpty";
 
@@ -14,7 +16,7 @@ import { JournalEntryGroupEmpty } from "./JournalEntryGroupEmpty";
 export interface JournalEntryGroupProps extends React.ComponentProps<typeof AccordionItem> {
   label: string
   value: IntakeTime
-  journalEntries: JournalDayJournalEntries
+  journalEntries: JournalEntriesByDateReturn
 }
 
 export function JournalEntryGroup({
