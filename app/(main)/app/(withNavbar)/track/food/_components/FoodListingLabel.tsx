@@ -14,7 +14,7 @@ export function FoodListingLabel({
   return (
     <div
       className={cn(
-        "flex justify-between items-center gap-4 [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 [&_svg]:text-muted-foreground",
+        "flex justify-between items-center gap-4 [&_svg:not([class*='size-'])]:size-3.5 shrink-0 [&_svg]:shrink-0 [&_svg]:text-muted-foreground",
         classname
       )}
     >

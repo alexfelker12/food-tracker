@@ -2,6 +2,8 @@
 
 import { FoodWithPortionsType } from "@/orpc/router/food/list";
 
+import { useIntakeTimeParam } from "@/hooks/useIntakeTimeParam";
+
 import { APP_BASE_URL } from "@/lib/constants";
 import { getDefaultPortionData } from "@/lib/food.utils";
 
@@ -18,6 +20,13 @@ interface FoodListingItemProps extends React.ComponentProps<typeof Item> {
 export function FoodListingItem({ food, ...props }: FoodListingItemProps) {
   const { kcal, name } = getDefaultPortionData(food)
 
+  const { intakeTime, intakeTimeKey } = useIntakeTimeParam()
+
+  const itemLink = `${APP_BASE_URL}/track/food/${food.id}${intakeTime
+    ? `?${intakeTimeKey}=${intakeTime}`
+    : ""
+    }`
+
   return (
     <Item
       variant="outline"
@@ -31,7 +40,7 @@ export function FoodListingItem({ food, ...props }: FoodListingItemProps) {
       asChild
       {...props}
     >
-      <NoPrefetchLink href={`${APP_BASE_URL}/track/food/${food.id}`}>
+      <NoPrefetchLink href={itemLink}>
         <ItemContent>
           <ItemTitle>{food.name}</ItemTitle>
           <ItemDescription>{kcal} kcal - {name}{food.brand && `, (${food.brand})`}</ItemDescription>

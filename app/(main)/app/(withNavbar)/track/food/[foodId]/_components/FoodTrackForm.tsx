@@ -1,31 +1,36 @@
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isDefinedError } from "@orpc/client"
 import { useMutation } from "@tanstack/react-query"
 import { Controller, FormProvider, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import z from "zod"
+import { z } from "zod"
 
 import { IntakeTimeEnum, journalEntrySchema } from "@/schemas/journal/journalEntrySchema"
 import { intakeTimeLabels } from "@/schemas/labels/journalEntrySchemaLabels"
 import { getFoodById } from "@/server/actions/food"
+
+import { IntakeTime } from "@/generated/prisma/enums"
+
+import { useIntakeTimeParam } from "@/hooks/useIntakeTimeParam"
 
 import { BASE_PORTION_NAME } from "@/lib/constants"
 import { orpc } from "@/lib/orpc"
 import { PlusIcon, XIcon } from "lucide-react"
 
 import { EnumField } from "@/components/form-fields/EnumField"
+import { NumFieldInput } from "@/components/form-fields/NumField"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-// import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 import { Spinner } from "@/components/ui/spinner"
+// import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
-import { NumFieldInput } from "@/components/form-fields/NumField"
+import { getGermanDate, offsetDate } from "@/lib/utils"
 import { FoodMacros } from "./FoodMacros"
 import { TrackingWeekDays } from "./TrackingWeekDays"
-
 
 
 const compProps = journalEntrySchema.pick({ consumableType: true })
@@ -33,11 +38,12 @@ export type FoodTrackFormProps = React.ComponentProps<"form">
   & { consumable: NonNullable<Awaited<ReturnType<typeof getFoodById>>> }
   & z.infer<typeof compProps>
 export function FoodTrackForm({ consumable, consumableType, children, ...props }: FoodTrackFormProps) {
+  const { intakeTime } = useIntakeTimeParam()
+
   const defaultPortion = consumable.portions.find((portion) => portion.isDefault)
   const initialPortion = defaultPortion ?? consumable.portions.find((portion) => portion.name === BASE_PORTION_NAME)!
 
-  const today = new Date()
-  today.setHours(5, 0, 0, 0)
+  const today = offsetDate(new Date())
 
   //* main form
   const form = useForm({
@@ -47,7 +53,8 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
       consumableType,
       daysToTrack: [today],
       portionId: initialPortion.id,
-      portionAmount: 1
+      portionAmount: 1,
+      intakeTime: intakeTime as IntakeTime
     },
     mode: "onTouched",
   })
@@ -71,11 +78,8 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
 
       if (count === 1) {
         // single day was tracked - add more details
-        const dateString = variables.daysToTrack[0].toLocaleDateString("de-DE", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric"
-        })
+        const dateString = getGermanDate(variables.daysToTrack[0])
+
         description = <span className="text-muted-foreground">
           Für den {" "}
           <span className="text-foreground">{dateString}</span> zu {" "}
