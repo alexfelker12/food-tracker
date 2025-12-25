@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 
 import { auth } from "@/lib/auth";
+import { APP_BASE_URL } from "@/lib/constants";
 
 import { HouseIcon } from "lucide-react";
 
@@ -52,7 +53,7 @@ function UnauthedUser() {
     <>
       <p>Du bist nicht angemeldet</p>
       <OAuthLoginButton
-        callbackURL="/"
+        callbackURL={APP_BASE_URL}
       />
     </>
   );

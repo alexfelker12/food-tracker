@@ -1,6 +1,7 @@
 import { FoodWithPortionsType } from "@/orpc/router/food/list"
 
 import { BASE_PORTION_NAME } from "./constants"
+import { IntakeTime } from "@/generated/prisma/enums"
 
 
 export const getDefaultPortionData = (foodWithPortions: FoodWithPortionsType) => {
@@ -19,3 +20,14 @@ export const getDefaultPortionData = (foodWithPortions: FoodWithPortionsType) =>
 
   return defaultPortionData
 }
+
+//TODO: decide for use of automatic intake times
+export function guessIntakeTimeByHour(date: Date): IntakeTime {
+  const hour = date.getHours()
+
+  if (hour < 10) return "BREAKFAST"
+  if (hour < 14) return "LUNCH"
+  if (hour < 18) return "SNACKS"
+  return "DINNER"
+}
+

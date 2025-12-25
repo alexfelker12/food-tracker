@@ -18,7 +18,6 @@ export default async function Page({
 }) {
   const { foodId } = await params
 
-
   // TODO add a ellipsis to the top right for users to go to update page
   // -> {APP_BASE_URL + "/track/food/[foodId]/update"}
   //* probably will just show the current create food form with a different onSubmit

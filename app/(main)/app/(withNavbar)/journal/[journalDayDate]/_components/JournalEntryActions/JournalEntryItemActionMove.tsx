@@ -2,11 +2,11 @@
 
 import { useRef } from "react";
 
-import { isDefinedError } from "@orpc/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+// import { isDefinedError } from "@orpc/client";
+// import { useMutation, useQueryClient } from "@tanstack/react-query";
+// import { toast } from "sonner";
 
-import { orpc } from "@/lib/orpc";
+// import { orpc } from "@/lib/orpc";
 
 import { type IntakeTime } from "@/generated/prisma/client";
 import { IntakeTime as intakeTimeEnum } from "@/generated/prisma/enums";
@@ -99,14 +99,15 @@ export function JournalEntryItemActionMove({ ref }: JournalEntryItemActionMovePr
   );
 }
 
-interface MoveOptionProps extends React.ComponentPropsWithRef<typeof DrawerClose> {
+
+interface MoveOptionProps extends React.ComponentPropsWithRef<typeof Button> {
   onOptionSelect: () => void
   label: string
   isActive?: boolean
 }
 function MoveOption({ onOptionSelect, label, isActive, ...props }: MoveOptionProps) {
   return (
-    <DrawerClose {...props} asChild>
+    <DrawerClose asChild>
       <Button
         variant={isActive ? "secondary" : "outline"}
         disabled={isActive}
@@ -114,6 +115,7 @@ function MoveOption({ onOptionSelect, label, isActive, ...props }: MoveOptionPro
           if (isActive) return;
           onOptionSelect()
         }}
+        {...props}
       >
         {isActive && <CheckIcon />} {label}
       </Button>

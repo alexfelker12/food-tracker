@@ -2,17 +2,18 @@
 
 import { useRef } from "react";
 
-import { isDefinedError } from "@orpc/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+// import { isDefinedError } from "@orpc/client";
+// import { useMutation, useQueryClient } from "@tanstack/react-query";
+// import { toast } from "sonner";
 
-import { orpc } from "@/lib/orpc";
+// import { orpc } from "@/lib/orpc";
 
 import { type IntakeTime } from "@/generated/prisma/client";
 import { IntakeTime as intakeTimeEnum } from "@/generated/prisma/enums";
 
 import { CopyCheckIcon, XIcon } from "lucide-react";
 
+import { IntakeTimeOption } from "@/components/journal/IntakeTimeOption";
 import { Button } from "@/components/ui/button";
 import { DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, NestedDrawer } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
@@ -62,20 +63,20 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
         </DrawerHeader>
 
         <div className="flex flex-col gap-2 p-4 pt-0">
-          <MoveOption
+          <IntakeTimeOption
             label="Frühstück"
             onOptionSelect={() => handleRetracking(intakeTimeEnum.BREAKFAST)}
             ref={firstButtonRef}
           />
-          <MoveOption
+          <IntakeTimeOption
             label="Mittagessen"
             onOptionSelect={() => handleRetracking(intakeTimeEnum.LUNCH)}
           />
-          <MoveOption
+          <IntakeTimeOption
             label="Abendessen"
             onOptionSelect={() => handleRetracking(intakeTimeEnum.DINNER)}
           />
-          <MoveOption
+          <IntakeTimeOption
             label="Snacks"
             onOptionSelect={() => handleRetracking(intakeTimeEnum.SNACKS)}
           />
@@ -91,16 +92,4 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
       </DrawerContent>
     </NestedDrawer>
   );
-}
-
-interface MoveOptionProps extends React.ComponentPropsWithRef<typeof DrawerClose> {
-  onOptionSelect: () => void
-  label: string
-}
-function MoveOption({ onOptionSelect, label, ...props }: MoveOptionProps) {
-  return (
-    <DrawerClose {...props} asChild>
-      <Button variant="outline" onClick={() => onOptionSelect()}>{label}</Button>
-    </DrawerClose>
-  )
 }

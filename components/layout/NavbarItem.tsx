@@ -1,33 +1,33 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 
+import { LucideIcon } from "lucide-react"
+
+import { useIsActiveNavItem } from "@/hooks/useIsActiveNavItem"
 import { cn } from "@/lib/utils"
-import { APP_BASE_URL } from "@/lib/constants"
-
-import { NavItemProps } from "./NavbarItems"
 
 
-interface NavbarItemProps {
-  item: NavItemProps
+export interface NavbarItemBaseProps {
+  label: Capitalize<string>
+  icon: LucideIcon
+  href: `/${string}`
+  isPrimary?: boolean
+}
+interface NavbarItemProps extends NavbarItemBaseProps {
   prefetch?: boolean
 }
-
-export function NavbarItem({ item, prefetch }: NavbarItemProps) {
-  const pathname = usePathname()
-  // check if href is startpage, else if current pathname is a descendant of nav item
-  const isActive = (item.href === APP_BASE_URL && pathname === APP_BASE_URL) || (item.href !== APP_BASE_URL && pathname.startsWith(item.href))
-  const isCurrentPage = item.href === pathname
-  const Icon = item.icon
+export function NavbarItem({ href, icon, label, isPrimary, prefetch }: NavbarItemProps) {
+  const { isActive, isCurrentPage } = useIsActiveNavItem({ href })
+  const Icon = icon
 
   return (
-    <div className={item.isPrimary ? "flex items-center" : ""}>
+    <div className={isPrimary ? "flex items-center" : ""}>
       <Link
         data-component="nav-item"
-        href={item.href}
+        href={href}
         prefetch={prefetch}
-        onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        onClick={(e) => {
           if (isCurrentPage) e.preventDefault();
         }}
         className="group/nav-item flex flex-col items-center gap-1 min-w-14"
@@ -35,27 +35,27 @@ export function NavbarItem({ item, prefetch }: NavbarItemProps) {
         <div
           className={cn(
             "flex justify-center items-center group-hover/nav-item:bg-accent/50 rounded-xl transition-all duration-200 group-active/nav-item:scale-95 size-10",
-            item.isPrimary && "bg-primary rounded-2xl size-12 text-primary-foreground group-hover/nav-item:bg-primary/85",
-            (!item.isPrimary && isActive) && "bg-accent group-hover/nav-item:bg-accent",
-            (item.isPrimary && isActive) && "shadow-xl shadow-primary/50",
+            isPrimary && "bg-primary rounded-2xl size-12 text-primary-foreground group-hover/nav-item:bg-primary/85",
+            (!isPrimary && isActive) && "bg-accent group-hover/nav-item:bg-accent",
+            (isPrimary && isActive) && "shadow-xl shadow-primary/50",
           )}
         >
           <Icon
             className={cn(
               "transition-colors size-5",
-              (!item.isPrimary && isActive) ? "text-foreground" : "text-muted-foreground",
-              item.isPrimary && "size-6 text-primary-foreground"
+              (!isPrimary && isActive) ? "text-foreground" : "text-muted-foreground",
+              isPrimary && "size-6 text-primary-foreground"
             )}
           />
         </div>
-        {!item.isPrimary &&
+        {!isPrimary &&
           <span
             className={cn(
               "font-medium text-xs transition-colors",
               isActive ? "text-foreground" : "text-muted-foreground",
             )}
           >
-            {item.label}
+            {label}
           </span>
         }
       </Link>

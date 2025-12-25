@@ -15,7 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { JournalDay, JournalDayProps } from "./_components/JournalDay";
 import { JournalDayMacros } from "./_components/JournalDayMacros";
 import { JournalDayPicker } from "./_components/JournalDayPicker";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 
 export default async function Page({
@@ -121,12 +121,3 @@ async function JournalDayPickerWrap({ date }: JournalDayProps) {
     </HydrateClient>
   )
 }
-
-
-// function Loader() {
-//   return (
-//     <div className="flex flex-col gap-1.5">
-//       {Array.from({ length: 3 }).map((_, index) => <FoodItemSkeleton key={index} />)}
-//     </div>
-//   );
-// }

@@ -5,19 +5,20 @@ import { auth } from "@/lib/auth"
 
 import { AuthProvider } from "@/components/providers/AuthProvider"
 import { Skeleton } from "@/components/ui/skeleton"
+
 import { NavbarItems } from "./NavbarItems"
 import { UserDropdown } from "./UserDropdown"
 
 
 export function BottomNavbar() {
   return (
-    <header className="right-0 bottom-0 left-0 z-50 sticky p-2 pt-0">
+    <header className="right-0 bottom-0 left-0 z-50 sticky bg-linear-to-t from-background via-background/50 to-background/0 p-2 pt-0">
       <div className="relative">
         {/* backgrund blur */}
         <div className="absolute inset-0 bg-background/80 shadow-lg backdrop-blur-xl border border-border rounded-md" />
 
         {/* nav items */}
-        <nav className="relative flex justify-between items-stretch p-2">
+        <nav className="relative flex justify-between items-center p-2">
           <Suspense>
             <NavbarItems />
           </Suspense>
