@@ -8,7 +8,9 @@ import { ChevronLeftIcon } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
 
+import { headers } from "next/headers";
 import { FoodDetails, FoodDetailsProps } from "./_components/FoodDetails";
+import { RefererContextProvider } from "./_components/RefererContext";
 
 
 export default async function Page({
@@ -17,6 +19,7 @@ export default async function Page({
   params: Promise<{ foodId: string }>
 }) {
   const { foodId } = await params
+  const referer = (await headers()).get("referer")
 
   // TODO add a ellipsis to the top right for users to go to update page
   // -> {APP_BASE_URL + "/track/food/[foodId]/update"}
@@ -25,20 +28,26 @@ export default async function Page({
   return (
     <main className="flex justify-center p-4 h-full">
       <div className="flex flex-col gap-6 w-full">
-        <div className="flex items-center gap-4">
-          <BackButton
-            referrerPath={APP_BASE_URL + '/track/food' as `/${string}`}
-            size="icon-sm"
-            variant="secondary"
-          >
-            <ChevronLeftIcon />
-          </BackButton>
-          <h1 className="font-bold text-2xl">Lebesmittel tracken</h1>
-        </div>
 
-        <Suspense fallback={<FullScreenLoader />}>
-          <FoodDetailsWrap foodId={foodId} />
-        </Suspense>
+        <RefererContextProvider referer={referer}>
+
+          <div className="flex items-center gap-4">
+            <BackButton
+              referrerPath={APP_BASE_URL + '/track/food' as `/${string}`}
+              size="icon-sm"
+              variant="secondary"
+            >
+              <ChevronLeftIcon />
+            </BackButton>
+            <h1 className="font-bold text-2xl">Lebesmittel tracken</h1>
+          </div>
+
+          <Suspense fallback={<FullScreenLoader />}>
+            <FoodDetailsWrap foodId={foodId} />
+          </Suspense>
+
+        </RefererContextProvider>
+
       </div>
     </main>
   );

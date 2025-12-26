@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de-DE" suppressHydrationWarning>
-      <body className="grid grid-rows-[auto_1fr_auto] antialiased">
+      <body className="grid grid-rows-[auto_1fr_auto] **:[main,header]:mx-auto **:[main,header]:w-full **:[main,header]:max-w-md antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
