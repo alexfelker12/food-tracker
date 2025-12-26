@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { journalDayRegex } from "./constants"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -105,4 +106,10 @@ export function offsetDate(date: Date) {
   return new Date(
     Date.parse(date.toUTCString()) - date.getTimezoneOffset() * 60000
   );
+}
+
+
+// check if string is a valid journalDayDate url ("today" | yyyy-mm-dd format)
+export function isValidJournalDayDate(journalDayDate: string) {
+  return journalDayDate === "today" || journalDayRegex.test(journalDayDate)
 }
