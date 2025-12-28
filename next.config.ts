@@ -6,7 +6,8 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname)
   },
   devIndicators: false,
-  cacheComponents: true // enables ppr
+  cacheComponents: true, // enables ppr
+  reactCompiler: true,
 }
 
 export default nextConfig;

@@ -2,11 +2,11 @@
 
 import { createContext, use } from "react";
 
-type RefererContextType = {
+type ContextProps = {
   referer: string | null
 }
 
-export const RefererContext = createContext<RefererContextType | undefined>(undefined);
+export const RefererContext = createContext<ContextProps | undefined>(undefined);
 
 export function useRefererUrl() {
   const ctx = use(RefererContext)
@@ -16,11 +16,11 @@ export function useRefererUrl() {
 }
 
 export function RefererContextProvider({
-  children, referer
-}: { children: React.ReactNode, } & RefererContextType
+  children, ...contextValues
+}: { children: React.ReactNode, } & ContextProps
 ) {
   return (
-    <RefererContext.Provider value={{ referer }}>
+    <RefererContext.Provider value={contextValues}>
       {children}
     </RefererContext.Provider>
   );
