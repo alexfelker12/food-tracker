@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   cacheComponents: true, // enables ppr
   reactCompiler: true,
+  allowedDevOrigins: ['192.168.178.71'],
 }
 
 export default nextConfig;

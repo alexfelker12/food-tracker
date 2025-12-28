@@ -43,7 +43,7 @@ export function JournalCalendar({ journalDays, minDate, noSelection = true, disp
         className
       )} // shadow-sm border rounded-lg
       classNames={{
-        today: "bg-accent rounded-md [&>button]:after:content-none [&[data-today=true]:not([data-selected=true])_button]:text-accent-foreground! [&[data-today=true]>button]:text-base"
+        today: "bg-accent rounded-md [&>button]:after:content-none [&[data-today=true]:not([data-selected=true])_button]:text-accent-foreground! [&[data-today=true]>button]:text-lg"
       }}
       buttonVariant="outline"
       modifiers={{

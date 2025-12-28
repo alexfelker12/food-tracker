@@ -1,16 +1,15 @@
+import { headers } from "next/headers";
 import { Suspense } from "react";
 
 import { APP_BASE_URL } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
-import { ChevronLeftIcon } from "lucide-react";
 
 import { BackButton } from "@/components/BackButton";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
+import { RefererContextProvider } from "@/components/RefererContext";
 
-import { headers } from "next/headers";
 import { FoodDetails, FoodDetailsProps } from "./_components/FoodDetails";
-import { RefererContextProvider } from "./_components/RefererContext";
 
 
 export default async function Page({
@@ -32,13 +31,8 @@ export default async function Page({
         <RefererContextProvider referer={referer}>
 
           <div className="flex items-center gap-4">
-            <BackButton
-              referrerPath={APP_BASE_URL + '/track/food' as `/${string}`}
-              size="icon-sm"
-              variant="secondary"
-            >
-              <ChevronLeftIcon />
-            </BackButton>
+            <BackButton refererPath={APP_BASE_URL + '/track/food' as `/${string}`} />
+
             <h1 className="font-bold text-2xl">Lebesmittel tracken</h1>
           </div>
 

@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -6,9 +7,8 @@ import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
 import { cn, getGermanDate, isValidJournalDayDate, offsetDate } from "@/lib/utils";
 
-import { ChevronLeftIcon } from "lucide-react";
-
 import { BackButton } from "@/components/BackButton";
+import { RefererContextProvider } from "@/components/RefererContext";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
@@ -24,6 +24,9 @@ export default async function Page({
   params: Promise<{ journalDayDate: string }>
 }) {
   const { journalDayDate } = await params
+  const referer = (await headers()).get("referer")
+
+
 
   if (!isValidJournalDayDate(journalDayDate)) redirect(APP_BASE_URL + "/journal");
 
@@ -36,13 +39,9 @@ export default async function Page({
       <div className="flex flex-col gap-6 w-full">
 
         <div className="flex justify-between items-center">
-          <BackButton
-            referrerPath={APP_BASE_URL + '/journal' as `/${string}`}
-            size="icon"
-            variant="secondary"
-          >
-            <ChevronLeftIcon />
-          </BackButton>
+          <RefererContextProvider referer={referer}>
+            <BackButton refererPath={APP_BASE_URL + '/journal' as `/${string}`} />
+          </RefererContextProvider>
 
           <Suspense fallback={
             <div className={cn(

@@ -35,7 +35,7 @@ import { Spinner } from "@/components/ui/spinner"
 // import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
 import { FoodMacros } from "./FoodMacros"
-import { useRefererUrl } from "./RefererContext"
+import { useRefererUrl } from "@/components/RefererContext"
 import { TrackingWeekDays } from "./TrackingWeekDays"
 
 
@@ -50,7 +50,7 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
 
   // referer
   const foodListingUrl = APP_BASE_URL + "/track/food"
-  const fromFoodListing = refererUrl.pathname === foodListingUrl
+  const fromFoodListing = refererUrl && refererUrl.pathname === foodListingUrl
 
   // initial portion
   const defaultPortion = consumable.portions.find((portion) => portion.isDefault)
