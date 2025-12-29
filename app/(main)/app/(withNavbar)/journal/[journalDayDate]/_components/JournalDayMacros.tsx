@@ -46,24 +46,24 @@ export function JournalDayMacros({ date }: JournalDayMacrosProps) {
           <Separator orientation="vertical" className="h-4/5!" />
 
           <div className="flex flex-1 items-center gap-1 h-full">
-            <div className="flex flex-col flex-1 gap-1 text-center">
-              <span className="text-muted-foreground text-xs">Kohlenhydrate</span>
+            <div data-slot="open-carbs" className="flex flex-col flex-1 gap-1 text-center">
+              <span data-slot="open-carbs-label" className="text-muted-foreground text-xs">Kohlenhydrate</span>
               <span>{openCarbs} <span className={cn(
                 "text-muted-foreground text-xs",
                 openMacros.carbs === 0 && "hidden"
               )}>g</span></span>
             </div>
 
-            <div className="flex flex-col flex-1 gap-1 text-center">
-              <span className="text-muted-foreground text-xs">Fette</span>
+            <div data-slot="open-fats" className="flex flex-col flex-1 gap-1 text-center">
+              <span data-slot="open-fats-label" className="text-muted-foreground text-xs">Fette</span>
               <span>{openFats} <span className={cn(
                 "text-muted-foreground text-xs",
                 openMacros.fats === 0 && "hidden"
               )}>g</span></span>
             </div>
 
-            <div className="flex flex-col flex-1 gap-1 text-center">
-              <span className="text-muted-foreground text-xs">Proteine</span>
+            <div data-slot="open-proteins" className="flex flex-col flex-1 gap-1 text-center">
+              <span data-slot="open-proteins-label" className="text-muted-foreground text-xs">Proteine</span>
               <span>{openProteins} <span className={cn(
                 "text-muted-foreground text-xs",
                 openMacros.proteins === 0 && "hidden"

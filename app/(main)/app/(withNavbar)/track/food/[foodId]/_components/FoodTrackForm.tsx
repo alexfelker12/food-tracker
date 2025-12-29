@@ -101,10 +101,10 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
         </span>
       }
 
-      const successToast = toast.success(title, {
+      toast.success(title, {
         description,
         action:
-          <Button variant="outline" className="ml-auto" onClick={() => toast.dismiss(successToast)} asChild>
+          <Button variant="outline" className="ml-auto" onClick={() => toast.dismiss()} asChild>
             <Link href={APP_BASE_URL + "/journal/today"}><NotebookTextIcon /> Tagebuch</Link>
           </Button>
         ,

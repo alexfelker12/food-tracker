@@ -15,7 +15,7 @@ export function BottomNavbar() {
     <header className="right-0 bottom-0 left-0 z-50 sticky bg-linear-to-t from-background via-background/50 to-background/0 p-2 pt-0">
       <div className="relative">
         {/* backgrund blur */}
-        <div className="absolute inset-0 bg-background/80 shadow-lg backdrop-blur-xl border border-border rounded-md" />
+        <div className="absolute inset-0 bg-background/80 shadow dark:shadow-lg backdrop-blur-xl border border-border rounded-md" />
 
         {/* nav items */}
         <nav className="relative flex justify-between items-center p-2">
@@ -24,8 +24,8 @@ export function BottomNavbar() {
           </Suspense>
 
           {/* user dropdown */}
-          {/* <UserDropdownMock /> */}
           <Suspense fallback={<UserDropdownLoader />}>
+            {/* <UserDropdownMock /> */}
             <UserDropdownWrap />
           </Suspense>
         </nav>

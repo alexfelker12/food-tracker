@@ -55,6 +55,8 @@ function JournalDayPickerWrap({ yyyymmdd_date_string, children, journalDays, min
     setOpen(false) // always close popver
   }
 
+  const isToday = yyyymmdd_date_string === today_yyyymmdd_date
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -73,18 +75,24 @@ function JournalDayPickerWrap({ yyyymmdd_date_string, children, journalDays, min
         <div className="flex justify-between items-center gap-3 w-full">
           <div className="flex flex-wrap justify-start items-center gap-1">
             <span className="w-full text-muted-foreground text-sm">Tage:</span>
-            <Badge>Aktiv</Badge>
-            <Badge className="bg-accent text-accent-foreground">Heute</Badge>
-            <Badge className="bg-accent/80">Getrackt</Badge>
+            {isToday
+              ? <Badge>Heute</Badge>
+              : <>
+                <Badge>Aktiv</Badge>
+                <Badge className="bg-accent text-accent-foreground">Heute</Badge>
+              </>
+            }
+            <Badge className="bg-accent/80 text-foreground">Getrackt</Badge>
             <Badge variant="outline" className="text-muted-foreground/75">Leer</Badge>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => handleNavigation("today")}
-            disabled={yyyymmdd_date_string === today_yyyymmdd_date}
-          >
-            <Calendar1Icon /> Heute
-          </Button>
+          {!isToday &&
+            <Button
+              variant="outline"
+              onClick={() => handleNavigation("today")}
+            >
+              <Calendar1Icon /> Heute
+            </Button>
+          }
         </div>
       </PopoverContent>
     </Popover>

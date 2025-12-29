@@ -68,7 +68,7 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
           /> */}
             <Drawer open={open} onOpenChange={setOpen} dismissible={!anyActionPending}>
               <DrawerTrigger asChild>
-                <Button variant="outline" size="icon-sm"><EllipsisVerticalIcon /></Button>
+                <Button variant="outline" size="icon"><EllipsisVerticalIcon /></Button>
               </DrawerTrigger>
               <JournalEntryItemActions label={drawerLabel} />
             </Drawer>

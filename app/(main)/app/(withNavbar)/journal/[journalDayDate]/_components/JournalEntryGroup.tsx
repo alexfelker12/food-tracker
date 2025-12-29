@@ -12,9 +12,9 @@ import { PlusIcon } from "lucide-react";
 import NoPrefetchLink from "@/components/NoPrefetchLink";
 import { Button } from "@/components/ui/button";
 import { ItemGroup } from "@/components/ui/item";
+import { Separator } from "@/components/ui/separator";
 
 import { JournalEntryItem } from "./JournalEntryItem";
-import { Separator } from "@/components/ui/separator";
 
 
 export interface JournalEntryGroupProps extends React.ComponentProps<"section"> {
@@ -48,19 +48,25 @@ export function JournalEntryGroup({
 
   return (
     <section
-      className={cn("space-y-2", className)}
+      className={cn("space-y-2 shadow-2xs p-3 border rounded-md", className)}
       aria-label={label}
       {...props}
     >
       <div className="flex justify-between items-center pb-2 border-b">
         <div className="leading-none">
-          <h3 className="text-accent-foreground text-base">{label}</h3>
+          <h3 className="text-base">{label}</h3>
           <span className="text-muted-foreground text-sm leading-none">
             {macroSum.kcal
               ? <span className="inline-flex items-center gap-2 h-3.5">
-                <span className="text-primary-foreground">{macroSum.kcal} Kcal</span>
+                <span className="min-w-15">{macroSum.kcal} Kcal</span>
                 <Separator orientation="vertical" className="h-full" />
-                <span>K: {groupCarbs}g - F: {groupFats}g - P: {groupProteins}g</span>
+                <div className="inline-flex flex-1 items-center gap-x-2">
+                  <span className="text-label-carbs">{groupCarbs}g</span>
+                  <span>-</span>
+                  <span className="text-label-fats">{groupFats}g</span>
+                  <span>-</span>
+                  <span className="text-label-proteins">{groupProteins}g</span>
+                </div>
               </span>
               : "-"
             }
@@ -72,9 +78,8 @@ export function JournalEntryGroup({
           </NoPrefetchLink>
         </Button>
       </div>
-      <div>
-        <JournalEntriesMap journalEntries={journalEntries} />
-      </div>
+
+      <JournalEntriesMap journalEntries={journalEntries} />
     </section>
   );
 }

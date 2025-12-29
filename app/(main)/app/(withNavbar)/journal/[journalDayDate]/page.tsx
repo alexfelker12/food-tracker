@@ -57,7 +57,7 @@ export default async function Page({
           <div className="size-9"></div>
         </div>
 
-        <div className="flex flex-col flex-1 gap-6">
+        <div className="flex flex-col flex-1 gap-6 **:data-[slot=open-carbs-label]:text-label-carbs **:data-[slot=open-fats-label]:text-label-fats **:data-[slot=open-proteins-label]:text-label-proteins">
           <Suspense fallback={<Skeleton className="w-full h-[110px]" />}>
             <JournalDayMacroWrap date={journalDay} />
           </Suspense>

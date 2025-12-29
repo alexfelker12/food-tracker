@@ -21,7 +21,7 @@ export function JournalDay({ date }: JournalDayProps) {
 
   {/* journal entries grouped by intaketime */ }
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* breakfast */}
       <JournalEntryGroup
         label="Frühstück"

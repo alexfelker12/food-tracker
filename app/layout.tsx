@@ -1,18 +1,16 @@
 import type { Metadata } from "next"
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+import { cn } from "@/lib/utils";
+
 import { ThemeProvider } from "@/components/providers/ThemeProvider"
 import "@/app/globals.css"
 
-// import { Geist, Geist_Mono } from "next/font/google";
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-// -> pass as classNames to body: ${geistSans.variable} ${geistMono.variable}
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "MFoody",
@@ -23,7 +21,6 @@ export const metadata: Metadata = {
   },
 }
 
-
 export default function RootLayout({
   children
 }: Readonly<{
@@ -31,7 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de-DE" suppressHydrationWarning>
-      <body className="grid grid-rows-[auto_1fr_auto] **:[main,header]:mx-auto **:[main,header]:w-full **:[main,header]:max-w-md antialiased">
+      {/* <head>
+        <script
+          async
+          crossOrigin="anonymous"
+          src="https://tweakcn.com/live-preview.min.js"
+        />
+      </head> */}
+      <body className={cn("grid grid-rows-[auto_1fr_auto] **:[main,header]:mx-auto **:[main,header]:w-full **:[main,header]:max-w-md antialiased", plusJakartaSans.variable)}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

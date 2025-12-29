@@ -13,7 +13,7 @@ interface BackButtonProps extends React.ComponentProps<typeof Button> {
 }
 export function BackButton({
   refererPath,
-  size = "icon-sm",
+  size = "icon",
   variant = "secondary",
   children = <ChevronLeftIcon />,
   ...props

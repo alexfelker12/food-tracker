@@ -54,7 +54,7 @@ function JournalCalendarViewWrap({ journalDays, minDate }: ListJournalDaysType) 
           <span className="w-full text-sm">Tage:</span>
           {/* <Badge>Ausgewählt</Badge> */}
           <Badge className="bg-accent text-accent-foreground">Heute</Badge>
-          <Badge className="bg-accent/80">Getrackt</Badge>
+          <Badge className="bg-accent/80 text-foreground">Getrackt</Badge>
           <Badge variant="outline" className="text-muted-foreground/75">Leer</Badge>
         </div>
         <Button asChild variant="outline">
