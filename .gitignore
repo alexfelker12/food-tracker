@@ -56,3 +56,6 @@ brainstorming.yaml
 
 # .npmrc (not used for now)
 .npmrc
+
+# vscode settings
+.vscode

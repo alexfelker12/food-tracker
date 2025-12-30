@@ -8,8 +8,10 @@ import { useIsActiveNavItem } from "@/hooks/useIsActiveNavItem";
 import { APP_BASE_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-import { ArrowLeftIcon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, ScanBarcodeIcon } from "lucide-react";
 
+import { NavbarBarcodeScan } from "@/components/barcode/BarcodeScan";
+import { BarcodeScanProvider } from "@/components/barcode/BarcodeScanContext";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, NestedDrawer } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
@@ -28,7 +30,7 @@ export function NavbarItemTrack({ icon, label, href, isPrimary }: NavbarItemTrac
   const Icon = icon
 
   return (
-    <Drawer open={open} onOpenChange={setOpen} >
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger className="group/nav-item flex flex-col items-center gap-1 min-w-14">
         <div
           className={cn(
@@ -66,11 +68,11 @@ export function NavbarItemTrack({ icon, label, href, isPrimary }: NavbarItemTrac
 
         <DrawerFooter className="pt-0">
 
+          <NavbarBarcodeScanDrawer closeMainDrawer={() => setOpen(false)} />
+
           <NestedDrawer>
             <DrawerTrigger className="flex-1" ref={firstButtonRef} asChild>
-              <Button variant="outline" >
-                Lebensmittel
-              </Button>
+              <Button variant="outline">Lebensmittel</Button>
             </DrawerTrigger>
             <DrawerContent onOpenAutoFocus={() => nestedFirstButtonRef.current?.focus()}>
               <DrawerHeader>
@@ -94,17 +96,69 @@ export function NavbarItemTrack({ icon, label, href, isPrimary }: NavbarItemTrac
             </DrawerContent>
           </NestedDrawer>
 
-
           <DrawerClose asChild>
             <Button asChild variant="outline">
-              <Link href={APP_BASE_URL + "/track/meal"}>
-                Mahlzeit
-              </Link>
+              <Link href={APP_BASE_URL + "/track/meal"}>Mahlzeit</Link>
             </Button>
           </DrawerClose>
 
         </DrawerFooter>
       </DrawerContent>
-    </Drawer>
+    </Drawer >
   )
+}
+
+interface NavbarBarcodeScanDrawerProps {
+  closeMainDrawer: () => void
+}
+
+function NavbarBarcodeScanDrawer({ closeMainDrawer }: NavbarBarcodeScanDrawerProps) {
+  const [open, setOpen] = useState(false)
+  const [barcode, setBarcode] = useState("")
+  const [lastBarcode, setLastBarcode] = useState("")
+  const firstButtonRef = useRef<HTMLButtonElement>(null)
+
+  return (
+    <NestedDrawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger className="flex-1" asChild>
+        <Button variant="outline"><ScanBarcodeIcon /> Per Barcode finden</Button>
+      </DrawerTrigger>
+      <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>
+
+        <DrawerHeader>
+          <DrawerTitle className="text-lg">Barcode scannen</DrawerTitle>
+          <DrawerDescription className="text-base sr-only">Scanne den Barcode eines Produkts, um es in der Datenbank zu finden, falls es bereits erstellt ist</DrawerDescription>
+        </DrawerHeader>
+
+        <DrawerFooter className="gap-4 pt-0">
+          <BarcodeScanProvider
+            barcode={barcode}
+            setBarcode={setBarcode}
+            lastBarcode={lastBarcode}
+            setLastBarcode={setLastBarcode}
+            closeNestedDrawer={() => setOpen(false)}
+            closeMainDrawer={closeMainDrawer}
+            enabled={open}
+          >
+            <NavbarBarcodeScan />
+          </BarcodeScanProvider>
+
+          <Separator />
+
+          <DrawerClose asChild>
+            <Button
+              className="flex-1"
+              variant="outline"
+              onClick={() => {
+                setBarcode("")
+                setLastBarcode("")
+              }}
+              ref={firstButtonRef}
+            ><ArrowLeftIcon /> Zurück</Button>
+          </DrawerClose>
+        </DrawerFooter>
+
+      </DrawerContent>
+    </NestedDrawer>
+  );
 }

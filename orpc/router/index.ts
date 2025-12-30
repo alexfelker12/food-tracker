@@ -1,25 +1,26 @@
 //* onboard
-import { createInitialProfile } from "@/orpc/router/onboard";
+import { createInitialProfile } from "./onboard";
 
 //* profile
-import { getProfile } from "@/orpc/router/profile/get";
-import { updateProfile } from "@/orpc/router/profile/update";
+import { getProfile } from "./profile/get";
+import { updateProfile } from "./profile/update";
 
 //* food
-import { createFood } from "@/orpc/router/food/create";
-import { foodById } from "@/orpc/router/food/get";
-import { listFood } from "@/orpc/router/food/list";
+import { createFood } from "./food/create";
+import { foodById } from "./food/get";
+import { foodsByBarcode } from "./food/getByBarcode";
+import { listFood } from "./food/list";
 
 //* journal
-import { trackFood } from "@/orpc/router/journal/track";
-import { journalEntriesByDate } from "@/orpc/router/journal/day/getEntries";
-import { journalDayMacrosByDate } from "@/orpc/router/journal/day/getMacros";
-import { deleteEntry } from "@/orpc/router/journal/entry/deleteEntry";
-import { listJournalDays } from "@/orpc/router/journal/list";
+import { journalEntriesByDate } from "./journal/day/getEntries";
+import { journalDayMacrosByDate } from "./journal/day/getMacros";
+import { deleteEntry } from "./journal/entry/deleteEntry";
+import { listPastWeekJournalEntryFoods } from "./journal/history/listPastWeek";
+import { listJournalDays } from "./journal/list";
+import { trackFood } from "./journal/track";
 
 //* dashboard
-import { getKcalRange } from "@/orpc/router/dashboard/kcalRange";
-import { listPastWeekJournalEntryFoods } from "./journal/history/listPastWeek";
+import { getKcalRange } from "./dashboard/kcalRange";
 
 
 // 0 implement track food functionality
@@ -44,6 +45,7 @@ export const router = {
   food: {
     list: listFood,
     get: foodById,
+    getByBarcode: foodsByBarcode,
     create: createFood,
     // update: base, // 5th <--- mutate food data
     // delete: base, // 5th <--- mutate food data

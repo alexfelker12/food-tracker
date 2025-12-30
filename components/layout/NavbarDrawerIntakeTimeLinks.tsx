@@ -9,7 +9,7 @@ import { IntakeTimeOptionLink } from "@/components/journal/IntakeTimeOption";
 
 interface NavbarDrawerIntakeTimeLinksProps {
   href: string
-  ref: React.Ref<HTMLButtonElement>
+  ref: React.RefObject<HTMLButtonElement | null>
   onOptionClick?: () => void
 }
 export function NavbarDrawerIntakeTimeLinks({ href, ref, onOptionClick }: NavbarDrawerIntakeTimeLinksProps) {

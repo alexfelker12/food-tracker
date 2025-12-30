@@ -223,6 +223,7 @@
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
+    word-spacing: calc(var(--spacing)/2);
   }
   /* input[type="number"]::-webkit-textfield-decoration-container {
     @apply w-fit
@@ -230,4 +231,10 @@
   input[type="number"]::-webkit-inner-spin-button {
     @apply ml-1 hidden
   }
+
+  /* .barcode-wrap {
+    container-type: size; 
+    max-height: 100cqw;
+    height: fit-content;
+  } */
 }

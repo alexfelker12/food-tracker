@@ -207,6 +207,9 @@ model Food {
   carbs   Float
   protein Float //? maybe fix someday? missed plural form here (protein*s*) ...
 
+  // barcode
+  barcodes String[]
+
   // created by
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)

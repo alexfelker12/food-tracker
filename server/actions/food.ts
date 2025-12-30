@@ -73,3 +73,21 @@ export async function getFoodById({ foodId }: GetFoodByIdProps) {
     }
   })
 }
+
+
+//* foods by barcode
+interface GetFoodsByBarcodeProps {
+  barcode: string
+}
+export async function getFoodsByBarcode({ barcode }: GetFoodsByBarcodeProps) {
+  return await db.food.findMany({
+    where: {
+      barcodes: {
+        has: barcode
+      },
+    },
+    include: {
+      portions: true,
+    }
+  })
+}
