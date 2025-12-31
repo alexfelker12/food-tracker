@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useState } from 'react';
+
 import type { IDetectedBarcode } from '@yudiel/react-qr-scanner';
 
 const Scanner = dynamic(
@@ -36,7 +37,12 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
         classNames={{
           container: "rounded"
         }}
-        constraints={{ facingMode: 'environment' }}
+        constraints={{
+          facingMode: 'environment',
+          noiseSuppression: true,
+          autoGainControl: true
+        }}
+        components={{ zoom: true }}
         formats={['ean_13', 'ean_8']}
         sound={false}
 
@@ -45,9 +51,6 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
           onDetected(results);
         }}
         onError={(error) => handleError(error)}
-        components={{
-          // finder: true
-        }}
       />
     </div>
   );
