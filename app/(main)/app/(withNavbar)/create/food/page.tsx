@@ -8,6 +8,7 @@ export default function Page() {
           <h1 className="font-semibold text-xl">Lebensmittel erstellen</h1>
           <p className="text-muted-foreground text-sm">Gebe die Informationen eines Lebensmittel an, um dieses zu deinem Tagebuch hinzufügen zu können</p>
         </div>
+
         <CreateFoodForm />
       </div>
     </main>

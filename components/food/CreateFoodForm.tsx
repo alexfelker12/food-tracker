@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { FieldSeparator } from "@/components/ui/field";
 
 import { CreateFoodFormSubmit } from "./fields/CreateFoodFormSubmit";
+import { FoodBarcodes } from "./fields/FoodBarcodes";
 import { FoodLabeling } from "./fields/FoodLabeling";
 import { FoodMacroValues } from "./fields/FoodMacroValues";
 import { FoodPortions } from "./fields/FoodPortions";
@@ -31,7 +32,8 @@ export function CreateFoodForm({ className, children, ...props }: React.Componen
         name: "",
         brand: "",
       },
-      portions: []
+      portions: [],
+      barcodes: []
     },
     mode: "onTouched",
   })
@@ -49,12 +51,13 @@ export function CreateFoodForm({ className, children, ...props }: React.Componen
     onSuccess: (data) => {
       form.reset()
       form.setValue("portions", [])
+      form.setValue("barcodes", [])
       console.log(data)
 
       toast("Lebensmittel wurde erfolgreich erstellt", {
         description: `${data.name} ${data.brand ? `- ${data.brand}` : ""}`,
         action: (
-          <Button asChild variant="secondary">
+          <Button asChild variant="secondary" onClick={() => toast.dismiss()}>
             <Link href={`${APP_BASE_URL}/track/food/${data.id}`}>
               Zum Lebensmittel
             </Link>
@@ -85,6 +88,13 @@ export function CreateFoodForm({ className, children, ...props }: React.Componen
         {/* portions */}
         <Suspense>
           <FoodPortions />
+        </Suspense>
+
+        <FieldSeparator />
+
+        {/* barcodes */}
+        <Suspense>
+          <FoodBarcodes />
         </Suspense>
 
         <div className="flex justify-end mt-2">

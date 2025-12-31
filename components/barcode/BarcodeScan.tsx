@@ -66,6 +66,7 @@ export function NavbarBarcodeScan() {
           : enabled
             ? <BarcodeScanner
               onDetected={(results) => {
+                if (results.length !== 1) return
                 const barcode = results[0].rawValue
                 setBarcode(barcode)
                 setLastBarcode(barcode)

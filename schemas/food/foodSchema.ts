@@ -37,7 +37,6 @@ export const foodSchema = z.object({
 //   "Die Makronährstoffsumme weicht von der angegebenen Kalorien-Zahl ab"
 // )
 
-
 //* food portions
 export const foodPortionsSchema = z.array(
   z.object({
@@ -54,10 +53,21 @@ export const foodPortionsSchema = z.array(
   })
 )
 
+//* food portions
+export const foodBarcodesSchema = z.array(
+  z.object({
+    barcode: z
+      .string()
+      .min(1, "Barcode darf nicht leer sein")
+      .transform((name) => name.trim()),
+  })
+)
+
 
 export const foodWithPortionsSchema = z.object({
   food: foodSchema,
-  portions: foodPortionsSchema
+  portions: foodPortionsSchema,
+  barcodes: foodBarcodesSchema
 })
 
 

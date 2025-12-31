@@ -16,11 +16,11 @@ export const createFood = base
   .input(foodWithPortionsSchema)
   .output(z.custom<FoodModel>())
   .handler(async ({
-    input: { food, portions },
+    input: { food, portions, barcodes },
     context: { session },
     errors
   }) => {
-    const createdFood = await insertFoodWithPortions({ food, portions, userId: session.user.id })
+    const createdFood = await insertFoodWithPortions({ food, portions, barcodes, userId: session.user.id })
 
     if (!createdFood) throw errors.BAD_REQUEST() // invalid input
 

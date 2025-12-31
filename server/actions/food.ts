@@ -1,5 +1,6 @@
 import { BASE_PORTION_GRAMS, BASE_PORTION_NAME } from "@/lib/constants";
 import { db } from "@/lib/db";
+
 import { foodWithPortionsSchema } from "@/schemas/food/foodSchema";
 import { FoodWithPortionsSchema } from "@/schemas/types";
 
@@ -8,16 +9,17 @@ import { FoodWithPortionsSchema } from "@/schemas/types";
 interface InsertFoodPropsWithPortions extends FoodWithPortionsSchema {
   userId: string
 }
-export async function insertFoodWithPortions({ food, portions, userId }: InsertFoodPropsWithPortions) {
-  const { success, data } = await foodWithPortionsSchema.safeParseAsync({ food, portions })
-
+export async function insertFoodWithPortions({ food, portions, barcodes, userId }: InsertFoodPropsWithPortions) {
+  const { success, data } = await foodWithPortionsSchema.safeParseAsync({ food, portions, barcodes })
   if (!success) return null; // parse failed -> bad request
 
+  const dbBarcodes = data.barcodes.map(({ barcode }) => barcode)
   const is100gDefault = data.portions.every((portion) => !portion.isDefault)
 
   return await db.food.create({
     data: {
       ...data.food,
+      barcodes: dbBarcodes,
       user: {
         connect: {
           id: userId
