@@ -2,11 +2,13 @@
 
 import { useRef } from "react";
 
-// import { isDefinedError } from "@orpc/client";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { toast } from "sonner";
+import { isDefinedError } from "@orpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-// import { orpc } from "@/lib/orpc";
+import { intakeTimeLabels } from "@/schemas/labels/journalEntrySchemaLabels";
+
+import { orpc } from "@/lib/orpc";
 
 import { type IntakeTime } from "@/generated/prisma/client";
 import { IntakeTime as intakeTimeEnum } from "@/generated/prisma/enums";
@@ -23,31 +25,44 @@ import { useJournalEntry } from "./JournalEntryContext";
 
 interface JournalEntryItemActionMoveProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }
 export function JournalEntryItemActionMove({ ref }: JournalEntryItemActionMoveProps) {
-  const { journalEntry, anyActionPending } = useJournalEntry()
+  const { journalEntry, anyActionPending, closeMainDrawer } = useJournalEntry()
   const firstButtonRef = useRef<HTMLButtonElement>(null)
-  const handleMove = (intakeTime: IntakeTime) => console.log("moved", journalEntry.id, "to:", intakeTime)
-  const isPending = false
 
-  // const qc = useQueryClient()
+  const qc = useQueryClient()
 
-  // const { mutate: handleMove, isPending } = useMutation(orpc.journal.entry.delete.mutationOptions({
-  //   onError: (error) => {
-  //     if (isDefinedError(error)) {
-  //       toast.error(error.message)
-  //     } else {
-  //       toast.error("Es gab Probleme beim Löschen")
-  //     }
-  //   },
-  //   // onSuccess parameters: (data, variables, onMutateResult, context)
-  //   onSuccess: ({ name }) => {
-  //     toast.success(`${name} wurde gelöscht`)
-  //     qc.invalidateQueries({
-  //       queryKey: [["journal", "day"]]
-  //     })
-  //   }
-  // }))
+  const { mutate, isPending } = useMutation(orpc.journal.entry.move.mutationOptions({
+    onError: (error) => {
+      if (isDefinedError(error)) {
+        toast.error(error.message)
+      } else {
+        toast.error("Es gab Probleme beim Löschen")
+      }
+    },
+    // onSuccess parameters: (data, variables, onMutateResult, context)
+    onSuccess: ({ name, intakeTime }) => {
+      const intakeTimeLabel = intakeTimeLabels[intakeTime]
+      const toastMsg = (
+        <span className="text-muted-foreground *:[span]:text-foreground">
+          <span>{name}</span> wurde nach <span>{intakeTimeLabel}</span> verschoben
+        </span>
+      )
+
+      // * invalidate journal entries query, notify user and close entry actions drawer
+      qc.invalidateQueries({ queryKey: [["journal", "day", "getEntries"]] })
+      toast.success(toastMsg)
+      closeMainDrawer()
+    }
+  }))
 
   const currentIntakeTime = journalEntry.intakeTime
+
+  const handleMove = (intakeTime: IntakeTime) => {
+    if (currentIntakeTime === intakeTime) return;
+    mutate({
+      journalEntryId: journalEntry.id,
+      newIntakeTime: intakeTime
+    })
+  }
 
   return (
     <NestedDrawer>

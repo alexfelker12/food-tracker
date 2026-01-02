@@ -5,7 +5,7 @@ import { IntakeTime } from "@/generated/prisma/enums";
 
 import { BASE_PORTION_NAME } from "@/lib/constants";
 import { db } from "@/lib/db";
-import { offsetDate } from "@/lib/utils";
+import { offsetDate, tryCatch } from "@/lib/utils";
 
 
 //* food with portions
@@ -325,4 +325,67 @@ export async function pastWeekJournalEntryFoods({ userId }: PastWeekJournalEntry
   })
 
   return distinctFoods
+}
+
+
+// move journal entry to different intaketime
+interface MoveJournalEntryProps {
+  userId: string
+  journalEntryId: string
+  intakeTime: IntakeTime
+}
+export async function moveJournalEntry({ userId, journalEntryId, intakeTime }: MoveJournalEntryProps) {
+  const { data: updatedJournalEntry, error } = await tryCatch(db.journalEntry.update({
+    where: {
+      id: journalEntryId,
+      userId,
+      intakeTime: {
+        not: intakeTime
+      }
+    },
+    data: { intakeTime }
+  }))
+
+  //* if journalEntry does not exist or does not belong the user the update will fail
+  if (error) return null
+
+  return updatedJournalEntry
+}
+
+
+// move journal entry to different intaketime
+interface RetrackJournalEntryProps {
+  userId: string
+  journalEntryId: string
+  intakeTime: IntakeTime
+}
+export async function retrackJournalEntry({ userId, journalEntryId, intakeTime }: RetrackJournalEntryProps) {
+  const journalEntryToRetrack = await db.journalEntry.findFirst({
+    where: {
+      id: journalEntryId,
+      userId
+    },
+    include: {
+      consumableReference: true
+    }
+  })
+
+  //* journal entry does not exist or does not belong to the user
+  if (!journalEntryToRetrack || !journalEntryToRetrack.consumableReference) return null
+
+  const {
+    consumableReference: { foodId, foodPortionId, mealId, mealPortionId }, // consumable reference
+    name, brand, kcal, carbs, fats, proteins, date, portionName, portionAmount,  // needed journal entry data
+  } = journalEntryToRetrack
+
+  const retrackedJournalEntry = await db.journalEntry.create({
+    data: {
+      name, brand, kcal, carbs, fats, proteins, date, portionName, portionAmount, // entry data
+      intakeTime, // selected intaketime
+      user: { connect: { id: userId } }, // user data
+      consumableReference: { create: { foodId, foodPortionId, mealId, mealPortionId } } // consumable data
+    }
+  })
+
+  return retrackedJournalEntry
 }

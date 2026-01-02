@@ -12,12 +12,17 @@ import { foodsByBarcode } from "./food/getByBarcode";
 import { listFood } from "./food/list";
 
 //* journal
-import { journalEntriesByDate } from "./journal/day/getEntries";
-import { journalDayMacrosByDate } from "./journal/day/getMacros";
-import { deleteEntry } from "./journal/entry/deleteEntry";
-import { listPastWeekJournalEntryFoods } from "./journal/history/listPastWeek";
 import { listJournalDays } from "./journal/list";
 import { trackFood } from "./journal/track";
+// day
+import { journalEntriesByDate } from "./journal/day/getEntries";
+import { journalDayMacrosByDate } from "./journal/day/getMacros";
+// entry
+import { deleteEntry } from "./journal/entry/deleteEntry";
+import { moveEntry } from "./journal/entry/moveEntry";
+import { retrackEntry } from "./journal/entry/retrackEntry";
+// history
+import { listPastWeekJournalEntryFoods } from "./journal/history/listPastWeek";
 
 //* dashboard
 import { getKcalRange } from "./dashboard/kcalRange";
@@ -65,8 +70,8 @@ export const router = {
       getMacros: journalDayMacrosByDate,
     },
     entry: {
-      //     retrack: base, // 5th <--- mutate journal entries
-      //     move: base, // 5th <--- mutate journal entries
+      retrack: retrackEntry, // 5th <--- mutate journal entries
+      move: moveEntry,
       //     update: base, // 5th <--- mutate journal entries
       delete: deleteEntry,
     },
