@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isDefinedError } from "@orpc/client"
 import { useMutation } from "@tanstack/react-query"
-import { Controller, FormProvider, useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 
-import { IntakeTimeEnum, journalEntrySchema } from "@/schemas/journal/journalEntrySchema"
+import { FoodWithPortionsType } from "@/orpc/router/food/list"
+import { journalEntrySchema } from "@/schemas/journal/journalEntrySchema"
 import { intakeTimeLabels } from "@/schemas/labels/journalEntrySchemaLabels"
-import { getFoodById } from "@/server/actions/food"
 
 import { IntakeTime } from "@/generated/prisma/enums"
 
@@ -22,28 +22,25 @@ import { APP_BASE_URL, BASE_PORTION_NAME } from "@/lib/constants"
 import { orpc } from "@/lib/orpc"
 import { getGermanDate, offsetDate } from "@/lib/utils"
 
-import { NotebookTextIcon, PlusIcon, XIcon } from "lucide-react"
+import { NotebookTextIcon, PlusIcon } from "lucide-react"
 
-import { EnumField } from "@/components/form-fields/EnumField"
-import { NumFieldInput } from "@/components/form-fields/NumField"
 import { useRefererUrl } from "@/components/RefererContext"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
-import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field"
-import { InputGroup, InputGroupAddon } from "@/components/ui/input-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { FieldGroup, FieldSeparator } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-// import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
-import { FoodMacros } from "./FoodMacros"
-import { TrackingWeekDays } from "./TrackingWeekDays"
-import { FoodPortionAmount } from "./FoodPortionAmount"
+import { FoodTrackDays } from "./FoodTrackDays"
+import { FoodTrackIntakeTime } from "./FoodTrackIntakeTime"
+import { FoodMacros } from "./FoodTrackMacros"
+import { FoodPortionAmount } from "./FoodTrackPortionAmount"
 
 
 const compProps = journalEntrySchema.pick({ consumableType: true })
-export type FoodTrackFormProps = React.ComponentProps<"form">
-  & { consumable: NonNullable<Awaited<ReturnType<typeof getFoodById>>> }
-  & z.infer<typeof compProps>
+export interface FoodTrackFormProps extends
+  React.ComponentProps<"form">,
+  z.infer<typeof compProps> {
+  consumable: FoodWithPortionsType
+}
 export function FoodTrackForm({ consumable, consumableType, children, ...props }: FoodTrackFormProps) {
   const { intakeTime } = useIntakeTimeParam()
   const { refererUrl } = useRefererUrl()
@@ -137,28 +134,12 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
 
           <div className="space-y-2">
             <p className="text-muted-foreground text-sm">Makronährwerte der ausgewählten Portionsmenge:</p>
-            <FoodMacros
-              consumable={consumable}
-            />
+            <FoodMacros consumable={consumable} />
           </div>
 
           <FieldSeparator />
 
-          <Controller name="intakeTime"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <EnumField
-                field={field}
-                fieldState={fieldState}
-                label="Mahlzeit"
-                description="Wähle die Essenszeit aus"
-                placeholder="Mahlzeit"
-                compact
-                options={IntakeTimeEnum.options}
-                labels={intakeTimeLabels}
-              />
-            )}
-          />
+          <FoodTrackIntakeTime />
 
           <FieldSeparator />
 
@@ -166,26 +147,7 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
 
           <FieldSeparator />
 
-          <Controller name="daysToTrack"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-              >
-                <FieldContent className="gap-1">
-                  <FieldLabel htmlFor={field.name}>Für mehrere Tage tracken</FieldLabel>
-                  <FieldDescription className="sr-only">Tracke heute und bis zu den nächsten 6 Tagen</FieldDescription>
-                </FieldContent>
-
-                <TrackingWeekDays
-                  field={field}
-                  fieldState={fieldState}
-                />
-
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-              </Field>
-            )}
-          />
+          <FoodTrackDays />
 
           <FieldSeparator />
 
@@ -199,20 +161,5 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
         </FieldGroup>
       </form>
     </FormProvider>
-    // <Drawer>
-    //   <DrawerTrigger>Open</DrawerTrigger>
-    //   <DrawerContent>
-    //     <DrawerHeader>
-    //       <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-    //       <DrawerDescription>This action cannot be undone.</DrawerDescription>
-    //     </DrawerHeader>
-    //     <DrawerFooter>
-    //       <Button>{isPending ? <Spinner /> : <PlusIcon />} Tracken</Button>
-    //       <DrawerClose asChild>
-    //         <Button variant="outline">Abbrechen</Button>
-    //       </DrawerClose>
-    //     </DrawerFooter>
-    //   </DrawerContent>
-    // </Drawer>
   );
 }

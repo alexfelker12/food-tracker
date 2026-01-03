@@ -14,7 +14,7 @@ import { orpc } from "@/lib/orpc";
 
 import { CheckIcon, ListXIcon, PencilIcon, XIcon } from "lucide-react";
 
-import { FoodPortionAmount } from "@/components/track/FoodPortionAmount";
+import { FoodPortionAmount } from "@/components/track/FoodTrackPortionAmount";
 import { Button } from "@/components/ui/button";
 import { DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, NestedDrawer } from "@/components/ui/drawer";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -23,7 +23,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 import { useJournalEntry } from "./JournalEntryContext";
 import { JournalEntryItemActionDelete } from "./JournalEntryItemActionDelete";
-import { FoodMacros } from "@/components/track/FoodMacros";
+import { FoodMacros } from "@/components/track/FoodTrackMacros";
 
 
 interface JournalEntryItemActionUpdateProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }

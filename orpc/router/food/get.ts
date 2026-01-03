@@ -1,8 +1,13 @@
+import { z } from "zod";
+
 import { authMiddleware } from "@/orpc/middleware/authorized";
 import { base } from "@/orpc/middleware/base";
-import { getFoodById } from "@/server/actions/food";
-import z from "zod";
 
+import { getFoodById } from "@/server/actions/food";
+
+
+type ProcedureReturnType = Awaited<ReturnType<typeof getFoodById>>
+// export type FoodWithPortionsType = NonNullable<ProcedureReturnType>
 export const foodById = base
   .use(authMiddleware)
   .route({
