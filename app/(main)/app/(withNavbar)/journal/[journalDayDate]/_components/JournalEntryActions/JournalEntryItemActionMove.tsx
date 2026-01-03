@@ -35,7 +35,7 @@ export function JournalEntryItemActionMove({ ref }: JournalEntryItemActionMovePr
       if (isDefinedError(error)) {
         toast.error(error.message)
       } else {
-        toast.error("Es gab Probleme beim Löschen")
+        toast.error("Es gab Probleme beim verschieben. Versuche es nochmal!")
       }
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)

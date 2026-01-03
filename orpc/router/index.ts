@@ -21,6 +21,7 @@ import { journalDayMacrosByDate } from "./journal/day/getMacros";
 import { deleteEntry } from "./journal/entry/deleteEntry";
 import { moveEntry } from "./journal/entry/moveEntry";
 import { retrackEntry } from "./journal/entry/retrackEntry";
+import { updateEntryFood } from "./journal/entry/updateEntry";
 // history
 import { listPastWeekJournalEntryFoods } from "./journal/history/listPastWeek";
 
@@ -70,10 +71,15 @@ export const router = {
       getMacros: journalDayMacrosByDate,
     },
     entry: {
-      retrack: retrackEntry, // 5th <--- mutate journal entries
+      retrack: retrackEntry,
       move: moveEntry,
-      //     update: base, // 5th <--- mutate journal entries
       delete: deleteEntry,
+      food: {
+        update: updateEntryFood,
+      },
+      // meal: {
+      //   update: updateEntryMeal,
+      // }
     },
     history: {
       listPastWeek: listPastWeekJournalEntryFoods

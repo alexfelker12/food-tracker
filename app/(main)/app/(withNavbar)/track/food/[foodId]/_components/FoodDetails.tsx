@@ -4,9 +4,10 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { orpc } from "@/lib/orpc";
 
+import { FoodTrackForm } from "@/components/track/FoodTrackForm";
 import { Separator } from "@/components/ui/separator";
+
 import { FoodNotFound } from "./FoodNotFound";
-import { FoodTrackForm } from "./FoodTrackForm";
 
 
 export type FoodDetailsProps = {

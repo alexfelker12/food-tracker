@@ -1,5 +1,5 @@
 import { journalEntrySchema } from "@/schemas/journal/journalEntrySchema";
-import { JournalEntrySchema } from "@/schemas/types";
+import { JournalEntrySchema, UpdateJournalEntrySchema } from "@/schemas/types";
 
 import { IntakeTime } from "@/generated/prisma/enums";
 
@@ -161,7 +161,28 @@ export async function getJournalEntriesByDate({ userId, date }: GetJournalEntrie
       date
     },
     include: {
-      consumableReference: true
+      consumableReference: {
+        include: {
+          food: {
+            where: {
+              deletedAt: null
+            },
+            include: {
+              portions: true
+            }
+          },
+          foodPortion: true,
+          meal: {
+            where: {
+              deletedAt: null
+            },
+            include: {
+              portions: true
+            }
+          },
+          mealPortion: true
+        }
+      }
     }
   })
 }
@@ -389,3 +410,160 @@ export async function retrackJournalEntry({ userId, journalEntryId, intakeTime }
 
   return retrackedJournalEntry
 }
+
+
+// update journal entry with tracked food
+interface UpdateJournalEntryProps extends UpdateJournalEntrySchema {
+  userId: string
+  journalEntryId: string
+}
+export async function updateJournalEntryFood({ journalEntryId, userId, portionAmount, portionId }: UpdateJournalEntryProps) {
+  //* 1. get the journal entry 
+  const journalEntryToUpdate = await db.journalEntry.findFirst({
+    where: {
+      id: journalEntryId,
+      userId,
+    },
+    include: {
+      consumableReference: {
+        include: {
+          food: {
+            include: {
+              portions: {
+                where: {
+                  id: portionId
+                }
+              }
+            }
+          },
+        }
+      }
+    }
+  })
+
+  //* journal entry does not exist or does not belong to the user
+  if (!journalEntryToUpdate || !journalEntryToUpdate.consumableReference) return null
+
+  //* 2. get the food from the journal entry
+  const { consumableReference: { food } } = journalEntryToUpdate
+
+  //* check if food and its portion exist
+  if (!food || food.portions.length !== 1) return null
+  const { kcal, fats, carbs, protein, portions } = food
+  const { grams: portionGrams, name } = portions[0]
+
+  //* 3. calculate final macro values 
+  const finalKcal = +((kcal * (portionGrams / 100)) * portionAmount).toFixed(0)
+  const finalFats = +((fats * (portionGrams / 100)) * portionAmount).toFixed(1)
+  const finalCarbs = +((carbs * (portionGrams / 100)) * portionAmount).toFixed(1)
+  const finalProteins = +((protein * (portionGrams / 100)) * portionAmount).toFixed(1)
+
+  //* 4. update with final (macro) values 
+  const updatedJournalEntry = await db.journalEntry.update({
+    where: {
+      id: journalEntryToUpdate.id,
+      userId
+    },
+    data: {
+      //* update portionReference if another portion was selected and portionName
+      ...(portionId === journalEntryToUpdate.consumableReference.foodPortionId
+        ? {}
+        : {
+          consumableReference: {
+            update: {
+              foodPortion: {
+                connect: {
+                  id: portionId
+                }
+              }
+            }
+          },
+          portionName: name
+        }
+      ),
+      //* macro values and portionAmount
+      kcal: finalKcal,
+      fats: finalFats,
+      carbs: finalCarbs,
+      proteins: finalProteins,
+      portionAmount
+    }
+  })
+
+  return updatedJournalEntry
+}
+
+
+// // update journal entry with tracked meal
+// interface UpdateJournalEntryProps extends UpdateJournalEntrySchema {
+//   userId: string
+//   journalEntryId: string
+// }
+// export async function updateJournalEntryMeal({
+//   journalEntryId, userId,
+//   consumableType, portionAmount, portionId
+// }: UpdateJournalEntryProps) {
+//   const journalEntryToUpdate = await db.journalEntry.findFirst({
+//     where: {
+//       id: journalEntryId,
+//       userId,
+//     },
+//     include: {
+//       consumableReference: {
+//         include: {
+//           food: {
+//             include: {
+//               portions: {
+//                 where: {
+//                   id: portionId
+//                 }
+//               }
+//             }
+//           },
+//           meal: {
+//             include: {
+//               portions: {
+//                 where: {
+//                   id: portionId
+//                 }
+//               }
+//             }
+//           },
+//         }
+//       }
+//     }
+//   })
+
+//   //* journal entry does not exist or does not belong to the user
+//   if (!journalEntryToUpdate || !journalEntryToUpdate.consumableReference) return null
+
+//   const { consumableReference: { food, meal, } } = journalEntryToUpdate
+
+//   //* assign food or meal by type
+//   const consumable = consumableType === "FOOD" ? food : meal
+
+//   if (!consumable || !consumable) return null
+
+//   switch (consumableType) {
+//     case "FOOD":
+
+
+
+//       break
+//     case "MEAL":
+//       break
+//     default:
+//       return null // if no determined type -> forbidden
+//   }
+
+//   // const retrackedJournalEntry = await db.journalEntry.create({
+//   //   data: {
+//   //     name, brand, kcal, carbs, fats, proteins, date, portionName, portionAmount, // entry data
+//   //     intakeTime, // selected intaketime
+//   //     user: { connect: { id: userId } }, // user data
+//   //     consumableReference: { create: { foodId, foodPortionId, mealId, mealPortionId } } // consumable data
+//   //   }
+//   // })
+
+//   // return retrackedJournalEntry
+// }

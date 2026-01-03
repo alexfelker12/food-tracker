@@ -26,6 +26,7 @@ import { NotebookTextIcon, PlusIcon, XIcon } from "lucide-react"
 
 import { EnumField } from "@/components/form-fields/EnumField"
 import { NumFieldInput } from "@/components/form-fields/NumField"
+import { useRefererUrl } from "@/components/RefererContext"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field"
@@ -35,8 +36,8 @@ import { Spinner } from "@/components/ui/spinner"
 // import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
 import { FoodMacros } from "./FoodMacros"
-import { useRefererUrl } from "@/components/RefererContext"
 import { TrackingWeekDays } from "./TrackingWeekDays"
+import { FoodPortionAmount } from "./FoodPortionAmount"
 
 
 const compProps = journalEntrySchema.pick({ consumableType: true })
@@ -161,65 +162,7 @@ export function FoodTrackForm({ consumable, consumableType, children, ...props }
 
           <FieldSeparator />
 
-          <Controller name="portionAmount"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-                className="gap-1.5"
-                orientation="vertical"
-              >
-                <div className="flex gap-1.5">
-                  <FieldContent className="justify-center gap-1">
-                    <FieldLabel htmlFor={field.name}>Portion</FieldLabel>
-                    <FieldDescription className="sr-only">Gebe die Anzahl der Portionen an</FieldDescription>
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </FieldContent>
-                  <ButtonGroup>
-                    <InputGroup>
-                      <NumFieldInput
-                        field={field}
-                        fieldState={fieldState}
-                        placeholder={"Anzahl" as `${number}`}
-                        className="placeholder:text-sm"
-                      />
-                      <InputGroupAddon align="inline-end">
-                        <XIcon className="text-muted-foreground size-3" />
-                      </InputGroupAddon>
-                    </InputGroup>
-                    <Controller name="portionId"
-                      control={form.control}
-                      render={({ field: nestedField, fieldState: nestedFieldState }) => (
-                        <Select
-                          name={nestedField.name}
-                          value={nestedField.value ?? ""}
-                          onValueChange={(value) => {
-                            nestedField.onChange(value)
-                            nestedField.onBlur() // trigger onBlur at onChange event (level): onBlur on SelectTrigger triggers validation before selection because of focus change into select options
-                          }}
-                        >
-                          <SelectTrigger
-                            id={nestedField.name}
-                            aria-invalid={nestedFieldState.invalid}
-                            className="gap-1 aria-[invalid=false]:text-foreground"
-                          >
-                            <SelectValue placeholder="Portion wählen" />
-                          </SelectTrigger>
-                          <SelectContent position="popper">
-                            {consumable.portions.map((portion) => (
-                              <SelectItem key={portion.id} value={portion.id}>
-                                {portion.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </ButtonGroup>
-                </div>
-              </Field>
-            )}
-          />
+          <FoodPortionAmount consumable={consumable} />
 
           <FieldSeparator />
 

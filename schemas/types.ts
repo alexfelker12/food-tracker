@@ -4,6 +4,7 @@ import { foodWithPortionsSchema } from "./food/foodSchema";
 import { activityLevelValueMapping, bodyFatPercentageValueMapping, fitnessGoalValueMapping } from "./mappings/profileSchemaMappings";
 import { mergedProfileSchema, profileSchema } from "./profileSchema";
 import { journalEntrySchema } from "./journal/journalEntrySchema";
+import { updateJournalEntrySchema } from "./journal/updateJournalEntrySchema";
 
 // Schemas
 export type ProfileSchema = z.infer<typeof profileSchema>
@@ -27,3 +28,7 @@ export type FoodWithPortionsSchema = z.infer<typeof foodWithPortionsSchema>
 
 // Journal entry
 export type JournalEntrySchema = z.infer<typeof journalEntrySchema>
+
+// Update Journal entry
+export type UpdateJournalEntrySchema = z.infer<typeof updateJournalEntrySchema>
+

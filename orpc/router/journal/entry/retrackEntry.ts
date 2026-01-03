@@ -12,7 +12,7 @@ type ProcedureReturnType = NonNullable<Awaited<ReturnType<typeof retrackJournalE
 export const retrackEntry = base
   .use(authMiddleware)
   .route({
-    method: "PUT",
+    method: "POST",
     path: "/journal/entry",
     summary: "Duplicates (retracks) a journal entry to the selected intake time",
     tags: ["Journal", "Entry"]

@@ -36,7 +36,7 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
       if (isDefinedError(error)) {
         toast.error(error.message)
       } else {
-        toast.error("Es gab Probleme beim Löschen")
+        toast.error("Es gab Probleme beim erneut tracken. Versuche es nochmal!")
       }
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)

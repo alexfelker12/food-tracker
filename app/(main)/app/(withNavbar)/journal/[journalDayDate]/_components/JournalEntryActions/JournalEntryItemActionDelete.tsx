@@ -17,8 +17,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { useJournalEntry } from "./JournalEntryContext";
 
 
-interface JournalEntryItemActionDeleteProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }
-export function JournalEntryItemActionDelete({ ref }: JournalEntryItemActionDeleteProps) {
+interface JournalEntryItemActionDeleteProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> {
+  buttonText?: string
+}
+export function JournalEntryItemActionDelete({ buttonText, ref }: JournalEntryItemActionDeleteProps) {
   const { journalEntry, closeMainDrawer, anyActionPending } = useJournalEntry()
   const firstButtonRef = useRef<HTMLButtonElement>(null)
   const qc = useQueryClient()
@@ -43,7 +45,7 @@ export function JournalEntryItemActionDelete({ ref }: JournalEntryItemActionDele
     <NestedDrawer>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="destructive">
-          {isPending ? <Spinner /> : <Trash2Icon />} Löschen
+          {isPending ? <Spinner /> : <Trash2Icon />} {buttonText || "Löschen"}
         </Button>
       </DrawerTrigger>
       <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>
