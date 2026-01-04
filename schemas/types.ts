@@ -1,10 +1,12 @@
-import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums";
 import { z } from "zod";
+
+import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums";
+
 import { foodWithPortionsSchema } from "./food/foodSchema";
+import { journalEntrySchema, retrackJournalEntrySchema, updateJournalEntrySchema } from "./journal/journalEntrySchema";
 import { activityLevelValueMapping, bodyFatPercentageValueMapping, fitnessGoalValueMapping } from "./mappings/profileSchemaMappings";
 import { mergedProfileSchema, profileSchema } from "./profileSchema";
-import { journalEntrySchema } from "./journal/journalEntrySchema";
-import { updateJournalEntrySchema } from "./journal/updateJournalEntrySchema";
+
 
 // Schemas
 export type ProfileSchema = z.infer<typeof profileSchema>
@@ -32,3 +34,5 @@ export type JournalEntrySchema = z.infer<typeof journalEntrySchema>
 // Update Journal entry
 export type UpdateJournalEntrySchema = z.infer<typeof updateJournalEntrySchema>
 
+// Retrack Journal entry
+export type RetrackJournalEntrySchema = z.infer<typeof retrackJournalEntrySchema>

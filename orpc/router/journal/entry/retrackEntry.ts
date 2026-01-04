@@ -3,7 +3,7 @@ import z from "zod";
 import { authMiddleware } from "@/orpc/middleware/authorized";
 import { base } from "@/orpc/middleware/base";
 
-import { IntakeTime } from "@/generated/prisma/client";
+import { RetrackJournalEntrySchema } from "@/schemas/types";
 
 import { retrackJournalEntry } from "@/server/actions/journal";
 
@@ -14,26 +14,25 @@ export const retrackEntry = base
   .route({
     method: "POST",
     path: "/journal/entry",
-    summary: "Duplicates (retracks) a journal entry to the selected intake time",
+    summary: "Creates a journal entry with the selected intake time and portion",
     tags: ["Journal", "Entry"]
   })
   .input(z.object({
     journalEntryId: z.string(),
-    newIntakeTime: z.custom<IntakeTime>()
+    retrackSchema: z.custom<RetrackJournalEntrySchema>()
   }))
   .output(z.custom<ProcedureReturnType>())
   .handler(async ({
-    input: { journalEntryId, newIntakeTime },
+    input: { journalEntryId, retrackSchema: { intakeTime, portionAmount, portionId } },
     context: { session },
     errors
   }) => {
-    const updatedEntry = await retrackJournalEntry({
-      userId: session.user.id,
-      journalEntryId,
-      intakeTime: newIntakeTime
+    const retrackedEntry = await retrackJournalEntry({
+      userId: session.user.id, journalEntryId,
+      intakeTime, portionAmount, portionId
     })
 
-    if (!updatedEntry) throw errors.FORBIDDEN()
+    if (!retrackedEntry) throw errors.FORBIDDEN()
 
-    return updatedEntry
+    return retrackedEntry
   })

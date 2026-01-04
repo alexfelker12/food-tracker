@@ -28,3 +28,18 @@ export const journalEntrySchema = z.object({
     .number({ error: "Bitte angeben" })
     .min(0.01, "Menge zu gering"),
 })
+
+
+//* update schema
+export const updateJournalEntrySchema = journalEntrySchema.pick({
+  portionAmount: true,
+  portionId: true,
+})
+
+
+//* retrack schema
+export const retrackJournalEntrySchema = journalEntrySchema.pick({
+  intakeTime: true,
+  portionAmount: true,
+  portionId: true,
+})

@@ -8,7 +8,7 @@ import { useMutation, useMutationState, useQueryClient } from "@tanstack/react-q
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { updateJournalEntrySchema } from "@/schemas/journal/updateJournalEntrySchema";
+import { updateJournalEntrySchema } from "@/schemas/journal/journalEntrySchema";
 
 import { orpc } from "@/lib/orpc";
 
@@ -55,7 +55,7 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
 
         <UpdateFormWrap />
 
-        <DrawerFooter className="flex-col-reverse pt-0">
+        <DrawerFooter className="flex-col-reverse pt-2">
           <DrawerClose ref={firstButtonRef} asChild>
             <Button variant="outline" className="flex-1"><XIcon /> Abbrechen</Button>
           </DrawerClose>
@@ -74,12 +74,9 @@ function UpdateFormWrap() {
 
   return (
     <UpdateJournalEntryForm>
-      <div className="flex flex-col gap-4 p-4 pt-0 w-full">
-        <DrawerClose asChild>
-          <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
-        </DrawerClose>
-        <Separator />
-      </div>
+      <DrawerClose asChild>
+        <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
+      </DrawerClose>
     </UpdateJournalEntryForm>
   );
 }
@@ -126,10 +123,11 @@ function UpdateJournalEntryForm({ children }: { children: React.ReactNode }) {
           updateSchema: { ...values }
         })
       }}
+      className="px-4"
     >
       {/* form fields here */}
       {journalEntry.consumableReference?.food &&
-        <div className="space-y-4 px-4 w-full">
+        <div className="space-y-4">
           {/* <Separator />
             <div>
               <h2 className="font-semibold">{journalEntry.consumableReference.food.name}</h2>
@@ -146,9 +144,11 @@ function UpdateJournalEntryForm({ children }: { children: React.ReactNode }) {
         </div>
       }
 
-      <div className="px-4 w-full"><Separator /></div>
+      <Separator />
 
-      {children}
+      <div className="flex">
+        {children}
+      </div>
     </FoodTrack>
   );
 }

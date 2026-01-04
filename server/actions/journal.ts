@@ -1,5 +1,5 @@
 import { journalEntrySchema } from "@/schemas/journal/journalEntrySchema";
-import { JournalEntrySchema, UpdateJournalEntrySchema } from "@/schemas/types";
+import { JournalEntrySchema, RetrackJournalEntrySchema, UpdateJournalEntrySchema } from "@/schemas/types";
 
 import { IntakeTime } from "@/generated/prisma/enums";
 
@@ -350,11 +350,12 @@ export async function pastWeekJournalEntryFoods({ userId }: PastWeekJournalEntry
 
 
 // move journal entry to different intaketime
-interface MoveJournalEntryProps {
+interface JournalEntryAction {
   userId: string
   journalEntryId: string
-  intakeTime: IntakeTime
 }
+
+interface MoveJournalEntryProps extends JournalEntryAction, Pick<JournalEntrySchema, "intakeTime"> { }
 export async function moveJournalEntry({ userId, journalEntryId, intakeTime }: MoveJournalEntryProps) {
   const { data: updatedJournalEntry, error } = await tryCatch(db.journalEntry.update({
     where: {
@@ -374,37 +375,44 @@ export async function moveJournalEntry({ userId, journalEntryId, intakeTime }: M
 }
 
 
-// move journal entry to different intaketime
-interface RetrackJournalEntryProps {
-  userId: string
-  journalEntryId: string
-  intakeTime: IntakeTime
-}
-export async function retrackJournalEntry({ userId, journalEntryId, intakeTime }: RetrackJournalEntryProps) {
-  const journalEntryToRetrack = await db.journalEntry.findFirst({
-    where: {
-      id: journalEntryId,
-      userId
-    },
-    include: {
-      consumableReference: true
-    }
-  })
+// retrack journal entry with different portion and intaketime
+interface RetrackJournalEntryProps extends JournalEntryAction, RetrackJournalEntrySchema { }
+export async function retrackJournalEntry({
+  userId, journalEntryId, intakeTime, portionAmount, portionId
+}: RetrackJournalEntryProps) {
+  //* 1. get the journal entry
+  const journalEntryToRetrack = await getJournalEntryWithReference({ journalEntryId, userId, portionId })
 
   //* journal entry does not exist or does not belong to the user
   if (!journalEntryToRetrack || !journalEntryToRetrack.consumableReference) return null
 
-  const {
-    consumableReference: { foodId, foodPortionId, mealId, mealPortionId }, // consumable reference
-    name, brand, kcal, carbs, fats, proteins, date, portionName, portionAmount,  // needed journal entry data
-  } = journalEntryToRetrack
+  //* 2. get the food from the journal entry
+  const { date, consumableReference: { food } } = journalEntryToRetrack
 
+  //* check if food and its portion exist
+  if (!food || food.portions.length !== 1) return null // portion does not exist -> bad request
+  const { name, brand, kcal, fats, carbs, protein } = food
+  const { name: portionName, grams: portionGrams } = food.portions[0]
+
+  //* 3. calculate final macro values
+  const finalKcal = +((kcal * (portionGrams / 100)) * portionAmount).toFixed(0)
+  const finalFats = +((fats * (portionGrams / 100)) * portionAmount).toFixed(1)
+  const finalCarbs = +((carbs * (portionGrams / 100)) * portionAmount).toFixed(1)
+  const finalProteins = +((protein * (portionGrams / 100)) * portionAmount).toFixed(1)
+
+  //* 4. retrack (create) entry
   const retrackedJournalEntry = await db.journalEntry.create({
     data: {
-      name, brand, kcal, carbs, fats, proteins, date, portionName, portionAmount, // entry data
-      intakeTime, // selected intaketime
-      user: { connect: { id: userId } }, // user data
-      consumableReference: { create: { foodId, foodPortionId, mealId, mealPortionId } } // consumable data
+      name, brand, date, // food/journal entry data
+      kcal: finalKcal, carbs: finalCarbs, fats: finalFats, proteins: finalProteins, // macro data
+      portionName, portionAmount, intakeTime, // retrack data
+      user: { connect: { id: userId } }, // connect to user
+      consumableReference: {
+        create: {
+          food: { connect: { id: food.id } }, // connect to food
+          foodPortion: { connect: { id: portionId } }, // connect to food portion
+        }
+      }
     }
   })
 
@@ -413,33 +421,10 @@ export async function retrackJournalEntry({ userId, journalEntryId, intakeTime }
 
 
 // update journal entry with tracked food
-interface UpdateJournalEntryProps extends UpdateJournalEntrySchema {
-  userId: string
-  journalEntryId: string
-}
+interface UpdateJournalEntryProps extends JournalEntryAction, UpdateJournalEntrySchema { }
 export async function updateJournalEntryFood({ journalEntryId, userId, portionAmount, portionId }: UpdateJournalEntryProps) {
-  //* 1. get the journal entry 
-  const journalEntryToUpdate = await db.journalEntry.findFirst({
-    where: {
-      id: journalEntryId,
-      userId,
-    },
-    include: {
-      consumableReference: {
-        include: {
-          food: {
-            include: {
-              portions: {
-                where: {
-                  id: portionId
-                }
-              }
-            }
-          },
-        }
-      }
-    }
-  })
+  //* 1. get the journal entry
+  const journalEntryToUpdate = await getJournalEntryWithReference({ journalEntryId, userId, portionId })
 
   //* journal entry does not exist or does not belong to the user
   if (!journalEntryToUpdate || !journalEntryToUpdate.consumableReference) return null
@@ -493,77 +478,28 @@ export async function updateJournalEntryFood({ journalEntryId, userId, portionAm
   return updatedJournalEntry
 }
 
-
-// // update journal entry with tracked meal
-// interface UpdateJournalEntryProps extends UpdateJournalEntrySchema {
-//   userId: string
-//   journalEntryId: string
-// }
-// export async function updateJournalEntryMeal({
-//   journalEntryId, userId,
-//   consumableType, portionAmount, portionId
-// }: UpdateJournalEntryProps) {
-//   const journalEntryToUpdate = await db.journalEntry.findFirst({
-//     where: {
-//       id: journalEntryId,
-//       userId,
-//     },
-//     include: {
-//       consumableReference: {
-//         include: {
-//           food: {
-//             include: {
-//               portions: {
-//                 where: {
-//                   id: portionId
-//                 }
-//               }
-//             }
-//           },
-//           meal: {
-//             include: {
-//               portions: {
-//                 where: {
-//                   id: portionId
-//                 }
-//               }
-//             }
-//           },
-//         }
-//       }
-//     }
-//   })
-
-//   //* journal entry does not exist or does not belong to the user
-//   if (!journalEntryToUpdate || !journalEntryToUpdate.consumableReference) return null
-
-//   const { consumableReference: { food, meal, } } = journalEntryToUpdate
-
-//   //* assign food or meal by type
-//   const consumable = consumableType === "FOOD" ? food : meal
-
-//   if (!consumable || !consumable) return null
-
-//   switch (consumableType) {
-//     case "FOOD":
-
-
-
-//       break
-//     case "MEAL":
-//       break
-//     default:
-//       return null // if no determined type -> forbidden
-//   }
-
-//   // const retrackedJournalEntry = await db.journalEntry.create({
-//   //   data: {
-//   //     name, brand, kcal, carbs, fats, proteins, date, portionName, portionAmount, // entry data
-//   //     intakeTime, // selected intaketime
-//   //     user: { connect: { id: userId } }, // user data
-//   //     consumableReference: { create: { foodId, foodPortionId, mealId, mealPortionId } } // consumable data
-//   //   }
-//   // })
-
-//   // return retrackedJournalEntry
-// }
+// grouped journal entries
+interface GetJournalEntryWithReferenceProps extends JournalEntryAction, Pick<JournalEntrySchema, "portionId"> { }
+async function getJournalEntryWithReference({ journalEntryId, userId, portionId }: GetJournalEntryWithReferenceProps) {
+  return await db.journalEntry.findFirst({
+    where: {
+      id: journalEntryId,
+      userId
+    },
+    include: {
+      consumableReference: {
+        include: {
+          food: {
+            include: {
+              portions: {
+                where: {
+                  id: portionId
+                }
+              }
+            }
+          },
+        }
+      }
+    }
+  })
+}
