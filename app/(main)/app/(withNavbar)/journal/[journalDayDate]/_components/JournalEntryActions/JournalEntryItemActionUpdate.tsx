@@ -14,14 +14,14 @@ import { orpc } from "@/lib/orpc";
 
 import { CheckIcon, ListXIcon, PencilIcon, XIcon } from "lucide-react";
 
+import { FoodTrackMacros } from "@/components/track/components/FoodTrackMacros";
 import { FoodTrackPortionAmount } from "@/components/track/components/FoodTrackPortionAmount";
+import { FoodTrack } from "@/components/track/FoodTrack";
 import { Button } from "@/components/ui/button";
 import { DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, NestedDrawer } from "@/components/ui/drawer";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { FoodTrackMacros } from "@/components/track/components/FoodTrackMacros";
-import { FoodTrack } from "@/components/track/FoodTrack";
 
 import { useJournalEntry } from "./JournalEntryContext";
 import { JournalEntryItemActionDelete } from "./JournalEntryItemActionDelete";
@@ -29,7 +29,7 @@ import { JournalEntryItemActionDelete } from "./JournalEntryItemActionDelete";
 
 interface JournalEntryItemActionUpdateProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }
 export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpdateProps) {
-  const { journalEntry, anyActionPending } = useJournalEntry()
+  const { anyActionPending } = useJournalEntry()
   const firstButtonRef = useRef<HTMLButtonElement>(null)
 
   const journalEntryUpdateState = useMutationState({
@@ -53,19 +53,7 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
           <DrawerDescription className="sr-only">Bearbeite die gewählte Portion und dessen Menge</DrawerDescription>
         </DrawerHeader>
 
-        {journalEntry.consumableReference?.food
-          ? <UpdateJournalEntryForm>
-            <div className="flex flex-col gap-4 p-4 pt-0 w-full">
-              <DrawerClose asChild>
-                <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
-              </DrawerClose>
-              <Separator />
-            </div>
-          </UpdateJournalEntryForm>
-          : <div className="flex flex-col gap-2 p-4 pt-0 w-full">
-            <JournalEntryFormEmpty />
-          </div>
-        }
+        <UpdateFormWrap />
 
         <DrawerFooter className="flex-col-reverse pt-0">
           <DrawerClose ref={firstButtonRef} asChild>
@@ -74,6 +62,25 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
         </DrawerFooter>
       </DrawerContent>
     </NestedDrawer>
+  );
+}
+
+function UpdateFormWrap() {
+  const { journalEntry } = useJournalEntry()
+
+  if (!journalEntry.consumableReference?.food) return <div className="flex flex-col gap-2 p-4 pt-0 w-full">
+    <JournalEntryFormEmpty />
+  </div>
+
+  return (
+    <UpdateJournalEntryForm>
+      <div className="flex flex-col gap-4 p-4 pt-0 w-full">
+        <DrawerClose asChild>
+          <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
+        </DrawerClose>
+        <Separator />
+      </div>
+    </UpdateJournalEntryForm>
   );
 }
 
@@ -107,7 +114,6 @@ function UpdateJournalEntryForm({ children }: { children: React.ReactNode }) {
     },
     mode: "onTouched",
   })
-
 
   return (
     <FoodTrack
