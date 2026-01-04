@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isDefinedError } from "@orpc/client"
 import { useMutation } from "@tanstack/react-query"
-import { useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -22,18 +22,18 @@ import { APP_BASE_URL, BASE_PORTION_NAME } from "@/lib/constants"
 import { orpc } from "@/lib/orpc"
 import { getGermanDate, offsetDate } from "@/lib/utils"
 
-import { NotebookTextIcon } from "lucide-react"
+import { NotebookTextIcon, PlusIcon } from "lucide-react"
 
 import { useRefererUrl } from "@/components/RefererContext"
 import { Button } from "@/components/ui/button"
 import { FieldGroup, FieldSeparator } from "@/components/ui/field"
+import { Spinner } from "@/components/ui/spinner"
 
 import { FoodTrackDays } from "./components/FoodTrackDays"
 import { FoodTrackIntakeTime } from "./components/FoodTrackIntakeTime"
-import { FoodTrackMacros } from "./components/FoodTrackMacros"
-import { FoodTrackPortionAmount } from "./components/FoodTrackPortionAmount"
-import { FoodTrackSubmit } from "./components/FoodTrackSubmit"
-import { FoodTrack } from "./FoodTrack"
+import { FoodMacros } from "./components/FoodTrackMacros"
+import { FoodPortionAmount } from "./components/FoodTrackPortionAmount"
+import { FoodTrackProvider } from "./components/FoodTrackProvider"
 
 
 const compProps = journalEntrySchema.pick({ consumableType: true })
@@ -42,7 +42,7 @@ export interface FoodTrackFormProps extends
   z.infer<typeof compProps> {
   consumable: FoodWithPortionsType
 }
-export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps) {
+export function FoodTrackForm({ consumable, consumableType, children, ...props }: FoodTrackFormProps) {
   const { intakeTime } = useIntakeTimeParam()
   const { refererUrl } = useRefererUrl()
   const { back, push } = useRouter()
@@ -58,7 +58,7 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
   const today = offsetDate(new Date())
 
   //* main form
-  const form = useForm({
+  const form = useForm<z.infer<typeof journalEntrySchema>>({
     resolver: zodResolver(journalEntrySchema),
     defaultValues: {
       consumableId: consumable?.id,
@@ -124,36 +124,48 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
   }))
 
   return (
-    <FoodTrack
-      form={form}
+    <FoodTrackProvider
       consumable={consumable}
       isPending={isPending}
-      onSubmitCallback={trackConsumable}
     >
-      <FieldGroup className="gap-4">
-        <div className="space-y-2">
-          <p className="text-muted-foreground text-sm">Makronährwerte der ausgewählten Portionsmenge:</p>
-          <FoodTrackMacros />
-        </div>
+      <FormProvider {...form}>
+        <form
+          className=""
+          onSubmit={form.handleSubmit((values) => trackConsumable(values))}
+          // onSubmit={form.handleSubmit((values) => console.log(values))}
+          {...props}
+        >
+          <FieldGroup className="gap-4">
 
-        <FieldSeparator />
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-sm">Makronährwerte der ausgewählten Portionsmenge:</p>
+              <FoodMacros consumable={consumable} />
+            </div>
 
-        <FoodTrackIntakeTime />
+            <FieldSeparator />
 
-        <FieldSeparator />
+            <FoodTrackIntakeTime />
 
-        <FoodTrackPortionAmount />
+            <FieldSeparator />
 
-        <FieldSeparator />
+            <FoodPortionAmount consumable={consumable} />
 
-        <FoodTrackDays />
+            <FieldSeparator />
 
-        <FieldSeparator />
+            <FoodTrackDays />
 
-        <div className="flex justify-end">
-          <FoodTrackSubmit />
-        </div>
-      </FieldGroup>
-    </FoodTrack>
+            <FieldSeparator />
+
+            <div className="flex justify-end">
+              <Button
+                disabled={isPending}
+              >
+                {isPending ? <Spinner /> : <PlusIcon />} Tracken
+              </Button>
+            </div>
+          </FieldGroup>
+        </form>
+      </FormProvider>
+    </FoodTrackProvider>
   );
 }

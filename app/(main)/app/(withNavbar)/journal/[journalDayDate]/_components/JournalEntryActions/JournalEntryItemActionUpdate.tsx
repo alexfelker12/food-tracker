@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isDefinedError } from "@orpc/client";
 import { useMutation, useMutationState, useQueryClient } from "@tanstack/react-query";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { updateJournalEntrySchema } from "@/schemas/journal/updateJournalEntrySchema";
@@ -14,16 +14,17 @@ import { orpc } from "@/lib/orpc";
 
 import { CheckIcon, ListXIcon, PencilIcon, XIcon } from "lucide-react";
 
-import { FoodPortionAmount } from "@/components/track/FoodTrackPortionAmount";
+import { FoodTrackPortionAmount } from "@/components/track/components/FoodTrackPortionAmount";
 import { Button } from "@/components/ui/button";
 import { DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, NestedDrawer } from "@/components/ui/drawer";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
+import { FoodTrackMacros } from "@/components/track/components/FoodTrackMacros";
+import { FoodTrack } from "@/components/track/FoodTrack";
 
 import { useJournalEntry } from "./JournalEntryContext";
 import { JournalEntryItemActionDelete } from "./JournalEntryItemActionDelete";
-import { FoodMacros } from "@/components/track/FoodTrackMacros";
 
 
 interface JournalEntryItemActionUpdateProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }
@@ -32,14 +33,12 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
   const firstButtonRef = useRef<HTMLButtonElement>(null)
 
   const journalEntryUpdateState = useMutationState({
-    filters: { mutationKey: orpc.food.create.mutationKey() },
+    filters: { mutationKey: orpc.journal.entry.food.update.mutationKey() },
     select: (mutation) => mutation.state.status === "pending"
   })
-  const isPending = journalEntryUpdateState.length > 0 ? journalEntryUpdateState[journalEntryUpdateState.length - 1] : false
-
-  const FirstButton = <DrawerClose ref={firstButtonRef} asChild>
-    <Button variant="outline" className="flex-1"><XIcon /> Abbrechen</Button>
-  </DrawerClose>
+  const isPending = journalEntryUpdateState.length > 0
+    ? journalEntryUpdateState[journalEntryUpdateState.length - 1]
+    : false
 
   return (
     <NestedDrawer>
@@ -56,30 +55,34 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
 
         {journalEntry.consumableReference?.food
           ? <UpdateJournalEntryForm>
-            <DrawerFooter className="flex-col-reverse">
-              {FirstButton}
+            <div className="flex flex-col gap-4 p-4 pt-0 w-full">
               <DrawerClose asChild>
                 <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
               </DrawerClose>
-            </DrawerFooter>
+              <Separator />
+            </div>
           </UpdateJournalEntryForm>
           : <div className="flex flex-col gap-2 p-4 pt-0 w-full">
             <JournalEntryFormEmpty />
-            {FirstButton}
           </div>
         }
+
+        <DrawerFooter className="flex-col-reverse pt-0">
+          <DrawerClose ref={firstButtonRef} asChild>
+            <Button variant="outline" className="flex-1"><XIcon /> Abbrechen</Button>
+          </DrawerClose>
+        </DrawerFooter>
       </DrawerContent>
     </NestedDrawer>
   );
 }
 
-interface UpdateJournalEntryFormProps extends React.ComponentProps<"form"> { }
-function UpdateJournalEntryForm({ children, ...props }: UpdateJournalEntryFormProps) {
+function UpdateJournalEntryForm({ children }: { children: React.ReactNode }) {
   const { journalEntry, closeMainDrawer } = useJournalEntry()
 
   //* update mutation
   const qc = useQueryClient()
-  const { mutate: handleEdit } = useMutation(orpc.journal.entry.food.update.mutationOptions({
+  const { mutate: handleEdit, isPending } = useMutation(orpc.journal.entry.food.update.mutationOptions({
     onError: (error) => {
       if (isDefinedError(error)) {
         toast.error(error.message)
@@ -105,36 +108,42 @@ function UpdateJournalEntryForm({ children, ...props }: UpdateJournalEntryFormPr
     mode: "onTouched",
   })
 
+
   return (
-    <FormProvider {...form}>
-      <form
-        onSubmit={form.handleSubmit((values) => {
-          handleEdit({
-            journalEntryId: journalEntry.id,
-            updateSchema: { ...values }
-          })
-        })}
-        // onSubmit={form.handleSubmit((values) => console.log(values))}
-        {...props}
-      >
-        {/* form fields here */}
-        {journalEntry.consumableReference?.food &&
-          <div className="space-y-4 p-4 pt-0 w-full">
-            {/* <Separator />
+    <FoodTrack
+      form={form}
+      consumable={journalEntry.consumableReference?.food!}
+      isPending={isPending}
+      onSubmitCallback={(values) => {
+        handleEdit({
+          journalEntryId: journalEntry.id,
+          updateSchema: { ...values }
+        })
+      }}
+    >
+      {/* form fields here */}
+      {journalEntry.consumableReference?.food &&
+        <div className="space-y-4 px-4 w-full">
+          {/* <Separator />
             <div>
               <h2 className="font-semibold">{journalEntry.consumableReference.food.name}</h2>
               {journalEntry.consumableReference.food.brand && <p className="text-muted-foreground text-sm">{journalEntry.consumableReference.food.brand}</p>}
             </div> */}
-            <Separator />
-            <FoodMacros consumable={journalEntry.consumableReference.food} />
-            <Separator />
-            <FoodPortionAmount consumable={journalEntry.consumableReference.food} />
-          </div>
-        }
-        <div className="px-4 w-full"><Separator /></div>
-        {children}
-      </form>
-    </FormProvider>
+
+          <Separator />
+
+          <FoodTrackMacros />
+
+          <Separator />
+
+          <FoodTrackPortionAmount />
+        </div>
+      }
+
+      <div className="px-4 w-full"><Separator /></div>
+
+      {children}
+    </FoodTrack>
   );
 }
 

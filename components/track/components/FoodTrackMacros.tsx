@@ -2,12 +2,12 @@
 
 import { Separator } from "@/components/ui/separator"
 import { useFormContext, useWatch } from "react-hook-form"
-import { FoodTrackFormProps } from "./FoodTrackForm"
+import { useFoodTrack } from "./FoodTrackProvider"
 
 
-type FoodMacrosProps = Pick<FoodTrackFormProps, "consumable">
-export function FoodMacros({ consumable }: FoodMacrosProps) {
+export function FoodTrackMacros() {
   const { control } = useFormContext()
+  const { consumable } = useFoodTrack()
 
   const formattedMacro = (macroValue: number) => {
     return macroValue === 0 ? 0 : String(macroValue).replace(".", ",")

@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form"
 
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 
-import { TrackingWeekDays } from "./components/TrackingWeekDays"
+import { TrackingWeekDays } from "./TrackingWeekDays"
 
 
 export function FoodTrackDays() {

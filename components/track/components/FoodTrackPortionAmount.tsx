@@ -9,12 +9,14 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FoodTrackFormProps } from "./FoodTrackForm"
+import { FoodTrackFormProps } from "../FoodTrackForm"
+import { useFoodTrack } from "./FoodTrackProvider"
 // import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
 
-export function FoodPortionAmount({ consumable }: Pick<FoodTrackFormProps, "consumable">) {
+export function FoodTrackPortionAmount() {
   const { control } = useFormContext()
+  const { consumable } = useFoodTrack()
 
   return (
     <Controller name="portionAmount"
