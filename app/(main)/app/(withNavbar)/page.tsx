@@ -8,8 +8,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { JournalDayMacros } from "./journal/[journalDayDate]/_components/JournalDayMacros"; // move to @/components?
-import { CaloryRangeWidget } from "./_components/CaloryRangeWidget";
+import { JournalDayMacros } from "@/components/widgets/JournalDayMacros";
+import { CaloryRangeWidget } from "@/components/widgets/CaloryRangeWidget";
 import { DateToday } from "./_components/DateToday";
 
 

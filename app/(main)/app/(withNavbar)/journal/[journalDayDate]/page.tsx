@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 
 import { JournalDay, JournalDayProps } from "./_components/JournalDay";
-import { JournalDayMacros } from "./_components/JournalDayMacros";
+import { JournalDayMacros } from "@/components/widgets/JournalDayMacros";
 import { JournalDayPicker } from "./_components/JournalDayPicker";
 
 
