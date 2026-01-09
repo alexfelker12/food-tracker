@@ -72,7 +72,7 @@ export function NumFieldInput({
 }: NumFieldInputProps) {
   if (min > max) return null; // input logic not executable if min is bigger than max
 
-  const InputComp = asInput ? Input : InputGroupInput // both components use <Input /> under the hood, but InputGroupInput gets addition attributes/classnames 
+  const InputComp = asInput ? Input : InputGroupInput // both components use <Input /> under the hood, but InputGroupInput gets additional attributes/classnames 
 
   return (
     <InputComp

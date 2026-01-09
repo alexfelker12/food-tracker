@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Separator } from "@/components/ui/separator";
+import { NumFieldInput } from "@/components/form-fields/NumField";
 
 
 export function FoodPortions() {
@@ -81,7 +82,7 @@ export function FoodPortions() {
                         <FieldLabel htmlFor={field.name}>Menge</FieldLabel>
                       </ButtonGroupText>
                       <InputGroup className="flex-1">
-                        <InputGroupInput
+                        {/* <InputGroupInput
                           id={field.name}
                           className="text-right"
                           aria-invalid={fieldState.invalid}
@@ -98,6 +99,11 @@ export function FoodPortions() {
                             if (fieldState.isTouched) field.onBlur() // trigger onBlur at onChange event (level): onBlur triggers validation "onInput"
                           }}
                           onFocus={(e) => e.target.select()}
+                        /> */}
+                        <NumFieldInput
+                          field={field}
+                          fieldState={fieldState}
+                          className="flex-1"
                         />
                         <InputGroupAddon align="inline-end">g</InputGroupAddon>
                       </InputGroup>
