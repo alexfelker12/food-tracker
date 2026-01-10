@@ -16,7 +16,7 @@ export function UserProfileData() {
   const birthDate = getGermanDate(profile.birthDate)
 
   return (
-    <CardContent className="space-y-6 px-4">
+    <CardContent className="space-y-6 px-0">
 
       {/* user data */}
       <ProfileDataSection label="Benutzerdaten">

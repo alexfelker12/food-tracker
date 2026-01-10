@@ -35,8 +35,8 @@ export function UserProfileView({ profile }: UserProfileViewProps) {
         cancelEdit: () => setEditMode(false)
       }}
     >
-      <Card className="py-4 w-full">
-        <CardHeader className="px-4">
+      <Card className="bg-background shadow-none py-0 border-none w-full">
+        <CardHeader className="px-0">
           <CardTitle className="text-lg leading-none">{userName}</CardTitle>
           <CardDescription className="text-base">Dein momentanes Profil</CardDescription>
           <CardAction>

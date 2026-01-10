@@ -17,6 +17,8 @@ interface ProfileFormFieldMacroSplitsProps {
   initialRecommended?: boolean
 }
 export function ProfileFormFieldMacroSplits({ initialRecommended }: ProfileFormFieldMacroSplitsProps) {
+  'use no memo';
+
   const { control, formState, setValue, getValues, watch } = useFormContext<ProfileSchema>();
   const [unlockedSplit, setUnlockedSplit] = useState<SplitLabel>("carbSplit") // default carbSplit locked
   const useRecommended = watch("macroSplitStep.useRecommended", initialRecommended)

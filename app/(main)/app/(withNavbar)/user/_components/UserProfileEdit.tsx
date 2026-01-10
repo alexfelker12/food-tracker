@@ -83,7 +83,7 @@ export function UserProfileEdit() {
   }))
 
   return (
-    <CardContent className="px-4">
+    <CardContent className="px-0">
       <FormProvider {...form}>
         <form
           className={cn(
@@ -116,7 +116,7 @@ export function UserProfileEdit() {
           {/* split data */}
           <ProfileDataSection label="Makronährwertdaten" className="space-y-3" listingClassNames="gap-3">
             <ProfileFormFieldRecommended />
-            <ProfileFormFieldMacroSplits initialRecommended={false} />
+            <ProfileFormFieldMacroSplits initialRecommended={nutritionResult.usedRecommendedSplits} />
           </ProfileDataSection>
 
           <Separator className="mb-4" />

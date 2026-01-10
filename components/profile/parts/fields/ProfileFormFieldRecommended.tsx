@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 
@@ -48,9 +48,13 @@ export function ProfileFormFieldRecommended() {
     ["bodyDataStep.bodyType", "fitnessProfileStep.fitnessGoal", "macroSplitStep.useRecommended"]
   )
 
-  useEffect(() => {
+  const applyInitialUseRecommended = useEffectEvent(() => {
     if (useRecommended) applyRecommendedValues({ bodyType, fitnessGoal })
-  }, [bodyType, fitnessGoal, useRecommended])
+  })
+
+  useEffect(() => {
+    applyInitialUseRecommended()
+  }, [])
 
   return (
     <Controller
@@ -62,12 +66,13 @@ export function ProfileFormFieldRecommended() {
           value={field.value ? "recommended" : "custom"}
           onValueChange={(value) => {
             const recommendedSelected = value === "recommended"
+            console.log(recommendedSelected)
 
             if ((field.value && recommendedSelected) || (!field.value && !recommendedSelected)) return;
             field.onChange(recommendedSelected)
             field.onBlur()
 
-            // if (recommendedSelected) applyRecommendedValues(calcRecommendedData)
+            if (recommendedSelected) applyRecommendedValues({ bodyType, fitnessGoal })
           }}
           className="gap-2 grid-cols-2"
         >
@@ -87,7 +92,7 @@ export function ProfileFormFieldRecommended() {
                     className="sr-only"
                   />
                   <Icon className={cn("text-muted-foreground size-4", isActive && "text-secondary-foreground")} />
-                  <FieldTitle className={cn("flex-none! text-muted-foreground text-sm", isActive && "text-secondary-foreground")}>
+                  <FieldTitle className={cn("flex-none! text-secondary-foreground text-sm")}>
                     {title}
                   </FieldTitle>
                 </Field>
