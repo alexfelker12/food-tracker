@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { intakeTimeLabels } from "@/schemas/labels/journalEntrySchemaLabels";
 
 import { orpc } from "@/lib/orpc";
+import { getMobileOperatingSystem } from "@/lib/utils";
 
 import { type IntakeTime } from "@/generated/prisma/client";
 import { IntakeTime as intakeTimeEnum } from "@/generated/prisma/enums";
@@ -64,8 +65,11 @@ export function JournalEntryItemActionMove({ ref }: JournalEntryItemActionMovePr
     })
   }
 
+  const os = getMobileOperatingSystem()
+  const shouldReposition = os !== "iOS" // don't reposition if iOS
+
   return (
-    <NestedDrawer repositionInputs={true}>
+    <NestedDrawer repositionInputs={shouldReposition}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline">
           {isPending ? <Spinner /> : <ArrowDownUpIcon />} Verschieben

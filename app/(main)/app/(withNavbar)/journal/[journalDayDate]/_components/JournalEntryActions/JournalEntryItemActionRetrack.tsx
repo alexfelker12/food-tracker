@@ -12,6 +12,7 @@ import { retrackJournalEntrySchema } from "@/schemas/journal/journalEntrySchema"
 import { intakeTimeLabels } from "@/schemas/labels/journalEntrySchemaLabels";
 
 import { orpc } from "@/lib/orpc";
+import { getMobileOperatingSystem } from "@/lib/utils";
 
 import { CheckIcon, CopyCheckIcon, ListXIcon, XIcon } from "lucide-react";
 
@@ -41,11 +42,14 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
     ? journalEntryRetrackState[journalEntryRetrackState.length - 1]
     : false
 
+  const os = getMobileOperatingSystem()
+  const shouldReposition = os !== "iOS" // don't reposition if iOS
+
   return (
-    <NestedDrawer repositionInputs={true}>
+    <NestedDrawer repositionInputs={shouldReposition}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline" >
-          {isPending ? <Spinner /> : <CopyCheckIcon />} Erneut tracken
+          {isPending ? <Spinner /> : <CopyCheckIcon />} Erneut tracken {os}
         </Button>
       </DrawerTrigger>
       <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>

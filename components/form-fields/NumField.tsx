@@ -103,7 +103,7 @@ export function NumFieldInput({
         field.onChange(onChangeValue)
         if (fieldState.isTouched) field.onBlur() // trigger onBlur at onChange event (level): onBlur triggers validation "onInput"
       }}
-      onFocus={(e) => e.target.select()}
+      // onFocus={(e) => e.target.select()}
       {...props}
     />
   );

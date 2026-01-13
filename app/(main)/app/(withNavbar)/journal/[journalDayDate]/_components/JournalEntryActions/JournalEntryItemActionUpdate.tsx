@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { updateJournalEntrySchema } from "@/schemas/journal/journalEntrySchema";
 
 import { orpc } from "@/lib/orpc";
+import { getMobileOperatingSystem } from "@/lib/utils";
 
 import { CheckIcon, ListXIcon, PencilIcon, XIcon } from "lucide-react";
 
@@ -40,8 +41,11 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
     ? journalEntryUpdateState[journalEntryUpdateState.length - 1]
     : false
 
+  const os = getMobileOperatingSystem()
+  const shouldReposition = os !== "iOS" // don't reposition if iOS
+
   return (
-    <NestedDrawer repositionInputs={true}>
+    <NestedDrawer repositionInputs={shouldReposition}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline">
           {isPending ? <Spinner /> : <PencilIcon />} Bearbeiten
