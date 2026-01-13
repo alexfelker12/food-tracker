@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { orpc } from "@/lib/orpc";
+import { getMobileOperatingSystem } from "@/lib/utils";
 
 import { Trash2Icon, XIcon } from "lucide-react";
 
@@ -41,8 +42,11 @@ export function JournalEntryItemActionDelete({ buttonText, ref }: JournalEntryIt
     }
   }))
 
+  const os = getMobileOperatingSystem()
+  const shouldReposition = os !== "iOS" // don't reposition if iOS
+
   return (
-    <NestedDrawer>
+    <NestedDrawer repositionInputs={shouldReposition}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="destructive">
           {isPending ? <Spinner /> : <Trash2Icon />} {buttonText || "Löschen"}
