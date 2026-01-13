@@ -32,7 +32,6 @@ import { useJournalEntry } from "./JournalEntryContext";
 interface JournalEntryItemActionRetrackProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }
 export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRetrackProps) {
   const { journalEntry, anyActionPending } = useJournalEntry()
-  const [open, setOpen] = useState(false)
   const firstButtonRef = useRef<HTMLButtonElement>(null)
   const drawerCloseRef = useRef<HTMLButtonElement>(null)
 

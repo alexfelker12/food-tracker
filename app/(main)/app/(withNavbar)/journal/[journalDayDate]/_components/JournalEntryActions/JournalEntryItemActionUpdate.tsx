@@ -31,7 +31,6 @@ import { JournalEntryItemActionDelete } from "./JournalEntryItemActionDelete";
 interface JournalEntryItemActionUpdateProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }
 export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpdateProps) {
   const { journalEntry, anyActionPending } = useJournalEntry()
-  const [open, setOpen] = useState(false)
   const firstButtonRef = useRef<HTMLButtonElement>(null)
   const drawerCloseRef = useRef<HTMLButtonElement>(null)
 

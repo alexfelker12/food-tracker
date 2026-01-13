@@ -36,8 +36,14 @@ export function JournalEntryItemActionDelete({ buttonText, ref }: JournalEntryIt
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)
     onSuccess: ({ name }) => {
+      const toastMsg = (
+        <span className="text-muted-foreground *:[span]:text-foreground">
+          <span>{name}</span> wurde gelöscht
+        </span>
+      )
+
       qc.invalidateQueries({ queryKey: [["journal", "day"]] })
-      toast.success(`${name} wurde gelöscht`)
+      toast.success(toastMsg)
       closeMainDrawer()
     }
   }))
