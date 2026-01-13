@@ -15,7 +15,7 @@ import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemTitle } from "@/components/ui/item";
 
 // import { JournalEntryItemDropdown } from "./JournalEntryItemDropdown";
-import { JournalDayJournalEntry, JournalEntryContext } from "./JournalEntryActions/JournalEntryContext";
+import { JournalDayJournalEntry, JournalEntryContext, useJournalEntry } from "./JournalEntryActions/JournalEntryContext";
 import { JournalEntryItemActions } from "./JournalEntryActions/JournalEntryItemActions";
 
 
@@ -25,27 +25,15 @@ interface JournalEntryItemProps {
 export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
   const [open, setOpen] = useState(false) // open={open} onOpenChange={setOpen}
 
-  const portion = journalEntry.portionName
-    // not base portion
-    ? `${journalEntry.portionAmount}x '${journalEntry.portionName}'`
-    // base portion
-    : `${journalEntry.portionAmount * BASE_PORTION_GRAMS} g`
-
-  const drawerLabel = `${journalEntry.name}${journalEntry.brand ? ` (${journalEntry.brand})` : ""}`
-
   //* mutation state of any pending entry action
   const anyActionPending = useMutationState({
     filters: { mutationKey: [["journal", "entry"]] },
     select: (mutation) => mutation.state.status === "pending"
   }).some((pending) => pending) // TODO: check if some is correct, else use length based 
 
-  //* german format macro values
-  const foodFats = getGermanNumber(journalEntry.fats)
-  const foodCarbs = getGermanNumber(journalEntry.carbs)
-  const foodProteins = getGermanNumber(journalEntry.proteins)
-
-  const os = getMobileOperatingSystem()
-  const shouldReposition = os !== "iOS" // don't reposition if iOS
+  // actions drawer
+  const drawerLabel = `${journalEntry.name}${journalEntry.brand ? ` (${journalEntry.brand})` : ""}`
+  const shouldReposition = getMobileOperatingSystem() !== "iOS" // don't reposition if iOS
 
   return (
     <JournalEntryContext.Provider value={{
@@ -59,16 +47,13 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
           {/* main item */}
           <CollapsibleTrigger className="flex-1">
             <ItemContent className="items-start">
-              <ItemTitle className="text-wrap">{journalEntry.name}</ItemTitle>
-              <ItemDescription>{journalEntry.kcal} kcal, {portion}</ItemDescription>
+              <ItemTitle className="text-start text-wrap">{journalEntry.name}</ItemTitle>
+              <JournalEntryItemDescription />
             </ItemContent>
           </CollapsibleTrigger>
 
+          {/* actions (delete, update, ...) */}
           <ItemActions>
-            {/* <JournalEntryItemDropdown
-            journalEntryId={journalEntry.id}
-            currentIntakeTime={journalEntry.intakeTime}
-          /> */}
             <Drawer
               open={open}
               onOpenChange={setOpen}
@@ -83,19 +68,48 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
           </ItemActions>
 
           {/* item footer */}
-          <CollapsibleContent className="w-full">
-            <ItemFooter className="flex-col items-start gap-1 pt-2">
-              <div className="flex justify-between items-center w-full">
-                <span>Kohlenhydrate: {foodCarbs} g</span>
-                <span>Fette: {foodFats} g</span>
-                <span>Proteine: {foodProteins} g</span>
-              </div>
-              {journalEntry.brand && <span className="text-muted-foreground">Marke: {journalEntry.brand}</span>}
-            </ItemFooter>
-          </CollapsibleContent>
+          <JournalEntryItemContent />
 
         </Item>
       </Collapsible>
     </JournalEntryContext.Provider>
+  );
+}
+
+function JournalEntryItemDescription() {
+  const { journalEntry } = useJournalEntry()
+
+  const portion = journalEntry.portionName
+    // not base portion
+    ? `${journalEntry.portionAmount}x '${journalEntry.portionName}'`
+    // base portion
+    : `${journalEntry.portionAmount * BASE_PORTION_GRAMS} g`
+
+  return (
+    <ItemDescription className="inline-flex gap-1.5">
+      <span>{journalEntry.kcal} kcal</span> <span>-</span> <span>{portion}</span>
+    </ItemDescription>
+  );
+}
+
+function JournalEntryItemContent() {
+  const { journalEntry } = useJournalEntry()
+
+  //* german format macro values
+  const foodFats = getGermanNumber(journalEntry.fats)
+  const foodCarbs = getGermanNumber(journalEntry.carbs)
+  const foodProteins = getGermanNumber(journalEntry.proteins)
+
+  return (
+    <CollapsibleContent className="w-full">
+      <ItemFooter className="flex-col items-start gap-1 pt-2">
+        <div className="flex justify-between items-center w-full">
+          <span>Carbs: {foodCarbs} g</span>
+          <span>Fette: {foodFats} g</span>
+          <span>Proteine: {foodProteins} g</span>
+        </div>
+        {journalEntry.brand && <span className="text-muted-foreground">Marke: {journalEntry.brand}</span>}
+      </ItemFooter>
+    </CollapsibleContent>
   );
 }

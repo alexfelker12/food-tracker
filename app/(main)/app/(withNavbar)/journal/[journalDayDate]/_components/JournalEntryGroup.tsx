@@ -48,47 +48,53 @@ export function JournalEntryGroup({
 
   return (
     <section
-      className={cn("space-y-2 shadow-2xs p-3 border rounded-md", className)}
+      className={cn("space-y-2 shadow-2xs p-2 pb-3 border rounded-md", className)}
       aria-label={label}
       {...props}
     >
-      <div className="flex justify-between items-center pb-2 border-b">
-        <div className="leading-none">
-          <h3 className="text-base">{label}</h3>
-          <span className="text-muted-foreground text-sm leading-none">
+      <div className="flex justify-between items-center">
+        <div className="space-y-0.5 w-full leading-none">
+          <h3 className="px-1 text-accent-foreground text-base">{label}</h3>
+          <div className="pl-1 text-muted-foreground text-sm leading-none">
             {macroSum.kcal
-              ? <span className="inline-flex items-center gap-2 h-3.5">
-                <span className="min-w-15">{macroSum.kcal} Kcal</span>
+              ?
+              <div className="inline-flex items-center gap-2 w-full h-3.5">
+                <span className="w-17 text-center text-ellipsis whitespace-nowrap overflow-hidden">
+                  <span className="text-foreground">{macroSum.kcal}</span> <span className="text-xs">kcal</span>
+                </span>
+
                 <Separator orientation="vertical" className="h-full" />
-                <div className="inline-flex flex-1 items-center gap-x-2">
-                  <span className="text-label-carbs">{groupCarbs}g</span>
-                  <span>-</span>
-                  <span className="text-label-fats">{groupFats}g</span>
-                  <span>-</span>
-                  <span className="text-label-proteins">{groupProteins}g</span>
+
+                <div className="flex flex-1 items-center gap-x-2">
+                  <MacroDisplay className="text-label-carbs" macroValue={groupCarbs} />
+                  <MacroDisplay className="text-label-fats" macroValue={groupFats} />
+                  <MacroDisplay className="text-label-proteins" macroValue={groupProteins} />
                 </div>
-              </span>
-              : "-"
+              </div>
+              :
+              <span>-</span>
             }
-          </span>
+          </div>
         </div>
-        <Button variant="ghost" size="icon" asChild>
+        {/* <Button variant="ghost" size="icon" asChild>
           <NoPrefetchLink href={APP_BASE_URL + `/track/food?intaketime=${value}`}>
             <PlusIcon />
           </NoPrefetchLink>
-        </Button>
+        </Button> */}
       </div>
 
-      <JournalEntriesMap journalEntries={journalEntries} />
+      <div className="px-1"><Separator /></div>
+
+      <JournalEntries journalEntries={journalEntries} />
     </section>
   );
 }
 
-function JournalEntriesMap({ journalEntries }: Pick<JournalEntryGroupProps, "journalEntries">) {
+function JournalEntries({ journalEntries }: Pick<JournalEntryGroupProps, "journalEntries">) {
   if (journalEntries.length === 0) return <JournalEntryGroupEmpty />
 
   return (
-    <ItemGroup className="gap-1.5">
+    <ItemGroup className="gap-1.5 px-1">
       {journalEntries.map((entry) => (
         <JournalEntryItem key={entry.id} journalEntry={entry} />
       ))}
@@ -104,3 +110,9 @@ function JournalEntryGroupEmpty() {
   );
 }
 
+interface MacroDisplayProps extends React.ComponentProps<"div"> { macroValue: string }
+function MacroDisplay({ macroValue, className, ...props }: MacroDisplayProps) {
+  return (
+    <span className={cn("flex flex-1 justify-center", className)} {...props}>{macroValue} g</span>
+  );
+}

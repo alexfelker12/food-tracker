@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isDefinedError } from "@orpc/client";
@@ -31,8 +31,12 @@ import { useJournalEntry } from "./JournalEntryContext";
 
 interface JournalEntryItemActionRetrackProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }
 export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRetrackProps) {
-  const { anyActionPending } = useJournalEntry()
+  const { journalEntry, anyActionPending } = useJournalEntry()
+  const [open, setOpen] = useState(false)
   const firstButtonRef = useRef<HTMLButtonElement>(null)
+  const drawerCloseRef = useRef<HTMLButtonElement>(null)
+
+  const closeNestedDrawer = () => drawerCloseRef.current?.click()
 
   const journalEntryRetrackState = useMutationState({
     filters: { mutationKey: orpc.journal.entry.retrack.mutationKey() },
@@ -46,52 +50,57 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
   const shouldReposition = os !== "iOS" // don't reposition if iOS
 
   return (
-    <NestedDrawer repositionInputs={shouldReposition}>
+    <NestedDrawer
+      open={open}
+      onOpenChange={setOpen}
+      repositionInputs={shouldReposition}
+    >
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline" >
           {isPending ? <Spinner /> : <CopyCheckIcon />} Erneut tracken
         </Button>
       </DrawerTrigger>
+      <DrawerClose ref={drawerCloseRef} className="hidden!" aria-hidden={true} />
       <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>
         <DrawerHeader>
           <DrawerTitle className="text-lg">Erneut tracken</DrawerTitle>
           <DrawerDescription className="sr-only">Tracke diesen Eintrag unter Auswahl der Essenszeit und Portion erneut</DrawerDescription>
         </DrawerHeader>
 
-        <RetrackFormWrap />
+        {journalEntry.consumableReference?.food
+          ?
+          <RetrackJournalEntryForm onMutate={closeNestedDrawer}>
+            <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
+          </RetrackJournalEntryForm>
+          :
+          <div className="flex flex-col gap-2 p-4 pt-0 w-full">
+            <JournalEntryFormEmpty />
+          </div>
+        }
 
         <DrawerFooter className="flex-col-reverse pt-2">
-          <DrawerClose ref={firstButtonRef} asChild>
-            <Button variant="outline" className="flex-1"><XIcon /> Abbrechen</Button>
-          </DrawerClose>
+          <Button variant="outline" className="flex-1" ref={firstButtonRef} onClick={closeNestedDrawer}>
+            <XIcon /> Abbrechen
+          </Button>
         </DrawerFooter>
       </DrawerContent>
     </NestedDrawer>
   );
 }
 
-function RetrackFormWrap() {
-  const { journalEntry } = useJournalEntry()
-
-  if (!journalEntry.consumableReference?.food) return <div className="flex flex-col gap-2 p-4 pt-0 w-full">
-    <JournalEntryFormEmpty />
-  </div>
-
-  return (
-    <RetrackJournalEntryForm>
-      <DrawerClose asChild>
-        <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
-      </DrawerClose>
-    </RetrackJournalEntryForm>
-  );
-}
-
-function RetrackJournalEntryForm({ children }: { children: React.ReactNode }) {
+function RetrackJournalEntryForm({
+  onMutate = () => { },
+  children
+}: {
+  onMutate?: () => void
+  children: React.ReactNode
+}) {
   const { journalEntry, closeMainDrawer } = useJournalEntry()
 
   //* Retrack mutation
   const qc = useQueryClient()
   const { mutate: handleRetrack, isPending } = useMutation(orpc.journal.entry.retrack.mutationOptions({
+    onMutate,
     onError: (error) => {
       if (isDefinedError(error)) {
         toast.error(error.message)

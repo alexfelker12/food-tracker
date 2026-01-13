@@ -38,7 +38,7 @@ export function JournalDayMacros({ date }: JournalDayMacrosProps) {
       <CardContent className="px-2">
         <div className="flex justify-between items-center gap-2 h-11 leading-none">
 
-          <div className="flex flex-col items-center gap-1 min-w-16 text-center text-lg leading-none">
+          <div className="flex flex-col items-center gap-1 w-18 text-center text-lg leading-none">
             <span className="text-muted-foreground text-sm">Kalorien</span>
             <span>{openKcal}</span>
           </div>
@@ -46,8 +46,9 @@ export function JournalDayMacros({ date }: JournalDayMacrosProps) {
           <Separator orientation="vertical" className="h-4/5!" />
 
           <div className="flex flex-1 items-center gap-1 h-full">
+
             <div data-slot="open-carbs" className="flex flex-col flex-1 gap-1 text-center">
-              <span data-slot="open-carbs-label" className="text-muted-foreground text-xs">Kohlenhydrate</span>
+              <span data-slot="open-carbs-label" className="text-muted-foreground text-xs">Carbs</span>
               <span>{openCarbs} <span className={cn(
                 "text-muted-foreground text-xs",
                 openMacros.carbs === 0 && "hidden"
@@ -69,6 +70,7 @@ export function JournalDayMacros({ date }: JournalDayMacrosProps) {
                 openMacros.proteins === 0 && "hidden"
               )}>g</span></span>
             </div>
+
           </div>
 
         </div>

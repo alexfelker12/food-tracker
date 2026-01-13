@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isDefinedError } from "@orpc/client";
@@ -30,8 +30,12 @@ import { JournalEntryItemActionDelete } from "./JournalEntryItemActionDelete";
 
 interface JournalEntryItemActionUpdateProps extends React.ComponentPropsWithRef<typeof DrawerTrigger> { }
 export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpdateProps) {
-  const { anyActionPending } = useJournalEntry()
+  const { journalEntry, anyActionPending } = useJournalEntry()
+  const [open, setOpen] = useState(false)
   const firstButtonRef = useRef<HTMLButtonElement>(null)
+  const drawerCloseRef = useRef<HTMLButtonElement>(null)
+
+  const closeNestedDrawer = () => drawerCloseRef.current?.click()
 
   const journalEntryUpdateState = useMutationState({
     filters: { mutationKey: orpc.journal.entry.food.update.mutationKey() },
@@ -45,52 +49,57 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
   const shouldReposition = os !== "iOS" // don't reposition if iOS
 
   return (
-    <NestedDrawer repositionInputs={shouldReposition}>
+    <NestedDrawer
+      open={open}
+      onOpenChange={setOpen}
+      repositionInputs={shouldReposition}
+    >
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline">
           {isPending ? <Spinner /> : <PencilIcon />} Bearbeiten
         </Button>
       </DrawerTrigger>
+      <DrawerClose ref={drawerCloseRef} className="hidden!" aria-hidden={true} />
       <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>
         <DrawerHeader>
           <DrawerTitle className="text-lg">Eintrag bearbeiten</DrawerTitle>
           <DrawerDescription className="sr-only">Bearbeite die gewählte Portion und dessen Menge</DrawerDescription>
         </DrawerHeader>
 
-        <UpdateFormWrap />
+        {journalEntry.consumableReference?.food
+          ?
+          <UpdateJournalEntryForm onMutate={closeNestedDrawer}>
+            <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
+          </UpdateJournalEntryForm>
+          :
+          <div className="flex flex-col gap-2 p-4 pt-0 w-full">
+            <JournalEntryFormEmpty />
+          </div>
+        }
 
         <DrawerFooter className="flex-col-reverse pt-2">
-          <DrawerClose ref={firstButtonRef} asChild>
-            <Button variant="outline" className="flex-1"><XIcon /> Abbrechen</Button>
-          </DrawerClose>
+          <Button variant="outline" className="flex-1" ref={firstButtonRef} onClick={closeNestedDrawer}>
+            <XIcon /> Abbrechen
+          </Button>
         </DrawerFooter>
       </DrawerContent>
     </NestedDrawer>
   );
 }
 
-function UpdateFormWrap() {
-  const { journalEntry } = useJournalEntry()
-
-  if (!journalEntry.consumableReference?.food) return <div className="flex flex-col gap-2 p-4 pt-0 w-full">
-    <JournalEntryFormEmpty />
-  </div>
-
-  return (
-    <UpdateJournalEntryForm>
-      <DrawerClose asChild>
-        <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
-      </DrawerClose>
-    </UpdateJournalEntryForm>
-  );
-}
-
-function UpdateJournalEntryForm({ children }: { children: React.ReactNode }) {
+function UpdateJournalEntryForm({
+  onMutate = () => { },
+  children
+}: {
+  onMutate?: () => void
+  children: React.ReactNode
+}) {
   const { journalEntry, closeMainDrawer } = useJournalEntry()
 
   //* update mutation
   const qc = useQueryClient()
   const { mutate: handleEdit, isPending } = useMutation(orpc.journal.entry.food.update.mutationOptions({
+    onMutate,
     onError: (error) => {
       if (isDefinedError(error)) {
         toast.error(error.message)
@@ -100,8 +109,14 @@ function UpdateJournalEntryForm({ children }: { children: React.ReactNode }) {
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)
     onSuccess: ({ name }) => {
+      const toastMsg = (
+        <span className="text-muted-foreground *:[span]:text-foreground">
+          <span>{name}</span> wurde erfolgreich bearbeitet
+        </span>
+      )
+
       qc.invalidateQueries({ queryKey: [["journal", "day"]] })
-      toast.success(`${name} wurde erfolgreich bearbeitet`)
+      toast.success(toastMsg)
       closeMainDrawer()
     }
   }))
