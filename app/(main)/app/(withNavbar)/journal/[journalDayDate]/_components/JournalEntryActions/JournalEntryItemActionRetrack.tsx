@@ -49,7 +49,7 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
     <NestedDrawer repositionInputs={shouldReposition}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline" >
-          {isPending ? <Spinner /> : <CopyCheckIcon />} Erneut tracken {os}
+          {isPending ? <Spinner /> : <CopyCheckIcon />} Erneut tracken
         </Button>
       </DrawerTrigger>
       <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>
