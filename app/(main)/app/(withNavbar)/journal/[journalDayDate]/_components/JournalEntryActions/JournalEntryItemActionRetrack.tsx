@@ -42,7 +42,7 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
     : false
 
   return (
-    <NestedDrawer>
+    <NestedDrawer repositionInputs={true}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline" >
           {isPending ? <Spinner /> : <CopyCheckIcon />} Erneut tracken

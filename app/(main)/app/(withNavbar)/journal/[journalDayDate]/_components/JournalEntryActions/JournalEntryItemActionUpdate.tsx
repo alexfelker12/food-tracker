@@ -41,7 +41,7 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
     : false
 
   return (
-    <NestedDrawer>
+    <NestedDrawer repositionInputs={true}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline">
           {isPending ? <Spinner /> : <PencilIcon />} Bearbeiten

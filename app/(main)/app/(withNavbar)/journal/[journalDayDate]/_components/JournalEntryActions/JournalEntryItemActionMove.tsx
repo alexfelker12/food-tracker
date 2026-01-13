@@ -65,7 +65,7 @@ export function JournalEntryItemActionMove({ ref }: JournalEntryItemActionMovePr
   }
 
   return (
-    <NestedDrawer>
+    <NestedDrawer repositionInputs={true}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline">
           {isPending ? <Spinner /> : <ArrowDownUpIcon />} Verschieben

@@ -66,7 +66,7 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
             journalEntryId={journalEntry.id}
             currentIntakeTime={journalEntry.intakeTime}
           /> */}
-            <Drawer open={open} onOpenChange={setOpen} dismissible={!anyActionPending}>
+            <Drawer open={open} onOpenChange={setOpen} dismissible={!anyActionPending} repositionInputs={false}>
               <DrawerTrigger asChild>
                 <Button variant="outline" size="icon"><EllipsisVerticalIcon /></Button>
               </DrawerTrigger>
