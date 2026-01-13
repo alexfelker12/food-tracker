@@ -50,11 +50,7 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
   const shouldReposition = os !== "iOS" // don't reposition if iOS
 
   return (
-    <NestedDrawer
-      open={open}
-      onOpenChange={setOpen}
-      repositionInputs={shouldReposition}
-    >
+    <NestedDrawer repositionInputs={shouldReposition}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline" >
           {isPending ? <Spinner /> : <CopyCheckIcon />} Erneut tracken

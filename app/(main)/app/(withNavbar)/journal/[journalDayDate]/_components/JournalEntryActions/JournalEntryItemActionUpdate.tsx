@@ -49,11 +49,7 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
   const shouldReposition = os !== "iOS" // don't reposition if iOS
 
   return (
-    <NestedDrawer
-      open={open}
-      onOpenChange={setOpen}
-      repositionInputs={shouldReposition}
-    >
+    <NestedDrawer repositionInputs={shouldReposition}>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline">
           {isPending ? <Spinner /> : <PencilIcon />} Bearbeiten
