@@ -26,12 +26,11 @@ export default async function Page({
   const { journalDayDate } = await params
   const referer = (await headers()).get("referer")
 
-
-
   if (!isValidJournalDayDate(journalDayDate)) redirect(APP_BASE_URL + "/journal");
 
   //* if param is "today" create offset date with "now" timestamp
-  const journalDay = offsetDate(journalDayDate === "today" ? new Date() : new Date(journalDayDate))
+  // const journalDay = offsetDate(journalDayDate === "today" ? new Date() : new Date(journalDayDate))
+  const journalDay = journalDayDate === "today" ? new Date() : new Date(journalDayDate)
   const germanDate = getGermanDate(journalDay)
 
   return (

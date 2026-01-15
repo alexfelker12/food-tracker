@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { ControllerFieldState, ControllerRenderProps } from "react-hook-form";
 
-import { cn, get_yyyymmdd_date, getGermanDate } from "@/lib/utils";
+import { cn, get_yyyymmdd_date, getGermanDate, offsetDate } from "@/lib/utils";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -23,7 +23,6 @@ export function TrackingWeekDays({
       const date = new Date()
       const day = date.getDate()
       date.setDate(day + index)
-      date.setHours(0, 0, 0, 0)
       return date
     })
   }, [(new Date()).getDate()]) // should only be reevaluated when day changes

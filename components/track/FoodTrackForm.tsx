@@ -56,7 +56,8 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
   const defaultPortion = consumable.portions.find((portion) => portion.isDefault)
   const initialPortion = defaultPortion ?? consumable.portions.find((portion) => portion.name === BASE_PORTION_NAME)!
 
-  const today = offsetDate(new Date())
+  // const today = offsetDate(new Date())
+  const today = new Date()
 
   const defaultValues: z.infer<typeof journalEntrySchema> = {
     consumableId: consumable?.id,
