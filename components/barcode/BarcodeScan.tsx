@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -83,18 +83,36 @@ export function NavbarBarcodeScan() {
 
 
 function BarcodeScanResults() {
-  const { barcode } = useBarcodeScan()
+  const { barcode, closeNestedDrawer, closeMainDrawer, urlSuffix } = useBarcodeScan()
   const { data, isFetching, isEnabled } = useQuery(orpc.food.getByBarcode.queryOptions({
     input: { barcode },
     enabled: barcode.length > 0
   }))
+  const handledBarcodeRef = useRef<string | null>(null)
+  const { push } = useRouter()
+
+  //* if only one result, directly push to food
+  useEffect(() => {
+    if (
+      !isFetching && // wait for 'isFetching === false' to only run this logic when fetching is settled
+      data?.length === 1 &&
+      handledBarcodeRef.current !== barcode // ref guard: runs this logic only once, if-check will never be true after setting the ref to the current barcode, only after remount/new barcode
+    ) {
+      handledBarcodeRef.current = barcode
+
+      push(`${APP_BASE_URL}/track/food/${data[0].id}${urlSuffix || ""}`)
+      closeNestedDrawer()
+      closeMainDrawer()
+    }
+  }, [data, isFetching, barcode])
 
   // w-full h-[min(calc(100vw-var(--spacing)*8),var(--container-md))]
   if (isFetching) return <div className="place-items-center grid size-full">
     <Spinner className="text-primary size-8" />
   </div>
 
-  if (isEnabled && data) return (
+  //* only render if result length is not 1, useEffect handles the logic for data.length === 1
+  if (isEnabled && data && data.length !== 1) return (
     <BarcodeScanResultsListing matches={data} />
   );
 }
@@ -104,16 +122,7 @@ function BarcodeScanResultsListing({
 }: {
   matches: BarcodeResultFoods
 }) {
-  const { closeNestedDrawer, closeMainDrawer, urlSuffix } = useBarcodeScan()
-  const { push } = useRouter()
-
-  useEffect(() => {
-    if (matches.length === 1) {
-      push(APP_BASE_URL + `/track/food/${matches[0].id}${urlSuffix || ""}`) // ?barcode=${barcode}
-      closeNestedDrawer()
-      closeMainDrawer()
-    }
-  }, [matches.length])
+  const { urlSuffix } = useBarcodeScan()
 
   if (matches.length === 0) return <BarcodeScanNoResults />
 
