@@ -74,12 +74,12 @@ export const OAuthLoginButton = ({
       {children || <>
         <div className="relative">
           <GoogleIcon
-            className={cn("transition-all size-[20px]",
+            className={cn("transition-all size-5",
               loadingState ? "scale-0 opacity-0" : "scale-100 opacity-100"
             )}
           />
           <Spinner
-            className={cn("top-1/2 left-1/2 absolute transition-all -translate-1/2 size-[20px]",
+            className={cn("top-1/2 left-1/2 absolute transition-all -translate-1/2 size-5",
               loadingState ? "scale-100 opacity-100" : "scale-0 opacity-0"
             )}
           />
