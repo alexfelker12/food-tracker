@@ -26,7 +26,7 @@ export default function AppLayout({
     <QueryProvider>
       <div className="-mt-px w-full h-px"></div>
       {children}
-      <Toaster className="main toast" closeButton />
+      <Toaster className="main toast" closeButton duration={3000} />
     </QueryProvider>
   )
 }
