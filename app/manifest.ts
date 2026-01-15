@@ -54,10 +54,11 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "maskable"
       }
     ],
-    start_url: APP_BASE_URL,
-    background_color: "#FFFFFF",
     display: "standalone",
+    start_url: APP_BASE_URL,
     scope: "/",
-    theme_color: "#000000"
+    theme_color: "#000000",
+    background_color: "#FFFFFF",
+    orientation: "portrait"
   }
 }
