@@ -53,7 +53,10 @@ export function FoodTrackMenu({ preselectedIntakeTime, children }: FoodTrackMenu
 
         <DrawerFooter className="pt-0">
 
-          <NavbarBarcodeScanDrawer closeMainDrawer={() => setOpen(false)}>
+          <NavbarBarcodeScanDrawer
+            closeMainDrawer={() => setOpen(false)}
+            preselectedIntakeTime={preselectedIntakeTime}
+          >
             <Button variant="outline" className="flex-1" ref={firstButtonRef}>
               <ScanBarcodeIcon /> Per Barcode finden
             </Button>

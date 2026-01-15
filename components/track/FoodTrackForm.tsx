@@ -34,6 +34,7 @@ import { FoodTrackMacros } from "./components/FoodTrackMacros"
 import { FoodTrackPortionAmount } from "./components/FoodTrackPortionAmount"
 import { FoodTrackSubmit } from "./components/FoodTrackSubmit"
 import { FoodTrack } from "./FoodTrack"
+import { useEffect } from "react"
 
 
 const compProps = journalEntrySchema.pick({ consumableType: true })
@@ -57,19 +58,26 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
 
   const today = offsetDate(new Date())
 
+  const defaultValues: z.infer<typeof journalEntrySchema> = {
+    consumableId: consumable?.id,
+    consumableType,
+    daysToTrack: [today],
+    portionId: initialPortion.id,
+    portionAmount: 1,
+    intakeTime: intakeTime as IntakeTime,
+  }
+
   //* main form
   const form = useForm({
     resolver: zodResolver(journalEntrySchema),
-    defaultValues: {
-      consumableId: consumable?.id,
-      consumableType,
-      daysToTrack: [today],
-      portionId: initialPortion.id,
-      portionAmount: 1,
-      intakeTime: intakeTime as IntakeTime
-    },
+    defaultValues,
     mode: "onTouched",
   })
+
+  //* update form with changing intaketime
+  useEffect(() => {
+    form.reset(defaultValues)
+  }, [intakeTime])
 
   //* create food mutation
   const { mutate: trackConsumable, isPending } = useMutation(orpc.journal.track.mutationOptions({
@@ -110,8 +118,7 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
         // cancel: {
         //   label: <><NotebookTextIcon /> Tagebuch</>,
         //   onClick: () => push(APP_BASE_URL + "/journal/today")
-        // }, 
-        duration: 1000 * 60 // * n sec
+        // },
       })
 
       // navigate back to foodlisting
