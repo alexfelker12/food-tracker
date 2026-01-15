@@ -111,7 +111,8 @@ export function offsetDate(date: Date) {
 
 // check if string is a valid journalDayDate url ("today" | yyyy-mm-dd format)
 export function isValidJournalDayDate(journalDayDate: string) {
-  return journalDayDate === "today" || journalDayRegex.test(journalDayDate)
+  // return journalDayDate === "today" || journalDayRegex.test(journalDayDate)
+  return journalDayRegex.test(journalDayDate)
 }
 
 

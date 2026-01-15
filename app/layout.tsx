@@ -1,10 +1,12 @@
-import type { Metadata } from "next"
+import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 
-import { ThemeProvider } from "@/components/providers/ThemeProvider"
-import "@/app/globals.css"
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { TimezoneDetector } from "@/components/TimezoneDetector";
+
+import "@/app/globals.css";
 
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -43,6 +45,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <TimezoneDetector />
         </ThemeProvider>
       </body>
     </html>

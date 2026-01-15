@@ -22,7 +22,15 @@ export default function proxy(request: NextRequest) {
 
   // redirect to /today only if user is navigating to /journal from a different route than /journal:path* 
   if (referrerPathname && !referrerPathname.startsWith("/app/journal")) {
-    return NextResponse.redirect(new URL("/app/journal/today", request.nextUrl), {
+    // get today's date in user's local timezone from cookie
+    const timezoneCookie = request.cookies.get('user-timezone')?.value
+    const timeZone = timezoneCookie || 'Europe/Berlin' // fallback timezone
+
+    // create today's date in user timezone and format as YYYY-MM-DD
+    const now = new Date()
+    const yyyymmdd_dateString = now.toLocaleDateString('en-CA', { timeZone })
+
+    return NextResponse.redirect(new URL(`/app/journal/${yyyymmdd_dateString}`, request.nextUrl), {
       status: 307,
     })
   }

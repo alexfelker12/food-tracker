@@ -30,7 +30,8 @@ export default async function Page({
 
   //* if param is "today" create offset date with "now" timestamp
   // const journalDay = offsetDate(journalDayDate === "today" ? new Date() : new Date(journalDayDate))
-  const journalDay = journalDayDate === "today" ? new Date() : new Date(journalDayDate)
+  // const journalDay = journalDayDate === "today" ? new Date() : new Date(journalDayDate)
+  const journalDay = new Date(journalDayDate)
   const germanDate = getGermanDate(journalDay)
 
   return (
