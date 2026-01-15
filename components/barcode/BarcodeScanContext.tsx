@@ -14,6 +14,8 @@ type ContextProps = {
   closeMainDrawer: () => void
 
   enabled: boolean
+
+  urlSuffix?: string
 }
 
 export const BarcodeScanContext = createContext<ContextProps | undefined>(undefined);

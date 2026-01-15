@@ -23,7 +23,7 @@ export function JournalDayMacros({ date }: JournalDayMacrosProps) {
   const openProteins = openMacros.proteins === 0 ? "-" : getGermanNumber(openMacros.proteins)
 
   return (
-    <Card className="gap-3 py-4 pb-3">
+    <Card className="gap-3 py-4 pb-3 rounded-md">
       <CardHeader className="gap-0 px-4">
         <CardTitle className="text-center text-xl leading-none">Offene Nährwerte</CardTitle>
         <CardDescription className="sr-only">Zeigt die offenen Kalorien und Makrowerte für diesen Tag an</CardDescription>

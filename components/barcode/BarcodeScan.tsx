@@ -100,16 +100,16 @@ function BarcodeScanResults() {
 }
 
 function BarcodeScanResultsListing({
-  matches }: {
-    matches: BarcodeResultFoods
-  }
-) {
-  const { closeNestedDrawer, closeMainDrawer } = useBarcodeScan()
+  matches
+}: {
+  matches: BarcodeResultFoods
+}) {
+  const { closeNestedDrawer, closeMainDrawer, urlSuffix } = useBarcodeScan()
   const { push } = useRouter()
 
   useEffect(() => {
     if (matches.length === 1) {
-      push(APP_BASE_URL + `/track/food/${matches[0].id}`) // ?barcode=${barcode}
+      push(APP_BASE_URL + `/track/food/${matches[0].id}${urlSuffix || ""}`) // ?barcode=${barcode}
       closeNestedDrawer()
       closeMainDrawer()
     }
@@ -120,7 +120,7 @@ function BarcodeScanResultsListing({
   if (matches.length > 1) return (
     <ItemGroup className="gap-1.5 h-full">
       {matches.map((food) => (
-        <FoodListingItem key={food.id} food={food} />
+        <FoodListingItem key={food.id} food={food} linkSuffix={urlSuffix} />
       ))}
     </ItemGroup>
   );

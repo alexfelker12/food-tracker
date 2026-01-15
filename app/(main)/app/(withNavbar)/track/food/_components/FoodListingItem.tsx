@@ -16,16 +16,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface FoodListingItemProps extends React.ComponentProps<typeof Item> {
   food: FoodWithPortionsType
+  linkSuffix?: string
 }
-export function FoodListingItem({ food, ...props }: FoodListingItemProps) {
+export function FoodListingItem({ food, linkSuffix, ...props }: FoodListingItemProps) {
   const { kcal, name } = getDefaultPortionData(food)
 
   const { intakeTime, intakeTimeKey } = useIntakeTimeParam()
 
-  const itemLink = `${APP_BASE_URL}/track/food/${food.id}${intakeTime
+  const intakeTimeParam = intakeTime
     ? `?${intakeTimeKey}=${intakeTime}`
     : ""
-    }`
+
+  const itemLink = `${APP_BASE_URL}/track/food/${food.id}${linkSuffix || intakeTimeParam}`
 
   return (
     <Item

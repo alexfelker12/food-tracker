@@ -38,7 +38,7 @@ export default function Page() {
             <Separator />
           </div>
 
-          <Suspense fallback={<Skeleton className="w-full h-[110px]" />}>
+          <Suspense fallback={<Skeleton className="w-full h-[106px]" />}>
             <OpenMacrosWidgetWrap />
           </Suspense>
 

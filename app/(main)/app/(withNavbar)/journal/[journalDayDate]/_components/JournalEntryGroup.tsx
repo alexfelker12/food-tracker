@@ -15,6 +15,7 @@ import { ItemGroup } from "@/components/ui/item";
 import { Separator } from "@/components/ui/separator";
 
 import { JournalEntryItem } from "./JournalEntryItem";
+import { FoodTrackMenu } from "@/components/track/FoodTrackMenu";
 
 
 export interface JournalEntryGroupProps extends React.ComponentProps<"section"> {
@@ -48,11 +49,12 @@ export function JournalEntryGroup({
 
   return (
     <section
-      className={cn("space-y-2 shadow-2xs p-2 pb-3 border rounded-md", className)}
+      className={cn("relative space-y-2 shadow-2xs p-2 pb-3 border rounded-md", className)}
       aria-label={label}
       {...props}
     >
       <div className="flex justify-between items-center">
+
         <div className="space-y-0.5 w-full leading-none">
           <h3 className="px-1 text-accent-foreground text-base">{label}</h3>
           <div className="pl-1 text-muted-foreground text-sm leading-none">
@@ -76,11 +78,14 @@ export function JournalEntryGroup({
             }
           </div>
         </div>
-        {/* <Button variant="ghost" size="icon" asChild>
-          <NoPrefetchLink href={APP_BASE_URL + `/track/food?intaketime=${value}`}>
-            <PlusIcon />
-          </NoPrefetchLink>
-        </Button> */}
+
+        <div className="-top-2 -right-1 z-0 absolute">
+          <FoodTrackMenu preselectedIntakeTime={value}>
+            <Button variant="outline" size="xs" background="floating">
+              <PlusIcon /> Tracken
+            </Button>
+          </FoodTrackMenu>
+        </div>
       </div>
 
       <div className="px-1"><Separator /></div>

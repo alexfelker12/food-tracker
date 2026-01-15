@@ -11,9 +11,7 @@ interface IntakeTimeOptionProps extends React.ComponentPropsWithRef<typeof Butto
 }
 export function IntakeTimeOption({ onOptionSelect, label, ...props }: IntakeTimeOptionProps) {
   return (
-    <DrawerClose asChild>
-      <Button variant="outline" onClick={() => onOptionSelect()} {...props}>{label}</Button>
-    </DrawerClose>
+    <Button variant="outline" onClick={() => onOptionSelect()} {...props}>{label}</Button>
   )
 }
 
@@ -22,12 +20,10 @@ interface IntakeTimeOptionLinkProps extends Omit<IntakeTimeOptionProps, "onOptio
 }
 export function IntakeTimeOptionLink({ label, href, ...props }: IntakeTimeOptionLinkProps) {
   return (
-    <DrawerClose asChild>
-      <Button variant="outline" asChild {...props}>
-        <NoPrefetchLink href={href}>
-          {label}
-        </NoPrefetchLink>
-      </Button>
-    </DrawerClose>
+    <Button variant="outline" asChild {...props}>
+      <NoPrefetchLink href={href}>
+        {label}
+      </NoPrefetchLink>
+    </Button>
   );
 }

@@ -5,6 +5,7 @@ import { IntakeTime as intakeTimeEnum } from "@/generated/prisma/enums";
 import { useIntakeTimeParam } from "@/hooks/useIntakeTimeParam";
 
 import { IntakeTimeOptionLink } from "@/components/journal/IntakeTimeOption";
+import { DrawerClose } from "@/components/ui/drawer";
 
 
 interface NavbarDrawerIntakeTimeLinksProps {
@@ -17,27 +18,35 @@ export function NavbarDrawerIntakeTimeLinks({ href, ref, onOptionClick }: Navbar
 
   return (
     <div className="flex flex-col gap-2 p-4 pt-0">
-      <IntakeTimeOptionLink
-        label="Frühstück"
-        href={`${href}?${intakeTimeKey}=${intakeTimeEnum.BREAKFAST}`}
-        ref={ref}
-        onClick={onOptionClick}
-      />
-      <IntakeTimeOptionLink
-        label="Mittagessen"
-        href={`${href}?${intakeTimeKey}=${intakeTimeEnum.LUNCH}`}
-        onClick={onOptionClick}
-      />
-      <IntakeTimeOptionLink
-        label="Abendessen"
-        href={`${href}?${intakeTimeKey}=${intakeTimeEnum.DINNER}`}
-        onClick={onOptionClick}
-      />
-      <IntakeTimeOptionLink
-        label="Snacks"
-        href={`${href}?${intakeTimeKey}=${intakeTimeEnum.SNACKS}`}
-        onClick={onOptionClick}
-      />
+      <DrawerClose asChild>
+        <IntakeTimeOptionLink
+          label="Frühstück"
+          href={`${href}?${intakeTimeKey}=${intakeTimeEnum.BREAKFAST}`}
+          ref={ref}
+          onClick={onOptionClick}
+        />
+      </DrawerClose>
+      <DrawerClose asChild>
+        <IntakeTimeOptionLink
+          label="Mittagessen"
+          href={`${href}?${intakeTimeKey}=${intakeTimeEnum.LUNCH}`}
+          onClick={onOptionClick}
+        />
+      </DrawerClose>
+      <DrawerClose asChild>
+        <IntakeTimeOptionLink
+          label="Abendessen"
+          href={`${href}?${intakeTimeKey}=${intakeTimeEnum.DINNER}`}
+          onClick={onOptionClick}
+        />
+      </DrawerClose>
+      <DrawerClose asChild>
+        <IntakeTimeOptionLink
+          label="Snacks"
+          href={`${href}?${intakeTimeKey}=${intakeTimeEnum.SNACKS}`}
+          onClick={onOptionClick}
+        />
+      </DrawerClose>
     </div>
   )
 }
