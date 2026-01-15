@@ -26,7 +26,7 @@ export const journalEntrySchema = z.object({
   portionId: z.string(),
   portionAmount: z
     .number({ error: "Bitte angeben" })
-    .min(0.01, "Menge zu gering"),
+    .min(0.001, "Menge zu gering"),
 })
 
 

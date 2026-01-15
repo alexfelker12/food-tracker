@@ -66,7 +66,7 @@ interface NumFieldInputProps extends Pick<NumFieldProps, "field" | "fieldState">
 }
 export function NumFieldInput({
   field, fieldState,
-  min = 0, max = 999, step = 0.01,
+  min = 0, max = 999, step = 0.001,
   placeholder, asInput,
   className, ...props
 }: NumFieldInputProps) {
