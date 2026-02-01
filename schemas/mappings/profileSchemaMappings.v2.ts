@@ -1,9 +1,5 @@
 import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums";
-import type {
-  FlatProfileSchema,
-  MacroSplits,
-  MappedFlatProfileSchema
-} from "../types";
+
 
 type MinMaxRecord = { min: number, max: number }
 
@@ -55,24 +51,6 @@ export const noWorkoutValueMapping: WorkoutValueType = {
   QUICKLY_GAIN_WEIGHT: { min: 1.4, max: 1.5 },
 }
 
-// bodyfat percentage estimation
-export const bodyFatPercentageValueMapping: Record<Gender, Record<BodyType, number>> = {
-  MALE: {
-    VERY_ATHLETIC: 8,
-    ATHLETIC: 13,
-    AVERAGE: 18,
-    SLIGHTLY_OVERWEIGHT: 24,
-    MORE_OVERWEIGHT: 31,
-  },
-  FEMALE: {
-    VERY_ATHLETIC: 16,
-    ATHLETIC: 21,
-    AVERAGE: 26,
-    SLIGHTLY_OVERWEIGHT: 32,
-    MORE_OVERWEIGHT: 40,
-  }
-}
-
 // fat calculation bodyfat factor
 export const bodyFatValueMapping: Record<Gender, Record<BodyType, MinMaxRecord>> = {
   MALE: {
@@ -88,56 +66,5 @@ export const bodyFatValueMapping: Record<Gender, Record<BodyType, MinMaxRecord>>
     AVERAGE: { min: 1, max: 1.2 },
     SLIGHTLY_OVERWEIGHT: { min: 1.1, max: 1.3 },
     MORE_OVERWEIGHT: { min: 1.2, max: 1.4 },
-  }
-}
-
-// carbs range multiplicator
-export const carbsRangeMultiplicator: MinMaxRecord = { min: 0.95, max: 1.05 }
-
-// recommended split percentages by fitnessGoal
-export const recommendedBaseSplitsMapping: Record<FitnessGoal, MacroSplits> = {
-  QUICKLY_LOSE_WEIGHT: {
-    fatSplit: 25,
-    carbSplit: 40,
-    proteinSplit: 35
-  },
-  LOSE_WEIGHT: {
-    fatSplit: 25,
-    carbSplit: 45,
-    proteinSplit: 30
-  },
-  MAINTAIN: {
-    fatSplit: 25,
-    carbSplit: 50,
-    proteinSplit: 25
-  },
-  GAIN_WEIGHT: {
-    fatSplit: 28,
-    carbSplit: 50,
-    proteinSplit: 22
-  },
-  QUICKLY_GAIN_WEIGHT: {
-    fatSplit: 30,
-    carbSplit: 50,
-    proteinSplit: 20
-  },
-}
-
-export const flatProfileSchemaMapping = ({
-  gender, birthDate, heightCm, weightKg, bodyType, fitnessGoal, activityLevel, trainingDaysPerWeek, proteinSplit, fatSplit, carbSplit, useRecommended
-}: Required<FlatProfileSchema>): MappedFlatProfileSchema => {
-  return {
-    gender,
-    birthDate,
-    heightCm,
-    weightKg,
-    kfaMap: bodyFatPercentageValueMapping[gender][bodyType],
-    fitnGoalMap: fitnessGoalValueMapping[fitnessGoal],
-    activityMap: activityLevelValueMapping[activityLevel],
-    trainingDaysPerWeek,
-    proteinSplit,
-    fatSplit,
-    carbSplit,
-    useRecommended
   }
 }

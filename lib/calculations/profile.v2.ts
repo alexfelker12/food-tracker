@@ -1,18 +1,18 @@
-import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums"
+import { ActivityLevel, FitnessGoal } from "@/generated/prisma/enums"
 
 import {
   activityLevelValueMapping as activityMap,
   fitnessGoalValueMapping as fitnGoalMap,
-  bodyFatPercentageValueMapping as kfaMap, // body fat percentage map
   bodyFatValueMapping,
   noWorkoutValueMapping,
-  recommendedBaseSplitsMapping,
   workoutFactorMapping,
   workoutValueMapping
 } from "@/schemas/mappings/profileSchemaMappings.v2"
+import {
+  bodyFatPercentageValueMapping as kfaMap, // body fat percentage map
+} from "@/schemas/mappings/profileSchemaMappings"
 import type {
   FlatProfileSchema,
-  MacroSplits,
   MappedFlatProfileSchema
 } from "@/schemas/types"
 
@@ -99,7 +99,7 @@ export type CalculateRecommendedProteinsProps = Pick<Required<FlatProfileSchema>
 export function calculateRecommendedProteins({ weightKg, fitnessGoal, trainingDaysPerWeek }: CalculateRecommendedProteinsProps) {
   let minValue = 0
   let maxValue = 0
-  let workoutFactor = 1
+  let workoutFactor = 1 // TODO: Discuss base factor (1 & 2 trainingDays are < 1)
 
   if (trainingDaysPerWeek > 0) {
     //* workout values
@@ -131,28 +131,6 @@ export function calculateRecommendedFats({ weightKg, gender, bodyType }: Calcula
   return { min, max }
   // return +(recommendedFats).toFixed(0)
 }
-
-//* remaining calories
-// // calculated remaining calories for recommended carbs calculation 
-// export type CalculateRemainingCaloriesProps = {
-//   calorieGoal: ReturnType<typeof calculateCalorieGoal>
-//   recommendedProteins: ReturnType<typeof calculateRecommendedProteins>
-//   recommendedFats: ReturnType<typeof calculateRecommendedFats>
-// }
-// export function calculateRemainingCalories({ calorieGoal, recommendedProteins, recommendedFats }: CalculateRemainingCaloriesProps) {
-//   const { min: minRecommendedProteins, max: maxRecommendedProteins } = recommendedProteins
-//   const { min: minRecommendedFats, max: maxRecommendedFats } = recommendedFats
-
-//   const proteinCaloriesMin = minRecommendedProteins * 4
-//   const proteinCaloriesMax = maxRecommendedProteins * 4
-//   const fatCaloriesMin = minRecommendedFats * 9
-//   const fatCaloriesMax = maxRecommendedFats * 9
-
-//   const min = calorieGoal - proteinCaloriesMin - fatCaloriesMin
-//   const max = calorieGoal - proteinCaloriesMax - fatCaloriesMax
-//   return { min, max }
-//   // return +(remainingCalories).toFixed(0)
-// }
 
 
 //* recommended carbs
