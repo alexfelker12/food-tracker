@@ -25,11 +25,21 @@ export const fitnessGoalValueMapping: Record<FitnessGoal, number> = {
   QUICKLY_GAIN_WEIGHT: 1.2,
 }
 
+// water goal
+export const waterGoalValueMapping: Record<FitnessGoal, number> = {
+  QUICKLY_LOSE_WEIGHT: 1.08,
+  LOSE_WEIGHT: 1.05,
+  MAINTAIN: 1,
+  GAIN_WEIGHT: 1,
+  QUICKLY_GAIN_WEIGHT: 1,
+}
+
 // workout factors
 type WorkoutValueType = Record<FitnessGoal, MinMaxRecord>
 export const workoutFactorMapping: { [t: number]: number } = {
-  1: 0.9,
-  2: 0.98,
+  0: 1,
+  1: 1,
+  2: 1,
   3: 1,
   4: 1.03,
   5: 1.05,

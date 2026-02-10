@@ -181,19 +181,22 @@ model NutritionResult {
   //* calculated calories/factors
   bmr         Float
   tdee        Float
-  caloryGoal  Float
-  waterDemand Float
+  calorieGoal Float
+
+  //* water demand range
+  waterDemandMin Float
+  waterDemandMax Float
 
   //* actual gram amount calculated from calorie goal and proteins/fats formula
-  fatsTargetGrams    Float
-  fatsMinGrams       Float
-  fatsMaxGrams       Float
-  carbsTargetGrams   Float
-  carbsMinGrams      Float
-  carbsMaxGrams      Float
-  proteinTargetGrams Float
-  proteinMinGrams    Float
-  proteinMaxGrams    Float
+  fatsTargetGrams     Float
+  fatsMinGrams        Float
+  fatsMaxGrams        Float
+  carbsTargetGrams    Float
+  carbsMinGrams       Float
+  carbsMaxGrams       Float
+  proteinsTargetGrams Float
+  proteinsMinGrams    Float
+  proteinsMaxGrams    Float
 
   // save profil data for potential future reference 
   profileSnapshot Json
