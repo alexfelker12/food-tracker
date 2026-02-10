@@ -1,4 +1,4 @@
-import { MetricsProfileModel, NutritionResultModel } from "@/generated/prisma/models";
+import { MetricsProfileModel } from "@/generated/prisma/models";
 import {
   // base calc
   calculateBMR, calculateTDEE, calculateCalorieGoal,
@@ -7,13 +7,14 @@ import {
   // split calc is done by strategy classes
 } from "@/lib/calculations/profile.v2";
 import { createMacroStrategy } from "./macro-plan-calculations/factory";
+import { Prisma } from "@/generated/prisma/client";
 
 
 //* create nutrition result
 // export interface ChangedProfileCalculationProps extends Omit<MetricsProfileModel, "id" | "userId"> { }
-export function changedProfileCalculation(
-  profileData: Omit<MetricsProfileModel, "id" | "userId">
-): Omit<NutritionResultModel, "id" | "metricsProfileId" | "date"> | null {
+export type NutritionResultData = Prisma.NutritionResultCreateWithoutMetricsProfileInput
+export type ChangedProfileCalculationProps = Omit<MetricsProfileModel, "id" | "userId">
+export function changedProfileCalculation(profileData: ChangedProfileCalculationProps): NutritionResultData | null {
   const {
     birthDate, gender, heightCm, weightKg, bodyType,
     activityLevel, fitnessGoal, trainingDaysPerWeek,

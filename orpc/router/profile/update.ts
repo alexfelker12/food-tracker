@@ -1,14 +1,18 @@
 import z from "zod";
 
+import type { NutritionResultModel } from "@/generated/prisma/models";
+
 import { authMiddleware } from "@/orpc/middleware/authorized";
 import { base } from "@/orpc/middleware/base";
 
 import { profileSchema } from "@/schemas/profileSchema";
 
-import { updateUserProfile, upsertNutritionResultFromProfileChange } from "@/server/actions/profile";
+import { getUserLocalDateNow } from "@/lib/utils";
+
+import { updateUserProfileAndLatestResult } from "@/server/actions/profile";
 
 
-type ProcedureReturnType = Awaited<ReturnType<typeof upsertNutritionResultFromProfileChange>>
+type ProcedureReturnType = NutritionResultModel
 export type UserProfileType = NonNullable<ProcedureReturnType>
 export const updateProfile = base
   .use(authMiddleware)
@@ -22,38 +26,28 @@ export const updateProfile = base
   .output(z.custom<ProcedureReturnType>())
   .handler(async ({
     input,
-    context: { session },
+    context: { session, headers },
     errors
   }) => {
-    const now = new Date()
-    const {
-      userDataStep,
-      bodyDataStep,
-      fitnessProfileStep,
-      macroSplitStep: { useRecommended, ...partialMacroSplitStep }
-    } = input
+    const userLocalNow = getUserLocalDateNow(headers)
 
-    // exclude non profile data
-    const userProfile = await updateUserProfile({
+    const updatedUserProfile = await updateUserProfileAndLatestResult({
+      userProfileData: input,
       userId: session.user.id,
-      profileData: {
-        ...userDataStep,
-        ...bodyDataStep,
-        ...fitnessProfileStep,
-        ...partialMacroSplitStep,
-      }
+      date: userLocalNow,
     })
 
-    if (!userProfile) throw errors.NOT_FOUND()
+    // error case checks
+    switch (updatedUserProfile) {
+      case "no profile":
+        throw errors.NOT_FOUND() // not allowed to create another 
+      case "invalid plan":
+      case "parsing error":
+        throw errors.BAD_REQUEST() // invalid input
+      case "no result":
+        throw errors.INTERNAL_SERVER_ERROR() // ...
+    }
 
-    const { id, userId, ...profileData } = userProfile
-
-    const changedUserProfile = await upsertNutritionResultFromProfileChange({
-      metricsProfileId: id,
-      updateDay: now,
-      profileData,
-      useRecommended: input.macroSplitStep.useRecommended
-    })
-
-    return changedUserProfile
+    // garantueed to be of length one because of "take: 1" and length check in create function
+    return updatedUserProfile.nutritionResult[0]
   })

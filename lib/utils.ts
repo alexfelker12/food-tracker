@@ -179,3 +179,35 @@ export function getMobileOperatingSystem() {
 
   return "unknown";
 }
+
+
+/**
+ * creates a date object with offset by the users timezone 
+ * @param headers Headers: request headers
+ * @returns Date: local offset date
+ */
+export function getUserLocalDateNow(headers: Headers) {
+  // get today's date in user's local timezone from cookie
+  const timezoneCookie = headers.get("user-timezone")
+  const timeZone = timezoneCookie || "Europe/Berlin" // fallback timezone
+
+  // create today's date in user timezone
+  const now = new Date()
+  const offsetMs = getTimezoneOffsetMs(now, timeZone)
+  const userLocalNow = new Date(now.getTime() + offsetMs)
+
+  return userLocalNow
+}
+
+
+/**
+ * calculates the offset in ms for a date relative to passed timezone
+ * @param date Date: current date
+ * @param tz string: timezone
+ * @returns number: offset time in ms
+ */
+export function getTimezoneOffsetMs(date: Date, tz: string) {
+  const tzDate = new Date(date.toLocaleString("en-US", { timeZone: tz }));
+  const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
+  return tzDate.getTime() - utcDate.getTime();
+}

@@ -36,6 +36,12 @@ export const BodyTypeEnum = z.enum([
 ], {
   error: "Bitte wähle einen Körpertyp aus"
 })
+export const MacroSplitEnum = z.enum([
+  "RECOMMENDED",
+  "CUSTOM",
+], {
+  error: "Bitte wähle einen Makro-Split aus"
+})
 
 
 //* STEP — user data
@@ -78,24 +84,10 @@ export const FitnessProfileStepSchema = z.object({
 
 //* STEP — Macro Splits
 export const MacroSplitsStepSchema = z.object({
-  useRecommended: z.boolean(),
-  fatSplit: z
-    .number({ error: "Bitte gib deinen Fettanteil an" })
-    .min(0)
-    .max(100),
-  carbSplit: z
-    .number({ error: "Bitte gib deinen Kohlenhydratanteil an" })
-    .min(0)
-    .max(100),
-  proteinSplit: z
-    .number({ error: "Bitte gib deinen Proteinanteil an" })
-    .min(0)
-    .max(100),
-}).refine(
-  (data) =>
-    data.fatSplit + data.carbSplit + data.proteinSplit === 100,
-  "Die Makronährstoffverteilung muss zusammen 100% ergeben"
-)
+  macroSplit: MacroSplitEnum,
+  fatTargetGrams: z.number({ error: "Bitte gib dein Wunschziel für Fette an" }).nullable(),
+  proteinTargetGrams: z.number({ error: "Bitte gib dein Wunschziel für Proteine an" }).nullable(),
+})
 
 
 //* combined (steps-) schema

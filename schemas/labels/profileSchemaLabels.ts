@@ -1,8 +1,19 @@
-import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums";
+import { ActivityLevel, BodyType, FitnessGoal, Gender, MacroSplit } from "@/generated/prisma/enums";
+import {
+  SlidersHorizontalIcon,
+  SparklesIcon,
+  type LucideIcon,
+} from "lucide-react";
 
 //* -----------------------------
 //* LABELS
 //* -----------------------------
+
+type DetailedOption = {
+  label: string
+  description: string
+  icon: LucideIcon
+}
 
 export const genderLabels: Record<Gender, string> = {
   MALE: "Männlich",
@@ -32,3 +43,17 @@ export const activityLevelLabels: Record<ActivityLevel, string> = {
   HIGH: "hoch",
   VERY_HIGH: "Sehr hoch",
 }
+
+export const macroSplitLabels: Record<MacroSplit, DetailedOption> = {
+  RECOMMENDED: {
+    label: "Empfohlen",
+    description: "Nutze eine von uns nach deinen Angaben empfohlene Nährstoffverteilung",
+    icon: SparklesIcon
+  },
+  CUSTOM: {
+    label: "Anpassen",
+    description: "Passe deine Nährstoffverteilung ganz selbst an",
+    icon: SlidersHorizontalIcon
+  },
+}
+
