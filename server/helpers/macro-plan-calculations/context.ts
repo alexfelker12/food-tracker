@@ -32,7 +32,7 @@ export interface MacroResult {
 
 //* each strategy has a calculate function, which returns the macro values part in a nutritionResult
 export interface MacroCalculationStrategy {
-  calculate(ctx: MacroCalculationContext): MacroResult | null
+  calculate(ctx: MacroCalculationContext): MacroResult
 }
 
 
@@ -45,13 +45,19 @@ export const avg = (value: {
   max: number
 }) => (value.min + value.max) / 2
 
-interface IsPlanValidProps {
+interface CheckPlanValidityProps {
   context: MacroCalculationContext
   proteinGrams: number
   fatGrams: number
   carbGrams: number
 }
-export const isPlanValid = ({ context, fatGrams, proteinGrams, carbGrams }: IsPlanValidProps) => {
+export type CheckPlanValidityReturn = {
+  isProteinAmountValid: boolean
+  isFatAmountValid: boolean
+  isCarbAmountValid: boolean
+  isPlanValid: boolean
+}
+export const checkPlanValidity = ({ context, fatGrams, proteinGrams, carbGrams }: CheckPlanValidityProps): CheckPlanValidityReturn => {
   const isProteinAmountValid = checkProteinRestrictions({
     proteinGrams,
     weightKg: context.weightKg
@@ -65,6 +71,11 @@ export const isPlanValid = ({ context, fatGrams, proteinGrams, carbGrams }: IsPl
 
   const isCarbAmountValid = checkCarbRestrictions({ carbGrams })
 
-  //* plan is only valid if all restrictions are met
-  return isProteinAmountValid && isFatAmountValid && isCarbAmountValid
+  return {
+    isProteinAmountValid,
+    isFatAmountValid,
+    isCarbAmountValid,
+    //* plan is only valid if all restrictions are met
+    isPlanValid: [isProteinAmountValid, isFatAmountValid, isCarbAmountValid].every((check) => check)
+  }
 }

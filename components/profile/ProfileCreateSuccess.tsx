@@ -37,10 +37,10 @@ export function ProfileCreateSuccess({ data }: ProfileCreateSuccessProps) {
 
         {/* nutrition result data display for user */}
         <FirstNutritionResultDisplay
-          caloryGoal={data?.caloryGoal}
-          amountFats={data?.amountFats}
-          amountCarbs={data?.amountCarbs}
-          amountProtein={data?.amountProtein}
+          caloryGoal={data?.calorieGoal}
+          amountFats={data?.fatsTargetGrams}
+          amountCarbs={data?.carbsTargetGrams}
+          amountProtein={data?.proteinsTargetGrams}
         />
 
         <div>

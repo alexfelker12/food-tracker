@@ -61,8 +61,8 @@ export async function updateUserProfileAndLatestResult({ userProfileData, userId
     ...data.macroSplitStep,
   }
 
-  const nutritionData = changedProfileCalculation(mergedProfileData)
-  if (!nutritionData) return "invalid plan"
+  const { nutritionResult: nutritionData, planValidity } = changedProfileCalculation(mergedProfileData)
+  if (!planValidity.isPlanValid && userProfileData.macroSplitStep.macroSplit === "RECOMMENDED") return "invalid plan"
 
   const updatedProfile = await db.metricsProfile.update({
     where: { id: userProfile.id, userId },

@@ -4,10 +4,10 @@ import { activityLevelLabels, bodyTypeLabels, fitnessGoalLabels, genderLabels } 
 
 import { getGermanDate } from "@/lib/utils";
 
+import { GridData, GridDataSection } from "@/components/GridData";
 import { CardContent } from "@/components/ui/card";
 
 import { useUserProfile } from "./UserProfileContext";
-import { ProfileData, ProfileDataSection } from "./UserProfileView";
 
 
 export function UserProfileData() {
@@ -19,57 +19,57 @@ export function UserProfileData() {
     <CardContent className="space-y-6 px-0">
 
       {/* user data */}
-      <ProfileDataSection label="Benutzerdaten">
-        <ProfileData>
+      <GridDataSection label="Benutzerdaten">
+        <GridData>
           <span>Geschlecht</span>
           <span>{genderLabels[profile.gender]}</span>
-        </ProfileData>
-        <ProfileData>
+        </GridData>
+        <GridData>
           <span>Geburtsdatum</span>
           <span>{birthDate}</span>
-        </ProfileData>
-      </ProfileDataSection>
+        </GridData>
+      </GridDataSection>
 
       {/* body data */}
-      <ProfileDataSection label="Körperdaten">
-        <ProfileData>
+      <GridDataSection label="Körperdaten">
+        <GridData>
           <span>Größe</span>
           <span>{profile.heightCm} cm</span>
-        </ProfileData>
-        <ProfileData>
+        </GridData>
+        <GridData>
           <span>Gewicht</span>
           <span>{profile.weightKg} kg</span>
-        </ProfileData>
-        <ProfileData>
+        </GridData>
+        <GridData>
           <span>Körpertyp</span>
           <span>{bodyTypeLabels[profile.bodyType]}</span>
-        </ProfileData>
-      </ProfileDataSection>
+        </GridData>
+      </GridDataSection>
 
       {/* fitness data */}
-      <ProfileDataSection label="Fitnessdaten">
-        <ProfileData>
+      <GridDataSection label="Fitnessdaten">
+        <GridData>
           <span>Fitness-Ziel</span>
           <span>{fitnessGoalLabels[profile.fitnessGoal]}</span>
-        </ProfileData>
-        <ProfileData>
+        </GridData>
+        <GridData>
           <span>Aktivitätslevel</span>
           <span>{activityLevelLabels[profile.activityLevel]}</span>
-        </ProfileData>
-        <ProfileData>
+        </GridData>
+        <GridData>
           <span>Trainingstage</span>
           <span>{profile.trainingDaysPerWeek} / Woche</span>
-        </ProfileData>
-      </ProfileDataSection>
+        </GridData>
+      </GridDataSection>
 
       {/* split data */}
-      <ProfileDataSection label="Makronährwertdaten">
-        <ProfileData>
+      <GridDataSection label="Makronährwertdaten">
+        <GridData>
           <span>Nutzt empfohlene Verteilung?</span>
           <span>{profile.nutritionResult.usedRecommendedSplits ? "Ja" : "Nein"}</span>
-        </ProfileData>
+        </GridData>
         {/* split percent from profile & absolute from nutrition result */}
-        <ProfileData className="gap-2 grid grid-cols-[1fr_auto_auto_auto] grid-row-3 text-end text-muted-foreground">
+        <GridData className="gap-2 grid grid-cols-[1fr_auto_auto_auto] grid-row-3 text-end text-muted-foreground">
           <span className="text-start">Fette</span>
           <span>{profile.fatSplit} %</span>
           <span>-</span>
@@ -84,8 +84,8 @@ export function UserProfileData() {
           <span>{profile.proteinSplit} %</span>
           <span>-</span>
           <span className="text-secondary-foreground">{profile.nutritionResult.amountProtein}g</span>
-        </ProfileData>
-      </ProfileDataSection>
+        </GridData>
+      </GridDataSection>
 
     </CardContent>
   );

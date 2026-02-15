@@ -1,14 +1,14 @@
 import { calculateRecommendedCarbs, calculateRecommendedFats, calculateRecommendedProteins } from "@/lib/calculations/profile.v2"
 
 import {
-  avg, isPlanValid,
+  avg,
   type MacroCalculationContext, type MacroCalculationStrategy, type MacroResult
 } from "./context"
 
 
 //* strategy RECOMMENDED
 export class RecommendedMacroStrategy implements MacroCalculationStrategy {
-  calculate(context: MacroCalculationContext): MacroResult | null {
+  calculate(context: MacroCalculationContext): MacroResult {
     const proteins = calculateRecommendedProteins({
       fitnessGoal: context.fitnessGoal,
       trainingDaysPerWeek: context.trainingDaysPerWeek,
@@ -26,13 +26,6 @@ export class RecommendedMacroStrategy implements MacroCalculationStrategy {
       recommendedProteins: proteins,
       recommendedFats: fats,
     })
-
-    if (!isPlanValid({
-      context,
-      proteinGrams: avg(proteins),
-      fatGrams: avg(fats),
-      carbGrams: avg(carbs)
-    })) return null
 
     return {
       proteinsMinGrams: proteins.min,

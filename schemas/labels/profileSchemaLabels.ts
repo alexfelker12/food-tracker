@@ -13,7 +13,10 @@ type DetailedOption = {
   label: string
   description: string
   icon: LucideIcon
+  disabled?: boolean
 }
+
+export type DetailedOptionLabel<T extends string> = Record<T, DetailedOption>
 
 export const genderLabels: Record<Gender, string> = {
   MALE: "Männlich",
@@ -44,16 +47,17 @@ export const activityLevelLabels: Record<ActivityLevel, string> = {
   VERY_HIGH: "Sehr hoch",
 }
 
-export const macroSplitLabels: Record<MacroSplit, DetailedOption> = {
+export const macroSplitLabels: DetailedOptionLabel<MacroSplit> = {
   RECOMMENDED: {
     label: "Empfohlen",
-    description: "Nutze eine von uns nach deinen Angaben empfohlene Nährstoffverteilung",
+    description: "Nutze eine von uns empfohlene Nährstoffverteilung",
     icon: SparklesIcon
   },
   CUSTOM: {
-    label: "Anpassen",
-    description: "Passe deine Nährstoffverteilung ganz selbst an",
-    icon: SlidersHorizontalIcon
+    label: "Anpassen (bald wieder verfügbar)",
+    description: "Passe deine Nährstoffverteilung selbst an",
+    icon: SlidersHorizontalIcon,
+    disabled: true
   },
 }
 

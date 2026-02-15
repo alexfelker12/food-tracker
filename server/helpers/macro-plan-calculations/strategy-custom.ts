@@ -4,7 +4,7 @@ import {
 } from "./context"
 
 export class CustomMacroStrategy implements MacroCalculationStrategy {
-  calculate(context: MacroCalculationContext): MacroResult | null {
+  calculate(context: MacroCalculationContext): MacroResult {
     if (
       !context.fatTargetGrams ||
       !context.proteinTargetGrams
@@ -30,13 +30,6 @@ export class CustomMacroStrategy implements MacroCalculationStrategy {
     //* carbs min/max range
     const carbsMinGrams = carbsTargetGrams * 0.95
     const carbsMaxGrams = carbsTargetGrams * 1.05
-
-    // if (!isPlanValid({
-    //   context,
-    //   proteinGrams: context.proteinTargetGrams,
-    //   fatGrams: context.fatTargetGrams,
-    //   carbGrams: carbsTargetGrams
-    // })) return null
 
     return {
       proteinsMinGrams,

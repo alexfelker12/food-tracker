@@ -13,14 +13,15 @@ import { cn } from "@/lib/utils";
 
 import { SaveIcon, XIcon } from "lucide-react";
 
+import { GridDataSection } from "@/components/GridData";
 import { ProfileFormFieldActivityLevel } from "@/components/profile/parts/fields/ProfileFormFieldActivityLevel";
 import { ProfileFormFieldBirthDate } from "@/components/profile/parts/fields/ProfileFormFieldBirthDate";
 import { ProfileFormFieldBodyType } from "@/components/profile/parts/fields/ProfileFormFieldBodyType";
 import { ProfileFormFieldFitnessGoal } from "@/components/profile/parts/fields/ProfileFormFieldFitnessGoal";
 import { ProfileFormFieldGender } from "@/components/profile/parts/fields/ProfileFormFieldGender";
 import { ProfileFormFieldHeight } from "@/components/profile/parts/fields/ProfileFormFieldHeight";
+import { ProfileFormFieldMacroPlan } from "@/components/profile/parts/fields/ProfileFormFieldMacroPlan";
 import { ProfileFormFieldMacroSplits } from "@/components/profile/parts/fields/ProfileFormFieldMacroSplits";
-import { ProfileFormFieldRecommended } from "@/components/profile/parts/fields/ProfileFormFieldRecommended";
 import { ProfileFormFieldTrainingDays } from "@/components/profile/parts/fields/ProfileFormFieldTrainingDays";
 import { ProfileFormFieldWeight } from "@/components/profile/parts/fields/ProfileFormFieldWeight";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,6 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useUserProfile } from "./UserProfileContext";
-import { ProfileDataSection } from "./UserProfileView";
 
 
 export function UserProfileEdit() {
@@ -94,30 +94,30 @@ export function UserProfileEdit() {
           onSubmit={form.handleSubmit((values) => updateProfile(values))}
         >
           {/* user data */}
-          <ProfileDataSection label="Benutzerdaten">
+          <GridDataSection label="Benutzerdaten">
             <ProfileFormFieldGender />
             <ProfileFormFieldBirthDate />
-          </ProfileDataSection>
+          </GridDataSection>
 
           {/* body data */}
-          <ProfileDataSection label="Körperdaten">
+          <GridDataSection label="Körperdaten">
             <ProfileFormFieldHeight />
             <ProfileFormFieldWeight />
             <ProfileFormFieldBodyType />
-          </ProfileDataSection>
+          </GridDataSection>
 
           {/* fitness data */}
-          <ProfileDataSection label="Fitnessdaten">
+          <GridDataSection label="Fitnessdaten">
             <ProfileFormFieldFitnessGoal />
             <ProfileFormFieldActivityLevel />
             <ProfileFormFieldTrainingDays />
-          </ProfileDataSection>
+          </GridDataSection>
 
           {/* split data */}
-          <ProfileDataSection label="Makronährwertdaten" className="space-y-3" listingClassNames="gap-3">
-            <ProfileFormFieldRecommended />
+          <GridDataSection label="Makronährwertdaten" className="space-y-3" listingClassNames="gap-3">
+            <ProfileFormFieldMacroPlan />
             <ProfileFormFieldMacroSplits initialRecommended={nutritionResult.usedRecommendedSplits} />
-          </ProfileDataSection>
+          </GridDataSection>
 
           <Separator className="mb-4" />
 

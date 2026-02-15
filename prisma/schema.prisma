@@ -165,7 +165,7 @@ model MetricsProfile {
   fatTargetGrams     Int?
 
   //* current macro mode
-  macroSplit MacroSplit
+  macroSplit MacroSplit @default(RECOMMENDED)
 
   // relations
   userId String @unique

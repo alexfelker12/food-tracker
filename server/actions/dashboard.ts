@@ -17,7 +17,7 @@ export async function getCaloryRangeFromCurrentNutritionResult({
     },
     select: {
       bmr: true,
-      caloryGoal: true,
+      calorieGoal: true,
       tdee: true
     },
     orderBy: { date: "desc" },

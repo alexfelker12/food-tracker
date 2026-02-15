@@ -1,20 +1,24 @@
+import { Prisma } from "@/generated/prisma/client";
 import { MetricsProfileModel } from "@/generated/prisma/models";
+
 import {
   // base calc
-  calculateBMR, calculateTDEE, calculateCalorieGoal,
+  calculateBMR,
+  calculateCalorieGoal,
+  calculateTDEE,
   // water demand
   calculateWaterDemand,
-  // split calc is done by strategy classes
 } from "@/lib/calculations/profile.v2";
+
+import { checkPlanValidity, MacroCalculationContext } from "./macro-plan-calculations/context";
 import { createMacroStrategy } from "./macro-plan-calculations/factory";
-import { Prisma } from "@/generated/prisma/client";
 
 
 //* create nutrition result
 // export interface ChangedProfileCalculationProps extends Omit<MetricsProfileModel, "id" | "userId"> { }
 export type NutritionResultData = Prisma.NutritionResultCreateWithoutMetricsProfileInput
 export type ChangedProfileCalculationProps = Omit<MetricsProfileModel, "id" | "userId">
-export function changedProfileCalculation(profileData: ChangedProfileCalculationProps): NutritionResultData | null {
+export function changedProfileCalculation(profileData: ChangedProfileCalculationProps) {
   const {
     birthDate, gender, heightCm, weightKg, bodyType,
     activityLevel, fitnessGoal, trainingDaysPerWeek,
@@ -35,8 +39,7 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
   })
 
   //* macro split values
-  const macroStrategy = createMacroStrategy(macroSplit)
-  const macros = macroStrategy.calculate({
+  const context: MacroCalculationContext = {
     calorieGoal,
     fitnessGoal,
     trainingDaysPerWeek,
@@ -45,12 +48,20 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
     gender,
     fatTargetGrams,
     proteinTargetGrams
+  }
+  const macroStrategy = createMacroStrategy(macroSplit)
+  const macros = macroStrategy.calculate(context)
+
+  //* checks if restrictions are met, implies further actions
+  const planValidity = checkPlanValidity({
+    context,
+    proteinGrams: macros.proteinsTargetGrams,
+    fatGrams: macros.fatsTargetGrams,
+    carbGrams: macros.carbsTargetGrams
   })
 
-  //* invalid plan (should not happen except endpoint is triggered outside of app context)
-  if (!macros) return null
-
-  return {
+  //* actual nutritionResult
+  const nutritionResult: NutritionResultData = {
     // base/general values
     bmr,
     tdee,
@@ -62,4 +73,7 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
     // profileSnapshot
     profileSnapshot,
   }
+
+
+  return { nutritionResult, planValidity }
 }

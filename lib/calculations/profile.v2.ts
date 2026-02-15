@@ -11,6 +11,7 @@ import {
 } from "@/schemas/mappings/profileSchemaMappings.v2"
 import { getAge } from "@/lib/utils"
 import { MetricsProfileModel } from "@/generated/prisma/models";
+import { avg } from "@/server/helpers/macro-plan-calculations/context";
 
 
 //* -----------------------------
@@ -32,6 +33,8 @@ function getWorkoutValuesAndFactor({ fitnessGoal, trainingDaysPerWeek }: GetWork
 //* -----------------------------
 //* MAIN CALCULATIONS
 //* -----------------------------
+
+// TODO: use new range calc logic
 
 //* BMR
 export type CalculateBMRProps = Pick<Required<MetricsProfileModel>, "gender" | "weightKg" | "heightCm" | "birthDate">
@@ -124,26 +127,36 @@ export type CalculateRecommendedCarbsProps = {
   recommendedFats: ReturnType<typeof calculateRecommendedFats>
 }
 export function calculateRecommendedCarbs({ calorieGoal, recommendedProteins, recommendedFats }: CalculateRecommendedCarbsProps) {
-  const { min: minRecommendedProteins, max: maxRecommendedProteins } = recommendedProteins
-  const { min: minRecommendedFats, max: maxRecommendedFats } = recommendedFats
+  const proteinsAvg = avg(recommendedProteins)
+  const fatsAvg = avg(recommendedFats)
 
-  const proteinCaloriesMin = minRecommendedProteins * 4
-  const proteinCaloriesMax = maxRecommendedProteins * 4
-  const fatCaloriesMin = minRecommendedFats * 9
-  const fatCaloriesMax = maxRecommendedFats * 9
-
-  const minRemainingCalories = calorieGoal - proteinCaloriesMin - fatCaloriesMin
-  const maxRemainingCalories = calorieGoal - proteinCaloriesMax - fatCaloriesMax
-  const min = minRemainingCalories / 4
-  const max = maxRemainingCalories / 4
+  const carbsTarget = (calorieGoal - (proteinsAvg * 4) - (fatsAvg * 9)) / 4
+  const min = carbsTarget * 0.95
+  const max = carbsTarget * 1.05
 
   return { min, max }
+
+  // const { min: minRecommendedProteins, max: maxRecommendedProteins } = recommendedProteins
+  // const { min: minRecommendedFats, max: maxRecommendedFats } = recommendedFats
+
+  // const proteinCaloriesMin = minRecommendedProteins * 4
+  // const proteinCaloriesMax = maxRecommendedProteins * 4
+  // const fatCaloriesMin = minRecommendedFats * 9
+  // const fatCaloriesMax = maxRecommendedFats * 9
+
+  // //* min and max have to be reversed here, because "max remaining calories" would be less than "min remaining calories"
+  // const minRemainingCalories = calorieGoal - proteinCaloriesMax - fatCaloriesMax // use max here
+  // const maxRemainingCalories = calorieGoal - proteinCaloriesMin - fatCaloriesMin // use min here
+  // const min = minRemainingCalories / 4
+  // const max = maxRemainingCalories / 4
+
+  // return { min, max }
   // return +(recommendedCarbs).toFixed(0)
 }
 
 
 //* proteins restrictions
-// ideally proteins should be between two certain values to optimal for that user
+// ideally proteins should be between two certain values to be optimal for that user
 //? returns `true` if protein amount is "valid"
 export type CheckProteinRestrictionsProps = Pick<Required<MetricsProfileModel>, "weightKg"> & {
   proteinGrams: number

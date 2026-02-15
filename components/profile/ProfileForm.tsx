@@ -20,8 +20,24 @@ export function ProfileForm({ className, children, ...props }: React.ComponentPr
   const form = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
+      userDataStep: {
+        birthDate: new Date("2000-10-26"),
+        gender: "MALE"
+      },
+      bodyDataStep: {
+        bodyType: "MORE_OVERWEIGHT",
+        heightCm: 183,
+        weightKg: 96
+      },
+      fitnessProfileStep: {
+        activityLevel: "VERY_LOW",
+        fitnessGoal: "QUICKLY_LOSE_WEIGHT",
+        trainingDaysPerWeek: 0
+      },
       macroSplitStep: {
-        useRecommended: true,
+        macroSplit: "RECOMMENDED",
+        fatTargetGrams: 100,
+        proteinTargetGrams: 200
       },
     },
     mode: "onTouched",
