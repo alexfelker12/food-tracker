@@ -1,3 +1,4 @@
+import { NutritionResult } from "@/generated/prisma/client"
 import { MetricsProfileModel } from "@/generated/prisma/models"
 import { checkCarbRestrictions, checkFatRestrictions, checkProteinRestrictions } from "@/lib/calculations/profile.v2"
 
@@ -6,29 +7,34 @@ import { checkCarbRestrictions, checkFatRestrictions, checkProteinRestrictions }
 //* -----------------------------
 
 //* strategy calculation props
-export interface MacroCalculationContext
-  extends Pick<MetricsProfileModel, | "fitnessGoal" | "trainingDaysPerWeek" | "weightKg" | "bodyType" | "gender"> {
-  calorieGoal: number
-
-  // optional für CUSTOM
-  proteinTargetGrams: number | null
-  fatTargetGrams: number | null
-}
+export type MacroCalculationContext =
+  Pick<MetricsProfileModel,
+    "fitnessGoal"
+    | "trainingDaysPerWeek"
+    | "weightKg"
+    | "bodyType"
+    | "gender"
+    | "proteinTargetGrams"
+    | "fatTargetGrams"
+  > &
+  Pick<NutritionResult,
+    "calorieGoal"
+  >
 
 //* macro values in nutritionResult
-export interface MacroResult {
-  proteinsMinGrams: number
-  proteinsMaxGrams: number
-  proteinsTargetGrams: number
-
-  fatsMinGrams: number
-  fatsMaxGrams: number
-  fatsTargetGrams: number
-
-  carbsMinGrams: number
-  carbsMaxGrams: number
-  carbsTargetGrams: number
-}
+export type MacroResult =
+  Pick<NutritionResult,
+    "proteinsMinGrams"
+    | "proteinsMaxGrams"
+    | "proteinsTargetGrams"
+    | "fatsMinGrams"
+    | "fatsMaxGrams"
+    | "fatsTargetGrams"
+    | "carbsMinGrams"
+    | "carbsMaxGrams"
+    | "carbsTargetGrams"
+  // | ""
+  >
 
 //* each strategy has a calculate function, which returns the macro values part in a nutritionResult
 export interface MacroCalculationStrategy {
@@ -39,11 +45,6 @@ export interface MacroCalculationStrategy {
 //* -----------------------------
 //* HELPER FUNCTIONS
 //* -----------------------------
-
-export const avg = (value: {
-  min: number
-  max: number
-}) => (value.min + value.max) / 2
 
 interface CheckPlanValidityProps {
   context: MacroCalculationContext

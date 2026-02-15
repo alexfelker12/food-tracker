@@ -30,6 +30,7 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useUserProfile } from "./UserProfileContext";
+import { ProfileFormFieldSelectedPlan } from "@/components/profile/parts/fields/ProfileFormFieldSelectedPlan";
 
 
 export function UserProfileEdit() {
@@ -41,7 +42,7 @@ export function UserProfileEdit() {
     gender, birthDate,
     heightCm, weightKg, bodyType,
     fitnessGoal, activityLevel, trainingDaysPerWeek,
-    fatSplit, carbSplit, proteinSplit,
+    macroSplit, proteinTargetGrams, fatTargetGrams
   } = currentProfileData
 
   const form = useForm({
@@ -57,10 +58,7 @@ export function UserProfileEdit() {
         fitnessGoal, activityLevel, trainingDaysPerWeek,
       },
       macroSplitStep: {
-        useRecommended: nutritionResult.usedRecommendedSplits,
-        fatSplit,
-        carbSplit,
-        proteinSplit
+        macroSplit, proteinTargetGrams, fatTargetGrams
       }
     },
     mode: "onTouched",
@@ -116,7 +114,7 @@ export function UserProfileEdit() {
           {/* split data */}
           <GridDataSection label="Makronährwertdaten" className="space-y-3" listingClassNames="gap-3">
             <ProfileFormFieldMacroPlan />
-            <ProfileFormFieldMacroSplits initialRecommended={nutritionResult.usedRecommendedSplits} />
+            <ProfileFormFieldSelectedPlan />
           </GridDataSection>
 
           <Separator className="mb-4" />

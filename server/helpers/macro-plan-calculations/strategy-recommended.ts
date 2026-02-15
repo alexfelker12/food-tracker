@@ -1,44 +1,32 @@
-import { calculateRecommendedCarbs, calculateRecommendedFats, calculateRecommendedProteins } from "@/lib/calculations/profile.v2"
+import { calculateRecommendedCarbs, calculateRecommendedFats, calculateRecommendedProteins, getMinMaxRange } from "@/lib/calculations/profile.v2"
 
-import {
-  avg,
-  type MacroCalculationContext, type MacroCalculationStrategy, type MacroResult
-} from "./context"
+import type { MacroCalculationContext, MacroCalculationStrategy, MacroResult } from "./context"
 
 
 //* strategy RECOMMENDED
 export class RecommendedMacroStrategy implements MacroCalculationStrategy {
-  calculate(context: MacroCalculationContext): MacroResult {
-    const proteins = calculateRecommendedProteins({
-      fitnessGoal: context.fitnessGoal,
-      trainingDaysPerWeek: context.trainingDaysPerWeek,
-      weightKg: context.weightKg,
-    })
+  calculate({ bodyType, calorieGoal, fitnessGoal, gender, trainingDaysPerWeek, weightKg }: MacroCalculationContext): MacroResult {
+    const recommendedProteins = calculateRecommendedProteins({ fitnessGoal, trainingDaysPerWeek, weightKg, })
+    const proteins = getMinMaxRange(recommendedProteins)
 
-    const fats = calculateRecommendedFats({
-      bodyType: context.bodyType,
-      gender: context.gender,
-      weightKg: context.weightKg,
-    })
+    const recommendedFats = calculateRecommendedFats({ bodyType, gender, weightKg, })
+    const fats = getMinMaxRange(recommendedFats)
 
-    const carbs = calculateRecommendedCarbs({
-      calorieGoal: context.calorieGoal,
-      recommendedProteins: proteins,
-      recommendedFats: fats,
-    })
+    const recommendedCarbs = calculateRecommendedCarbs({ calorieGoal, recommendedProteins, recommendedFats, })
+    const carbs = getMinMaxRange(recommendedCarbs)
 
     return {
       proteinsMinGrams: proteins.min,
       proteinsMaxGrams: proteins.max,
-      proteinsTargetGrams: avg(proteins),
+      proteinsTargetGrams: recommendedProteins,
 
       fatsMinGrams: fats.min,
       fatsMaxGrams: fats.max,
-      fatsTargetGrams: avg(fats),
+      fatsTargetGrams: recommendedFats,
 
       carbsMinGrams: carbs.min,
       carbsMaxGrams: carbs.max,
-      carbsTargetGrams: avg(carbs),
+      carbsTargetGrams: recommendedCarbs,
     }
   }
 }

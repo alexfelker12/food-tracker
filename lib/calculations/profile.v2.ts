@@ -1,17 +1,14 @@
-import { ActivityLevel, FitnessGoal } from "@/generated/prisma/enums"
 import {
-  activityLevelValueMapping as activityLevelMap,
+  activityLevelValueMapping as activityLevelMapping,
   bodyFatValueMapping,
-  fitnessGoalValueMapping as fitnessGoalMap,
+  fitnessGoalValueMapping as fitnessGoalMapping,
   noWorkoutValueMapping,
-  waterGoalValueMapping as waterGoalMap,
-  waterGoalValueMapping,
+  waterGoalValueMapping as waterGoalMapping,
   workoutFactorMapping,
   workoutValueMapping
 } from "@/schemas/mappings/profileSchemaMappings.v2"
 import { getAge } from "@/lib/utils"
 import { MetricsProfileModel } from "@/generated/prisma/models";
-import { avg } from "@/server/helpers/macro-plan-calculations/context";
 
 
 //* -----------------------------
@@ -22,19 +19,16 @@ export type GetWorkoutValuesAndFactorProps = Pick<Required<MetricsProfileModel>,
 function getWorkoutValuesAndFactor({ fitnessGoal, trainingDaysPerWeek }: GetWorkoutValuesAndFactorProps) {
   const workoutFactor = workoutFactorMapping[trainingDaysPerWeek]
 
-  const { min, max } =
-    trainingDaysPerWeek > 0
-      ? workoutValueMapping[fitnessGoal]
-      : noWorkoutValueMapping[fitnessGoal]
+  const workoutValue = trainingDaysPerWeek > 0
+    ? workoutValueMapping[fitnessGoal]
+    : noWorkoutValueMapping[fitnessGoal]
 
-  return { min, max, workoutFactor }
+  return { workoutValue, workoutFactor }
 }
 
 //* -----------------------------
 //* MAIN CALCULATIONS
 //* -----------------------------
-
-// TODO: use new range calc logic
 
 //* BMR
 export type CalculateBMRProps = Pick<Required<MetricsProfileModel>, "gender" | "weightKg" | "heightCm" | "birthDate">
@@ -52,7 +46,7 @@ export type CalculateTDEEProps = Pick<Required<MetricsProfileModel>, "activityLe
   bmr: ReturnType<typeof calculateBMR>
 }
 export function calculateTDEE({ bmr, activityLevel }: CalculateTDEEProps) {
-  const tdee = bmr * activityLevelMap[activityLevel]
+  const tdee = bmr * activityLevelMapping[activityLevel]
   return tdee
   // return +(tdee).toFixed(0)
 }
@@ -63,7 +57,7 @@ export type CalculateCalorieGoalProps = Pick<Required<MetricsProfileModel>, "fit
   tdee: ReturnType<typeof calculateTDEE>
 }
 export function calculateCalorieGoal({ tdee, fitnessGoal }: CalculateCalorieGoalProps) {
-  const calorieGoal = tdee * fitnessGoalMap[fitnessGoal]
+  const calorieGoal = tdee * fitnessGoalMapping[fitnessGoal]
   return calorieGoal
   // return +(calorieGoal).toFixed(0)
 }
@@ -73,22 +67,21 @@ export function calculateCalorieGoal({ tdee, fitnessGoal }: CalculateCalorieGoal
 export type CalculateWaterDemandProps = Pick<Required<MetricsProfileModel>, "weightKg" | "fitnessGoal" | "activityLevel" | "trainingDaysPerWeek">
 export function calculateWaterDemand({ weightKg, activityLevel, fitnessGoal, trainingDaysPerWeek }: CalculateWaterDemandProps) {
   // mappings
-  const { min: minWorkoutValue, max: maxWorkoutValue } = getWorkoutValuesAndFactor({ fitnessGoal, trainingDaysPerWeek })
-  const activityMap = activityLevelMap[activityLevel]
-  const waterGoalMap = waterGoalValueMapping[fitnessGoal]
+  const { workoutValue } = getWorkoutValuesAndFactor({ fitnessGoal, trainingDaysPerWeek })
+  const activityMap = activityLevelMapping[activityLevel]
+  const waterGoalMap = waterGoalMapping[fitnessGoal]
 
   // calculation factors
   const waterBaseMl = weightKg * 35
   const activityFactor = Math.max((activityMap - 1), 0) * 0.6 + 1 // at least 1
-  const proteinFactorMin = 1 + (Math.max(minWorkoutValue, 1.6) * 0.04) // × Protein_Faktor
-  const proteinFactorMax = 1 + (Math.max(maxWorkoutValue, 1.6) * 0.04) // × Protein_Faktor
+  const proteinFactor = 1 + (Math.max(workoutValue, 1.6) * 0.04) // × Protein_Faktor
 
   // min/max range
   const waterDemandBase = waterBaseMl * activityFactor * waterGoalMap
-  const min = (waterDemandBase * proteinFactorMin)
-  const max = (waterDemandBase * proteinFactorMax)
+  const waterDemand = (waterDemandBase * proteinFactor)
 
-  return { min, max }
+  const minMaxWaterDemand = getMinMaxRange(waterDemand)
+  return minMaxWaterDemand
   // return +(WaterDemand).toFixed(0)
 }
 
@@ -96,25 +89,20 @@ export function calculateWaterDemand({ weightKg, activityLevel, fitnessGoal, tra
 //* recommended proteins
 export type CalculateRecommendedProteinsProps = Pick<Required<MetricsProfileModel>, "weightKg" | "fitnessGoal" | "trainingDaysPerWeek">
 export function calculateRecommendedProteins({ weightKg, fitnessGoal, trainingDaysPerWeek }: CalculateRecommendedProteinsProps) {
-  const { min: minWorkoutValue, max: maxWorkoutValue, workoutFactor } = getWorkoutValuesAndFactor({ fitnessGoal, trainingDaysPerWeek })
+  const { workoutValue, workoutFactor } = getWorkoutValuesAndFactor({ fitnessGoal, trainingDaysPerWeek })
 
-  const calcFactorMin = minWorkoutValue * workoutFactor
-  const calcFactorMax = maxWorkoutValue * workoutFactor
-  const min = +(weightKg * calcFactorMin)
-  const max = +(weightKg * calcFactorMax)
-
-  return { min, max }
+  const recommendedProteins = +(weightKg * workoutValue * workoutFactor)
+  return recommendedProteins
   // return +(recommendedProteins).toFixed(0)
 }
 
 //* recommended fats
 export type CalculateRecommendedFatsProps = Pick<Required<MetricsProfileModel>, "weightKg" | "gender" | "bodyType">
 export function calculateRecommendedFats({ weightKg, gender, bodyType }: CalculateRecommendedFatsProps) {
-  const { min: minFats, max: maxFats } = bodyFatValueMapping[gender][bodyType]
-  const min = +(weightKg * minFats)
-  const max = +(weightKg * maxFats)
+  const bodyFatValue = bodyFatValueMapping[gender][bodyType]
 
-  return { min, max }
+  const recommendedFats = +(weightKg * bodyFatValue)
+  return recommendedFats
   // return +(recommendedFats).toFixed(0)
 }
 
@@ -123,34 +111,12 @@ export function calculateRecommendedFats({ weightKg, gender, bodyType }: Calcula
 // Carbs are calculated with the remaining calories 
 export type CalculateRecommendedCarbsProps = {
   calorieGoal: ReturnType<typeof calculateCalorieGoal>
-  recommendedProteins: ReturnType<typeof calculateRecommendedProteins>
-  recommendedFats: ReturnType<typeof calculateRecommendedFats>
+  recommendedProteins: number
+  recommendedFats: number
 }
 export function calculateRecommendedCarbs({ calorieGoal, recommendedProteins, recommendedFats }: CalculateRecommendedCarbsProps) {
-  const proteinsAvg = avg(recommendedProteins)
-  const fatsAvg = avg(recommendedFats)
-
-  const carbsTarget = (calorieGoal - (proteinsAvg * 4) - (fatsAvg * 9)) / 4
-  const min = carbsTarget * 0.95
-  const max = carbsTarget * 1.05
-
-  return { min, max }
-
-  // const { min: minRecommendedProteins, max: maxRecommendedProteins } = recommendedProteins
-  // const { min: minRecommendedFats, max: maxRecommendedFats } = recommendedFats
-
-  // const proteinCaloriesMin = minRecommendedProteins * 4
-  // const proteinCaloriesMax = maxRecommendedProteins * 4
-  // const fatCaloriesMin = minRecommendedFats * 9
-  // const fatCaloriesMax = maxRecommendedFats * 9
-
-  // //* min and max have to be reversed here, because "max remaining calories" would be less than "min remaining calories"
-  // const minRemainingCalories = calorieGoal - proteinCaloriesMax - fatCaloriesMax // use max here
-  // const maxRemainingCalories = calorieGoal - proteinCaloriesMin - fatCaloriesMin // use min here
-  // const min = minRemainingCalories / 4
-  // const max = maxRemainingCalories / 4
-
-  // return { min, max }
+  const recommendedCarbs = (calorieGoal - (recommendedProteins * 4) - (recommendedFats * 9)) / 4
+  return recommendedCarbs
   // return +(recommendedCarbs).toFixed(0)
 }
 
@@ -188,7 +154,7 @@ export function checkFatRestrictions({ weightKg, gender, fatGrams }: CheckFatRes
 
 //* carbs restrictions
 // carbs are being calculated with the remaining calories after calculating the essential amounts of proteins and fats.
-// Depending on the users body data the recommended carbs could be below a certain threshold. We check if the threshold is met, else we consider that the calorie goal cannot be held healthy enough with the users body data
+// Depending on the users profile data the recommended carbs could be below a certain threshold. We check if the threshold is met, else we consider that the calorie goal cannot be held healthy enough with the users profile data
 //? returns `true` if carbs amount is "valid"
 export type CheckCarbRestrictionsProps = {
   carbGrams: number
@@ -196,6 +162,18 @@ export type CheckCarbRestrictionsProps = {
 export function checkCarbRestrictions({ carbGrams }: CheckCarbRestrictionsProps) {
   const carbsMin = 50 // grams
 
-  //* as a general value we use 50 grams as the threshold. Since macro values are being calculated into a min and max value we create the average of the min carbs and max carbs to compare one value to another. Average should be higher than the general minimum
+  //* as a general value we use 50 grams as the threshold. Carbs are not allowed to go below this threshold
   return carbGrams > carbsMin
+}
+
+
+/**
+ * creates a min/max range from a target value
+ * @param targetValue :number, value to create min/max range from
+ * @param minMaxRangePercentage :number, min/max range multiplicator. Percentage value -> default 0.05 
+ */
+export function getMinMaxRange(targetValue: number, minMaxRangePercentage: number = 0.05) {
+  const min = targetValue * (1 - minMaxRangePercentage) // <- with default: 1 - 0.05 = 0.95
+  const max = targetValue * (1 + minMaxRangePercentage) // <- with default: 1 + 0.05 = 1.05
+  return { min, max }
 }

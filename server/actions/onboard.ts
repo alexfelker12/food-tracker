@@ -27,8 +27,8 @@ export async function createInitialProfileAndResult({ userProfileData, userId, d
   }
 
   //* first nutrition result
-  const { nutritionResult: nutritionData, planValid } = changedProfileCalculation(mergedProfileData)
-  if (!planValid && userProfileData.macroSplitStep.macroSplit === "RECOMMENDED") return "invalid plan"
+  const { nutritionResult: nutritionData, planValidity } = changedProfileCalculation(mergedProfileData)
+  if (!planValidity.isPlanValid && userProfileData.macroSplitStep.macroSplit === "RECOMMENDED") return "invalid plan"
 
   const initialProfile = await db.metricsProfile.create({
     data: {

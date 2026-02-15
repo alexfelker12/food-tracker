@@ -1,3 +1,5 @@
+import { getMinMaxRange } from "@/lib/calculations/profile.v2"
+
 import {
   // isPlanValid,
   type MacroCalculationContext, type MacroCalculationStrategy, type MacroResult
@@ -13,12 +15,10 @@ export class CustomMacroStrategy implements MacroCalculationStrategy {
     }
 
     //* proteins min/max range
-    const proteinsMinGrams = context.proteinTargetGrams * 0.95
-    const proteinsMaxGrams = context.proteinTargetGrams * 1.05
+    const { min: proteinsMinGrams, max: proteinsMaxGrams } = getMinMaxRange(context.proteinTargetGrams)
 
     //* fats min/max range
-    const fatsMinGrams = context.fatTargetGrams * 0.95
-    const fatsMaxGrams = context.fatTargetGrams * 1.05
+    const { min: fatsMinGrams, max: fatsMaxGrams } = getMinMaxRange(context.fatTargetGrams)
 
     //* calculate remaining calories & carbs target
     const proteinCalories = context.proteinTargetGrams * 4
@@ -28,8 +28,7 @@ export class CustomMacroStrategy implements MacroCalculationStrategy {
     const carbsTargetGrams = remainingCalories * 4
 
     //* carbs min/max range
-    const carbsMinGrams = carbsTargetGrams * 0.95
-    const carbsMaxGrams = carbsTargetGrams * 1.05
+    const { min: carbsMinGrams, max: carbsMaxGrams } = getMinMaxRange(carbsTargetGrams)
 
     return {
       proteinsMinGrams,
