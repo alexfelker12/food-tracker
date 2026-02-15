@@ -5,19 +5,19 @@ import { FoodWithPortionsSchema } from "@/schemas/types";
 
 
 //* food by id
-interface GetCaloryRangeFromCurrentNutritionResultProps {
+interface GetCalorieRangeFromCurrentNutritionResultProps {
   userId: string
 }
-export async function getCaloryRangeFromCurrentNutritionResult({
+export async function getCalorieRangeFromCurrentNutritionResult({
   userId
-}: GetCaloryRangeFromCurrentNutritionResultProps) {
+}: GetCalorieRangeFromCurrentNutritionResultProps) {
   return await db.nutritionResult.findFirst({
     where: {
       metricsProfile: { userId },
     },
     select: {
       bmr: true,
-      caloryGoal: true,
+      calorieGoalTarget: true,
       tdee: true
     },
     orderBy: { date: "desc" },

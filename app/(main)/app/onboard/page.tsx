@@ -24,22 +24,22 @@ export default function Page() {
 }
 
 async function PageWrap() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  // const session = await auth.api.getSession({
+  //   headers: await headers()
+  // })
 
-  if (!session) redirect("/auth")
+  // if (!session) redirect("/auth")
 
-  const alreadyHasProfile = await db.metricsProfile.findFirst({
-    where: {
-      userId: session.user.id
-    }
-  })
+  // const alreadyHasProfile = await db.metricsProfile.findFirst({
+  //   where: {
+  //     userId: session.user.id
+  //   }
+  // })
 
-  // await new Promise(r => setTimeout(r, 20000));
-  // redirect(`${APP_BASE_URL}?toast-msg=${encodeURIComponent("Du hast bereits ein Profil")}`)
+  // // await new Promise(r => setTimeout(r, 20000));
+  // // redirect(`${APP_BASE_URL}?toast-msg=${encodeURIComponent("Du hast bereits ein Profil")}`)
 
-  if (alreadyHasProfile) return <UserHasProfile />
+  // if (alreadyHasProfile) return <UserHasProfile />
   return <ProfileForm />
 }
 

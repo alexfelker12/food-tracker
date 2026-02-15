@@ -8,7 +8,7 @@ import { MacroSplitsStepSchema } from "@/schemas/profileSchema";
 import { ProfileSchema } from "@/schemas/types";
 
 import { MacroSplitField } from "./macro-splits/MacroSplitField";
-import { changedProfileCalculation } from "@/server/helpers/changedProfileCalculation";
+import { changedProfileCalculation } from "@/server/helpers/changedProfileCalculation.v2";
 
 
 type SplitLabel = keyof typeof MacroSplitsStepSchema.shape
@@ -51,24 +51,21 @@ export function ProfileFormFieldMacroSplits({ initialRecommended }: ProfileFormF
 
 
   //* actual gram amount of split values
-  const { amountFats, amountCarbs, amountProtein } = useWatch({
+  const { } = useWatch({
     control,
     compute: (data: ProfileSchema) => {
       const {
         userDataStep,
         bodyDataStep,
         fitnessProfileStep,
-        macroSplitStep: { useRecommended, ...partialMacroSplitStep }
+        macroSplitStep
       } = data
 
       return changedProfileCalculation({
-        profileData: {
-          ...userDataStep,
-          ...bodyDataStep,
-          ...fitnessProfileStep,
-          ...partialMacroSplitStep,
-        },
-        useRecommended
+        ...userDataStep,
+        ...bodyDataStep,
+        ...fitnessProfileStep,
+        ...macroSplitStep,
       })
     },
   });

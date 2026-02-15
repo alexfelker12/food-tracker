@@ -1,49 +1,63 @@
 import { profileSchema } from "@/schemas/profileSchema";
-import { FlatProfileSchema, ProfileSchema } from "@/schemas/types";
+import { ProfileSchema } from "@/schemas/types";
 
 import { db } from "@/lib/db";
 
-import { changedProfileCalculation, ChangedProfileCalculationProps } from "../helpers/changedProfileCalculation";
+import { changedProfileCalculation } from "../helpers/changedProfileCalculation.v2";
 
 
 //* steps profile
 interface CreateProfileFromStepsProps {
   userProfileData: ProfileSchema
   userId: string
+  date: Date
 }
-export async function createProfileFromSteps({ userProfileData, userId }: CreateProfileFromStepsProps) {
-  const hasProfile = await db.metricsProfile.findFirst({
-    where: {
-      userId
-    }
-  })
-
-  if (hasProfile) return "has profile";
-
+export async function createInitialProfileAndResult({ userProfileData, userId, date }: CreateProfileFromStepsProps) {
   const { success, data } = await profileSchema.safeParseAsync(userProfileData)
+  if (!success) return "parsing error" // parse failed -> bad request
 
-  if (!success) return "parsing error"; // parse failed -> bad request
+  const hasProfile = await db.metricsProfile.findFirst({ where: { userId } })
+  if (hasProfile) return "has profile"
 
-  const {
-    userDataStep,
-    bodyDataStep,
-    fitnessProfileStep,
-    macroSplitStep: { useRecommended, ...partialMacroSplitStep }
-  } = data
+  const mergedProfileData = {
+    ...data.userDataStep,
+    ...data.bodyDataStep,
+    ...data.fitnessProfileStep,
+    ...data.macroSplitStep,
+  }
 
-  return await db.metricsProfile.create({
+  //* first nutrition result
+  const { nutritionResult: nutritionData, planValidity } = changedProfileCalculation(mergedProfileData)
+  if (!planValidity.isPlanValid && userProfileData.macroSplitStep.macroSplit === "RECOMMENDED") return "invalid plan"
+
+  const initialProfile = await db.metricsProfile.create({
     data: {
-      ...userDataStep,
-      ...bodyDataStep,
-      ...fitnessProfileStep,
-      ...partialMacroSplitStep,
+      ...mergedProfileData,
       user: {
         connect: {
           id: userId
         }
+      },
+      nutritionResult: {
+        create: {
+          ...nutritionData,
+          date
+        }
+      }
+    },
+    include: {
+      nutritionResult: {
+        orderBy: {
+          date: "desc"
+        },
+        take: 1 // latest nutritionResult
       }
     }
   })
+
+  if (initialProfile.nutritionResult.length === 0) return "no result"
+
+  return initialProfile
 }
 
 
@@ -53,24 +67,3 @@ export async function createProfileFromSteps({ userProfileData, userId }: Create
 //   userId: string
 // }
 // export async function createProfileFromMerged({ }: createProfileFromMergedProps) { }
-
-
-//* create nutrition result
-interface CreateNutritionResultFromProfileProps extends ChangedProfileCalculationProps {
-  metricsProfileId: string
-}
-export async function createNutritionResultFromProfile({
-  metricsProfileId,
-  profileData,
-  useRecommended
-}: CreateNutritionResultFromProfileProps) {
-  const nutritionData = changedProfileCalculation({ profileData, useRecommended })
-
-  return await db.nutritionResult.create({
-    data: {
-      ...nutritionData,
-      // connect to metricsProfile (id)
-      metricsProfile: { connect: { id: metricsProfileId } }
-    }
-  })
-}

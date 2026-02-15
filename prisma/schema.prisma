@@ -23,12 +23,13 @@ model User {
   updatedAt     DateTime
 
   // relations
-  sessions       Session[]
-  accounts       Account[]
-  metricsProfile MetricsProfile?
-  meal           Meal[]
-  Food           Food[]
-  JournalEntries JournalEntry[]
+  sessions         Session[]
+  accounts         Account[]
+  metricsProfile   MetricsProfile?
+  meal             Meal[]
+  Food             Food[]
+  JournalEntries   JournalEntry[]
+  bodyMeasurements BodyMeasurement[]
 
   // username plugin
   username        String?
@@ -130,6 +131,17 @@ enum BodyType {
   MORE_OVERWEIGHT
 }
 
+enum MacroSplit {
+  RECOMMENDED
+  CUSTOM
+  // other splits ...
+}
+
+enum BodyMetricType {
+  WEIGHT_KG
+  // other measurements ...
+}
+
 model MetricsProfile {
   id String @id @default(cuid())
 
@@ -148,10 +160,12 @@ model MetricsProfile {
   activityLevel       ActivityLevel
   trainingDaysPerWeek Int
 
-  //* macro splits in percent %
-  fatSplit     Int
-  carbSplit    Int
-  proteinSplit Int
+  //* CUSTOM: macro split targets (grams)
+  proteinTargetGrams Int?
+  fatTargetGrams     Int?
+
+  //* current macro mode
+  macroSplit MacroSplit @default(RECOMMENDED)
 
   // relations
   userId String @unique
@@ -165,20 +179,30 @@ model NutritionResult {
   date DateTime @default(now()) @db.Date // stores result per date
 
   //* calculated calories/factors
-  bmr         Float
-  tdee        Float
-  caloryGoal  Float
-  tefQuota    Float
-  waterDemand Float
+  bmr                Float
+  tdee               Float
+  calorieGoalInitial Float
+  calorieGoalTarget  Float
+  calorieGoalMin     Float
+  calorieGoalMax     Float
 
-  //* actual gram amount calculated from goal calories, tef quota and macro splits
-  amountFats    Int
-  amountCarbs   Int
-  amountProtein Int
+  //* water demand range
+  waterDemandMin Float
+  waterDemandMax Float
+
+  //* actual gram amount calculated from calorie goal and proteins/fats formula
+  fatsTargetGrams     Float
+  fatsMinGrams        Float
+  fatsMaxGrams        Float
+  carbsTargetGrams    Float
+  carbsMinGrams       Float
+  carbsMaxGrams       Float
+  proteinsTargetGrams Float
+  proteinsMinGrams    Float
+  proteinsMaxGrams    Float
 
   // save profil data for potential future reference 
-  profileSnapshot       Json
-  usedRecommendedSplits Boolean
+  profileSnapshot Json
 
   metricsProfileId String
   metricsProfile   MetricsProfile @relation(fields: [metricsProfileId], references: [id], onDelete: Cascade)
@@ -186,6 +210,21 @@ model NutritionResult {
   // one result per profile per date
   @@unique([metricsProfileId, date])
   @@index([metricsProfileId])
+}
+
+model BodyMeasurement {
+  id    String         @id @default(cuid())
+  date  DateTime       @db.Date
+  type  BodyMetricType // type infers unit (e.g. WEIGHT_KG -> kg | one source of truth)
+  value Float
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+  @@index([userId, type])
 }
 
 //* -----------------------------

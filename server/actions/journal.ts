@@ -255,20 +255,20 @@ export async function getJournalDayMacros({ userId, date }: GetJournalDayMacrosP
         }
       }; // can't calculate calories and macros if no calory goal was created - just return "-"
 
-      const { caloryGoal, amountFats, amountCarbs, amountProtein } = nutritionResult
+      const { calorieGoalTarget, fatsTargetGrams, carbsTargetGrams, proteinsTargetGrams } = nutritionResult
 
       return {
         availableMacros: {
-          kcal: caloryGoal,
-          fats: amountFats,
-          carbs: amountCarbs,
-          proteins: amountProtein,
+          kcal: calorieGoalTarget,
+          fats: fatsTargetGrams,
+          carbs: carbsTargetGrams,
+          proteins: proteinsTargetGrams,
         },
         openMacros: {
-          kcal: +(caloryGoal - (kcal || 0)).toFixed(0),
-          fats: +(amountFats - (fats || 0)).toFixed(1),
-          carbs: +(amountCarbs - (carbs || 0)).toFixed(1),
-          proteins: +(amountProtein - (proteins || 0)).toFixed(1),
+          kcal: +(calorieGoalTarget - (kcal || 0)).toFixed(0),
+          fats: +(fatsTargetGrams - (fats || 0)).toFixed(1),
+          carbs: +(carbsTargetGrams - (carbs || 0)).toFixed(1),
+          proteins: +(proteinsTargetGrams - (proteins || 0)).toFixed(1),
         }
       }
     })

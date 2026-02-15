@@ -1,12 +1,18 @@
 import z from "zod";
 
-import { NutritionResultModel } from "@/generated/prisma/models";
+import type { NutritionResultModel } from "@/generated/prisma/models";
+
 import { authMiddleware } from "@/orpc/middleware/authorized";
 import { base } from "@/orpc/middleware/base";
+
 import { profileSchema } from "@/schemas/profileSchema";
-import { createNutritionResultFromProfile, createProfileFromSteps } from "@/server/actions/onboard";
+
+import { getUserLocalDateNow } from "@/lib/utils";
+
+import { createInitialProfileAndResult } from "@/server/actions/onboard";
 
 
+type ProcedureReturnType = NutritionResultModel
 export const createInitialProfile = base
   .use(authMiddleware)
   .route({
@@ -16,27 +22,31 @@ export const createInitialProfile = base
     tags: ["Onboard"]
   })
   .input(profileSchema)
-  .output(z.custom<NutritionResultModel>())
-  .handler(async ({ input, context: { session }, errors }) => {
-    const initialProfile = await createProfileFromSteps({
+  .output(z.custom<ProcedureReturnType>())
+  .handler(async ({
+    input,
+    context: { session, headers },
+    errors
+  }) => {
+    const userLocalNow = getUserLocalDateNow(headers)
+
+    const initialProfileWithNutritionResult = await createInitialProfileAndResult({
       userProfileData: input,
-      userId: session.user.id
+      userId: session.user.id,
+      date: userLocalNow
     })
 
-    switch (initialProfile) {
+    // error case checks
+    switch (initialProfileWithNutritionResult) {
       case "has profile":
         throw errors.FORBIDDEN() // not allowed to create another 
+      case "invalid plan":
       case "parsing error":
         throw errors.BAD_REQUEST() // invalid input
+      case "no result":
+        throw errors.INTERNAL_SERVER_ERROR() // ...
     }
 
-    const { id, userId, ...profileData } = initialProfile
-
-    const firstNutritionResult = await createNutritionResultFromProfile({
-      metricsProfileId: id,
-      profileData,
-      useRecommended: input.macroSplitStep.useRecommended
-    })
-
-    return firstNutritionResult
+    // garantueed to be of length one because of "take: 1" and length check in create function
+    return initialProfileWithNutritionResult.nutritionResult[0]
   })

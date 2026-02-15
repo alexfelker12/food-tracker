@@ -13,11 +13,11 @@ export function CaloryRangeWidget() {
 
   if (!data) return null;
 
-  const { bmr, caloryGoal, tdee } = data
+  const { bmr, calorieGoalTarget, tdee } = data
 
-  const formattedBMR = getGermanNumber(+bmr.toFixed(0))
-  const formattedCaloryGoal = getGermanNumber(caloryGoal)
-  const formattedTDEE = getGermanNumber(tdee)
+  const formattedBMR = getGermanNumber(bmr, 0)
+  const formattedCalorcalorieGoalTarget = getGermanNumber(calorieGoalTarget, 0)
+  const formattedTDEE = getGermanNumber(tdee, 0)
 
   return (
     <Card className="gap-3 py-4 pb-3">
@@ -34,7 +34,7 @@ export function CaloryRangeWidget() {
         </div>
         <div className="flex justify-between gap-2">
           <span className="text-muted-foreground text-sm">Momentanes Kalorienziel:</span>
-          <span>{formattedCaloryGoal}
+          <span>{formattedCalorcalorieGoalTarget}
             <span className="hidden text-muted-foreground text-sm">kcal</span>
           </span>
         </div>
