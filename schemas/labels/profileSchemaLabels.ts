@@ -50,12 +50,12 @@ export const activityLevelLabels: Record<ActivityLevel, string> = {
 export const macroSplitLabels: DetailedOptionLabel<MacroSplit> = {
   RECOMMENDED: {
     label: "Empfohlen",
-    description: "Nutze eine von uns empfohlene Nährstoffverteilung",
+    description: "Eine nach deinen Angaben empfohlene Nährstoffverteilung",
     icon: SparklesIcon
   },
   CUSTOM: {
-    label: "Anpassen (bald wieder verfügbar)",
-    description: "Passe deine Nährstoffverteilung selbst an",
+    label: "Angepasst (bald wieder verfügbar)",
+    description: "Nach deinen wünschen angepasste Nährstoffverteilung",
     icon: SlidersHorizontalIcon,
     disabled: true
   },

@@ -1,4 +1,4 @@
-import { getMinMaxRange } from "@/lib/calculations/profile.v2"
+import { calculateFinalCalorieGoal, getMinMaxRange } from "@/lib/calculations/profile.v2"
 
 import {
   // isPlanValid,
@@ -24,13 +24,28 @@ export class CustomMacroStrategy implements MacroCalculationStrategy {
     const proteinCalories = context.proteinTargetGrams * 4
     const fatCalories = context.fatTargetGrams * 9
     // subtract protein and fat calories from calorieGoal
-    const remainingCalories = context.calorieGoal - proteinCalories - fatCalories
+    const remainingCalories = context.calorieGoalInitial - proteinCalories - fatCalories
     const carbsTargetGrams = remainingCalories * 4
 
     //* carbs min/max range
     const { min: carbsMinGrams, max: carbsMaxGrams } = getMinMaxRange(carbsTargetGrams)
 
+    //* calorieGoal range
+    const { min: calorieGoalMax, max: calorieGoalMin } = calculateFinalCalorieGoal({
+      proteinsMinGrams,
+      proteinsMaxGrams,
+      fatsMinGrams,
+      fatsMaxGrams,
+      carbsMinGrams,
+      carbsMaxGrams
+    })
+    const calorieGoalTarget = (calorieGoalMax + calorieGoalMin) / 2 // simple average of min and max
+
     return {
+      calorieGoalMax,
+      calorieGoalMin,
+      calorieGoalTarget,
+
       proteinsMinGrams,
       proteinsMaxGrams,
       proteinsTargetGrams: context.proteinTargetGrams,

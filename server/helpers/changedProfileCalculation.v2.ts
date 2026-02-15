@@ -30,7 +30,7 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
   //* base/general values
   const bmr = calculateBMR({ birthDate, gender, heightCm, weightKg })
   const tdee = calculateTDEE({ activityLevel, bmr })
-  const calorieGoal = calculateCalorieGoal({ fitnessGoal, tdee })
+  const calorieGoalInitial = calculateCalorieGoal({ fitnessGoal, tdee })
   const { min: waterDemandMin, max: waterDemandMax } = calculateWaterDemand({
     weightKg,
     activityLevel,
@@ -40,7 +40,7 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
 
   //* macro split values
   const context: MacroCalculationContext = {
-    calorieGoal,
+    calorieGoalInitial,
     fitnessGoal,
     trainingDaysPerWeek,
     weightKg,
@@ -50,14 +50,14 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
     proteinTargetGrams
   }
   const macroStrategy = createMacroStrategy(macroSplit)
-  const macros = macroStrategy.calculate(context)
+  const macrosAndCalories = macroStrategy.calculate(context)
 
   //* checks if restrictions are met, implies further actions
   const planValidity = checkPlanValidity({
     context,
-    proteinGrams: macros.proteinsTargetGrams,
-    fatGrams: macros.fatsTargetGrams,
-    carbGrams: macros.carbsTargetGrams
+    proteinGrams: macrosAndCalories.proteinsTargetGrams,
+    fatGrams: macrosAndCalories.fatsTargetGrams,
+    carbGrams: macrosAndCalories.carbsTargetGrams
   })
 
   //* actual nutritionResult
@@ -65,11 +65,11 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
     // base/general values
     bmr,
     tdee,
-    calorieGoal,
+    calorieGoalInitial,
     waterDemandMin,
     waterDemandMax,
     // macro splits min/max/target
-    ...macros,
+    ...macrosAndCalories,
     // profileSnapshot
     profileSnapshot,
   }

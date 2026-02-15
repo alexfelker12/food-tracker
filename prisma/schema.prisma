@@ -179,9 +179,12 @@ model NutritionResult {
   date DateTime @default(now()) @db.Date // stores result per date
 
   //* calculated calories/factors
-  bmr         Float
-  tdee        Float
-  calorieGoal Float
+  bmr                Float
+  tdee               Float
+  calorieGoalInitial Float
+  calorieGoalTarget  Float
+  calorieGoalMin     Float
+  calorieGoalMax     Float
 
   //* water demand range
   waterDemandMin Float

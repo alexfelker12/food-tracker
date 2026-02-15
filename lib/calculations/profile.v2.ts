@@ -8,7 +8,7 @@ import {
   workoutValueMapping
 } from "@/schemas/mappings/profileSchemaMappings.v2"
 import { getAge } from "@/lib/utils"
-import { MetricsProfileModel } from "@/generated/prisma/models";
+import { MetricsProfileModel, NutritionResultModel } from "@/generated/prisma/models";
 
 
 //* -----------------------------
@@ -91,7 +91,11 @@ export type CalculateRecommendedProteinsProps = Pick<Required<MetricsProfileMode
 export function calculateRecommendedProteins({ weightKg, fitnessGoal, trainingDaysPerWeek }: CalculateRecommendedProteinsProps) {
   const { workoutValue, workoutFactor } = getWorkoutValuesAndFactor({ fitnessGoal, trainingDaysPerWeek })
 
-  const recommendedProteins = +(weightKg * workoutValue * workoutFactor)
+  const proteinGrams = +(weightKg * workoutValue * workoutFactor)
+  const { proteinGramsMin, proteinGramsMax } = checkProteinRestrictions({ proteinGrams, weightKg })
+
+  //* ensure proteins are in valid range
+  const recommendedProteins = Math.max(Math.min(proteinGrams, proteinGramsMax), proteinGramsMin)
   return recommendedProteins
   // return +(recommendedProteins).toFixed(0)
 }
@@ -101,24 +105,55 @@ export type CalculateRecommendedFatsProps = Pick<Required<MetricsProfileModel>, 
 export function calculateRecommendedFats({ weightKg, gender, bodyType }: CalculateRecommendedFatsProps) {
   const bodyFatValue = bodyFatValueMapping[gender][bodyType]
 
-  const recommendedFats = +(weightKg * bodyFatValue)
+  const fatGrams = +(weightKg * bodyFatValue)
+  const { fatGramsMin, fatGramsMax } = checkFatRestrictions({ fatGrams, weightKg, gender })
+
+  //* ensure fats are in valid range
+  const recommendedFats = Math.max(Math.min(fatGrams, fatGramsMax), fatGramsMin)
   return recommendedFats
   // return +(recommendedFats).toFixed(0)
 }
 
-
 //* recommended carbs
 // Carbs are calculated with the remaining calories 
 export type CalculateRecommendedCarbsProps = {
-  calorieGoal: ReturnType<typeof calculateCalorieGoal>
+  calorieGoalInitial: ReturnType<typeof calculateCalorieGoal>
   recommendedProteins: number
   recommendedFats: number
 }
-export function calculateRecommendedCarbs({ calorieGoal, recommendedProteins, recommendedFats }: CalculateRecommendedCarbsProps) {
-  const recommendedCarbs = (calorieGoal - (recommendedProteins * 4) - (recommendedFats * 9)) / 4
+export function calculateRecommendedCarbs({ calorieGoalInitial, recommendedProteins, recommendedFats }: CalculateRecommendedCarbsProps) {
+  const carbGrams = (calorieGoalInitial - (recommendedProteins * 4) - (recommendedFats * 9)) / 4
+  const { carbGramsMin } = checkCarbRestrictions({ carbGrams })
+
+  //* ensure carbs are above min threshold
+  const recommendedCarbs = Math.max(carbGramsMin, carbGrams)
   return recommendedCarbs
   // return +(recommendedCarbs).toFixed(0)
 }
+
+
+//* final calorieGoal
+// Carbs are calculated with the remaining calories 
+export type CalculateFinalCalorieGoalProps =
+  Pick<NutritionResultModel,
+    "proteinsMinGrams"
+    | "proteinsMaxGrams"
+    | "fatsMinGrams"
+    | "fatsMaxGrams"
+    | "carbsMinGrams"
+    | "carbsMaxGrams"
+  >
+export function calculateFinalCalorieGoal({
+  proteinsMinGrams, proteinsMaxGrams, fatsMinGrams, fatsMaxGrams, carbsMinGrams, carbsMaxGrams
+}: CalculateFinalCalorieGoalProps) {
+  const finalCalorieGoal = {
+    min: (proteinsMaxGrams * 4) + (fatsMaxGrams * 9) + (carbsMaxGrams * 4), // use max grams for min
+    max: (proteinsMinGrams * 4) + (fatsMinGrams * 9) + (carbsMinGrams * 4) // use min grams for max
+  }
+  return finalCalorieGoal
+  // return +(finalCalorieGoal).toFixed(0)
+}
+
 
 
 //* proteins restrictions
@@ -128,13 +163,21 @@ export type CheckProteinRestrictionsProps = Pick<Required<MetricsProfileModel>, 
   proteinGrams: number
 }
 export function checkProteinRestrictions({ weightKg, proteinGrams }: CheckProteinRestrictionsProps) {
-  const proteinsMinConst = 1.4 // grams per kg
-  const proteinsMaxConst = 2.6 // grams per kg
+  // grams per kg
+  const proteinsMinConst = 1.4
+  const proteinsMaxConst = 2.6
+
   const proteinsMin = weightKg * proteinsMinConst
   const proteinsMax = weightKg * proteinsMaxConst
 
-  //* between 1.4 g/kg and 2.6 g/kg
-  return proteinGrams >= proteinsMin && proteinGrams <= proteinsMax
+  // functions should return the min/max amount for proteins and if proteins are in valid range
+  const proteinRestrictions = {
+    proteinGramsMin: proteinsMin,
+    proteinGramsMax: proteinsMax,
+    valid: proteinGrams >= proteinsMin && proteinGrams <= proteinsMax
+  }
+
+  return proteinRestrictions
 }
 
 //* fats restrictions
@@ -144,26 +187,53 @@ export type CheckFatRestrictionsProps = Pick<Required<MetricsProfileModel>, "wei
   fatGrams: number
 }
 export function checkFatRestrictions({ weightKg, gender, fatGrams }: CheckFatRestrictionsProps) {
-  const maleFatsMin = 0.6 // grams per kg
-  const femaleFatsMin = 0.7 // grams per kg
+  // grams per kg
+  const maleFatsMin = 0.6
+  const femaleFatsMin = 0.7
+  const maleFatsMax = 1.2
+  const femaleFatsMax = 1.3
 
-  //* at least 0.6 or 0.7 g/kg depending on the users gender
-  const fatGramsMin = weightKg * (gender === "MALE" ? maleFatsMin : femaleFatsMin)
-  return fatGrams > fatGramsMin
+  //* functions should return the min/max amount for fats
+  const fatRestrictions = {
+    fatGramsMin: 0,
+    fatGramsMax: 0,
+    valid: false
+  }
+
+  //* determine gender differences for fats amount
+  switch (gender) {
+    case "MALE":
+      fatRestrictions.fatGramsMin = weightKg * (maleFatsMin)
+      fatRestrictions.fatGramsMax = weightKg * (maleFatsMax)
+    case "FEMALE":
+      fatRestrictions.fatGramsMin = weightKg * (femaleFatsMin)
+      fatRestrictions.fatGramsMax = weightKg * (femaleFatsMax)
+  }
+
+  //* provide a "valid" prop which indicates if the fat restriction is met
+  fatRestrictions.valid = fatGrams >= fatRestrictions.fatGramsMin && fatGrams <= fatRestrictions.fatGramsMax
+
+  return fatRestrictions
 }
 
 //* carbs restrictions
 // carbs are being calculated with the remaining calories after calculating the essential amounts of proteins and fats.
-// Depending on the users profile data the recommended carbs could be below a certain threshold. We check if the threshold is met, else we consider that the calorie goal cannot be held healthy enough with the users profile data
+// Depending on the users profile data the recommended carbs could be below a certain threshold. We check if the threshold is met, else we consider that the calorie goal cannot be held healthy enough with the users profile data and prompt the user to change their fitnessGoal to get higher remaining calories (higher carbGrams)
 //? returns `true` if carbs amount is "valid"
 export type CheckCarbRestrictionsProps = {
   carbGrams: number
 }
 export function checkCarbRestrictions({ carbGrams }: CheckCarbRestrictionsProps) {
+  //* as a general value we use 50 grams as the threshold. Carbs are not allowed to go below this threshold
   const carbsMin = 50 // grams
 
-  //* as a general value we use 50 grams as the threshold. Carbs are not allowed to go below this threshold
-  return carbGrams > carbsMin
+  // functions should return the min amount for carbs and if carbs are above threshold
+  const carbRestrictions = {
+    carbGramsMin: carbsMin,
+    valid: carbGrams >= carbsMin
+  }
+
+  return carbRestrictions
 }
 
 

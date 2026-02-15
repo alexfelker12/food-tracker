@@ -18,7 +18,7 @@ export type MacroCalculationContext =
     | "fatTargetGrams"
   > &
   Pick<NutritionResult,
-    "calorieGoal"
+    "calorieGoalInitial"
   >
 
 //* macro values in nutritionResult
@@ -33,7 +33,9 @@ export type MacroResult =
     | "carbsMinGrams"
     | "carbsMaxGrams"
     | "carbsTargetGrams"
-  // | ""
+    | "calorieGoalMin"
+    | "calorieGoalMax"
+    | "calorieGoalTarget"
   >
 
 //* each strategy has a calculate function, which returns the macro values part in a nutritionResult
@@ -52,6 +54,7 @@ interface CheckPlanValidityProps {
   fatGrams: number
   carbGrams: number
 }
+// TODO: check if function should just return the output of the restriction functions
 export type CheckPlanValidityReturn = {
   isProteinAmountValid: boolean
   isFatAmountValid: boolean
@@ -62,18 +65,18 @@ export const checkPlanValidity = ({ context, fatGrams, proteinGrams, carbGrams }
   const isProteinAmountValid = checkProteinRestrictions({
     proteinGrams,
     weightKg: context.weightKg
-  })
+  }).valid
 
   const isFatAmountValid = checkFatRestrictions({
     fatGrams,
     gender: context.gender,
     weightKg: context.weightKg
-  })
+  }).valid
 
-  const isCarbAmountValid = checkCarbRestrictions({ carbGrams })
+  const isCarbAmountValid = checkCarbRestrictions({ carbGrams }).valid
 
   return {
-    isProteinAmountValid,
+    isProteinAmountValid, // TODO read in output of checkPlanValidity "proteinRestrictions"-output
     isFatAmountValid,
     isCarbAmountValid,
     //* plan is only valid if all restrictions are met

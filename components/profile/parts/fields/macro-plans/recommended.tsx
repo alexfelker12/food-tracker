@@ -33,33 +33,34 @@ export function RecommendedPlan(props: SelectedPlanProps) {
 function NutritionResultDisplay({ nutritionResult }: SelectedPlanProps) {
   // macro values
   const {
-    calorieGoal,
+    calorieGoalMin, calorieGoalMax,
     proteinsMinGrams, proteinsMaxGrams,
     fatsMinGrams, fatsMaxGrams,
     carbsMinGrams, carbsMaxGrams,
   } = nutritionResult
-  // // ...
-  // const { } = nutritionResult
 
-  const calorieGoalText = getGermanNumber(calorieGoal)
-  const proteinsMin = getGermanNumber(proteinsMinGrams)
-  const proteinsMax = getGermanNumber(proteinsMaxGrams)
-  const fatsMin = getGermanNumber(fatsMinGrams)
-  const fatsMax = getGermanNumber(fatsMaxGrams)
-  const carbsMin = getGermanNumber(carbsMinGrams)
-  const carbsMax = getGermanNumber(carbsMaxGrams)
+  const calorieGoalMinText = getGermanNumber(calorieGoalMin, 0)
+  const calorieGoalMaxText = getGermanNumber(calorieGoalMax, 0)
+  const proteinsMin = getGermanNumber(proteinsMinGrams, 0)
+  const proteinsMax = getGermanNumber(proteinsMaxGrams, 0)
+  const fatsMin = getGermanNumber(fatsMinGrams, 0)
+  const fatsMax = getGermanNumber(fatsMaxGrams, 0)
+  const carbsMin = getGermanNumber(carbsMinGrams, 0)
+  const carbsMax = getGermanNumber(carbsMaxGrams, 0)
 
   return (
     // TODO: Maybe copy this to onboard success dialog
     <GridDataSection label="Kalorien-Ziel & Makronährwert-Bereich">
 
       {/* calorieGoal */}
-      <GridData className="grid grid-cols-[1fr_auto]">
+      <GridData className="gap-x-1 gap-y-2 grid grid-cols-[1fr_auto_auto_auto] grid-row-4">
         <span data-slot="grid-data-label">Kalorien-Ziel</span>
-        <span>{calorieGoalText}<span className="ml-0.5 text-muted-foreground">kcal</span></span>
-      </GridData>
+        <span>{calorieGoalMinText}<span className="ml-0.5 text-muted-foreground">kcal</span></span>
+        <span className="text-muted-foreground">-</span>
+        <span>{calorieGoalMaxText}<span className="ml-0.5 text-muted-foreground">kcal</span></span>
+        {/* </GridData>
 
-      <GridData className="gap-2 gap-x-1 grid grid-cols-[1fr_auto_auto_auto] grid-row-3">
+      <GridData className="gap-2 gap-x-1 grid grid-cols-[1fr_auto_auto_auto] grid-row-3"> */}
         {/* proteins */}
         <span data-slot="grid-data-label">Proteine</span>
         <span>{proteinsMin}<span className="ml-0.5 text-muted-foreground">g</span></span>
