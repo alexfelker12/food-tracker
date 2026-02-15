@@ -1,5 +1,4 @@
 import { FieldDescription, FieldGroup, FieldLegend, FieldSeparator, FieldSet } from "@/components/ui/field";
-import { ProfileFormFieldMacroSplits } from "../fields/ProfileFormFieldMacroSplits";
 import { ProfileFormFieldMacroPlan } from "../fields/ProfileFormFieldMacroPlan";
 import { ProfileFormFieldSelectedPlan } from "../fields/ProfileFormFieldSelectedPlan";
 

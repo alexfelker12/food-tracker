@@ -21,7 +21,6 @@ import { ProfileFormFieldFitnessGoal } from "@/components/profile/parts/fields/P
 import { ProfileFormFieldGender } from "@/components/profile/parts/fields/ProfileFormFieldGender";
 import { ProfileFormFieldHeight } from "@/components/profile/parts/fields/ProfileFormFieldHeight";
 import { ProfileFormFieldMacroPlan } from "@/components/profile/parts/fields/ProfileFormFieldMacroPlan";
-import { ProfileFormFieldMacroSplits } from "@/components/profile/parts/fields/ProfileFormFieldMacroSplits";
 import { ProfileFormFieldTrainingDays } from "@/components/profile/parts/fields/ProfileFormFieldTrainingDays";
 import { ProfileFormFieldWeight } from "@/components/profile/parts/fields/ProfileFormFieldWeight";
 import { Button } from "@/components/ui/button";

@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { profileSchema } from "@/schemas/profileSchema";
 import type { ProfileSchema } from "@/schemas/types";
 
-import { changedProfileCalculation } from "../helpers/changedProfileCalculation.v2";
+import { changedProfileCalculation } from "../helpers/changedProfileCalculation";
 
 
 //* steps profile

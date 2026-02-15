@@ -2,7 +2,7 @@
 
 import { useFormContext, useWatch } from "react-hook-form";
 
-import { changedProfileCalculation } from "@/server/helpers/changedProfileCalculation.v2";
+import { changedProfileCalculation } from "@/server/helpers/changedProfileCalculation";
 
 import { ProfileSchema } from "@/schemas/types";
 

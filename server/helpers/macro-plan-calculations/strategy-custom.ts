@@ -1,4 +1,4 @@
-import { calculateFinalCalorieGoal, getMinMaxRange } from "@/lib/calculations/profile.v2"
+import { calculateFinalCalorieGoal, getMinMaxRange } from "@/lib/calculations/profile"
 
 import {
   // isPlanValid,

@@ -1,22 +1,13 @@
 import { z } from "zod";
 
-import { ActivityLevel, BodyType, FitnessGoal, Gender } from "@/generated/prisma/enums";
-
 import { foodWithPortionsSchema } from "./food/foodSchema";
 import { journalEntrySchema, retrackJournalEntrySchema, updateJournalEntrySchema } from "./journal/journalEntrySchema";
-import { activityLevelValueMapping, bodyFatPercentageValueMapping, fitnessGoalValueMapping } from "./mappings/profileSchemaMappings";
 import { mergedProfileSchema, profileSchema } from "./profileSchema";
 
 
 // Schemas
 export type ProfileSchema = z.infer<typeof profileSchema>
 export type FlatProfileSchema = z.infer<typeof mergedProfileSchema>
-
-export type MappedFlatProfileSchema = Omit<Required<FlatProfileSchema>, "bodyType" | "fitnessGoal" | "activityLevel"> & {
-  kfaMap: typeof bodyFatPercentageValueMapping[Gender][BodyType]
-  activityMap: typeof activityLevelValueMapping[ActivityLevel]
-  fitnGoalMap: typeof fitnessGoalValueMapping[FitnessGoal]
-}
 
 // misc
 export type MacroSplits = {

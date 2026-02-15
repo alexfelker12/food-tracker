@@ -1,6 +1,6 @@
 import { NutritionResult } from "@/generated/prisma/client"
 import { MetricsProfileModel } from "@/generated/prisma/models"
-import { checkCarbRestrictions, checkFatRestrictions, checkProteinRestrictions } from "@/lib/calculations/profile.v2"
+import { checkCarbRestrictions, checkFatRestrictions, checkProteinRestrictions } from "@/lib/calculations/profile"
 
 //* -----------------------------
 //* MAIN TYPES

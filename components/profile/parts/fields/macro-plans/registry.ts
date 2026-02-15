@@ -1,6 +1,6 @@
 import { MacroSplit } from "@/generated/prisma/enums";
 
-import { NutritionResultData } from "@/server/helpers/changedProfileCalculation.v2";
+import { NutritionResultData } from "@/server/helpers/changedProfileCalculation";
 import { CheckPlanValidityReturn } from "@/server/helpers/macro-plan-calculations/context";
 
 import { CustomPlan } from "./custom";

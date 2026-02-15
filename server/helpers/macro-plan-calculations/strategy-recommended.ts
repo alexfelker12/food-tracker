@@ -1,4 +1,4 @@
-import { calculateFinalCalorieGoal, calculateRecommendedCarbs, calculateRecommendedFats, calculateRecommendedProteins, getMinMaxRange } from "@/lib/calculations/profile.v2"
+import { calculateFinalCalorieGoal, calculateRecommendedCarbs, calculateRecommendedFats, calculateRecommendedProteins, getMinMaxRange } from "@/lib/calculations/profile"
 
 import type { MacroCalculationContext, MacroCalculationStrategy, MacroResult } from "./context"
 
