@@ -62,17 +62,17 @@ export const noWorkoutValueMapping: WorkoutValueType = {
 // fat calculation bodyfat factor
 export const bodyFatValueMapping: Record<Gender, Record<BodyType, number>> = {
   MALE: {
-    VERY_ATHLETIC: 0.8,
-    ATHLETIC: 0.9,
-    AVERAGE: 1,
-    SLIGHTLY_OVERWEIGHT: 1,
-    MORE_OVERWEIGHT: 1,
+    VERY_ATHLETIC: 1.1,
+    ATHLETIC: 1,
+    AVERAGE: 0.9,
+    SLIGHTLY_OVERWEIGHT: 0.8,
+    MORE_OVERWEIGHT: 0.7,
   },
   FEMALE: {
-    VERY_ATHLETIC: 0.9,
-    ATHLETIC: 1,
-    AVERAGE: 1.1,
-    SLIGHTLY_OVERWEIGHT: 1.1,
-    MORE_OVERWEIGHT: 1.1,
+    VERY_ATHLETIC: 1.2,
+    ATHLETIC: 1.1,
+    AVERAGE: 1,
+    SLIGHTLY_OVERWEIGHT: 0.9,
+    MORE_OVERWEIGHT: 0.8,
   }
 }
