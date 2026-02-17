@@ -105,15 +105,16 @@ export type CalculateRecommendedFatsProps = Pick<Required<MetricsProfileModel>, 
 export function calculateRecommendedFats({ weightKg, gender, bodyType, fitnessGoal }: CalculateRecommendedFatsProps) {
   const bodyFatValue = bodyFatValueMapping[gender][bodyType]
 
-  const adjustedBodyFatValue = adjustRecommendedMacro({
-    macroValue: bodyFatValue, macro: "FATS",
-    bodyType, fitnessGoal, gender
-  })
+  // const adjustedBodyFatValue = adjustRecommendedMacro({
+  //   macroValue: bodyFatValue, macro: "FATS",
+  //   bodyType, fitnessGoal, gender
+  // })
 
-  console.log("base:", bodyFatValue)
-  console.log("adjustment:", adjustedBodyFatValue)
+  // console.log("base:", bodyFatValue)
+  // console.log("adjustment:", adjustedBodyFatValue)
 
-  const fatGrams = +(weightKg * adjustedBodyFatValue)
+  // const fatGrams = +(weightKg * adjustedBodyFatValue)
+  const fatGrams = +(weightKg * bodyFatValue)
   const { fatGramsMin, fatGramsMax } = checkFatRestrictions({ fatGrams, weightKg, gender })
 
   //* ensure fats are in valid range
