@@ -11,7 +11,7 @@ export class RecommendedMacroStrategy implements MacroCalculationStrategy {
     const proteinsMinGrams = proteins.min
     const proteinsMaxGrams = proteins.max
 
-    const recommendedFats = calculateRecommendedFats({ bodyType, gender, weightKg, })
+    const recommendedFats = calculateRecommendedFats({ bodyType, gender, weightKg, fitnessGoal })
     const fats = getMinMaxRange(recommendedFats)
     const fatsMinGrams = fats.min
     const fatsMaxGrams = fats.max

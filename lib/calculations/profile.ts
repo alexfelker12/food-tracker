@@ -101,11 +101,19 @@ export function calculateRecommendedProteins({ weightKg, fitnessGoal, trainingDa
 }
 
 //* recommended fats
-export type CalculateRecommendedFatsProps = Pick<Required<MetricsProfileModel>, "weightKg" | "gender" | "bodyType">
-export function calculateRecommendedFats({ weightKg, gender, bodyType }: CalculateRecommendedFatsProps) {
+export type CalculateRecommendedFatsProps = Pick<Required<MetricsProfileModel>, "weightKg" | "gender" | "bodyType" | "fitnessGoal">
+export function calculateRecommendedFats({ weightKg, gender, bodyType, fitnessGoal }: CalculateRecommendedFatsProps) {
   const bodyFatValue = bodyFatValueMapping[gender][bodyType]
 
-  const fatGrams = +(weightKg * bodyFatValue)
+  const adjustedBodyFatValue = adjustRecommendedMacro({
+    macroValue: bodyFatValue, macro: "FATS",
+    bodyType, fitnessGoal, gender
+  })
+
+  console.log("base:", bodyFatValue)
+  console.log("adjustment:", adjustedBodyFatValue)
+
+  const fatGrams = +(weightKg * adjustedBodyFatValue)
   const { fatGramsMin, fatGramsMax } = checkFatRestrictions({ fatGrams, weightKg, gender })
 
   //* ensure fats are in valid range
@@ -246,4 +254,49 @@ export function getMinMaxRange(targetValue: number, minMaxRangePercentage: numbe
   const min = targetValue * (1 - minMaxRangePercentage) // <- with default: 1 - 0.05 = 0.95
   const max = targetValue * (1 + minMaxRangePercentage) // <- with default: 1 + 0.05 = 1.05
   return { min, max }
+}
+
+// adjust macro values under certain conditions
+type AdjustRecommendedMacroProps = {
+  macroValue: number
+} & (
+    AdjustRecommendedFatsProps | AdjustRecommendedCarbsProps | AdjustRecommendedProteinsProps
+  )
+type AdjustRecommendedFatsProps =
+  { macro: "FATS" }
+  & Pick<Required<MetricsProfileModel>, "gender" | "bodyType" | "fitnessGoal">
+type AdjustRecommendedCarbsProps =
+  { macro: "CARBS" }
+// & Pick<Required<MetricsProfileModel>, "bodyType" | "fitnessGoal">
+type AdjustRecommendedProteinsProps =
+  { macro: "PROTEINS" }
+// & Pick<Required<MetricsProfileModel>, "gender" | "fitnessGoal">
+
+function adjustRecommendedMacro(props: AdjustRecommendedMacroProps) {
+  let adjustedMacroValue = props.macroValue
+  // bodyType, fitnessGoal, gender
+  switch (props.macro) {
+    case "FATS":
+      // fats, if:
+      //  1. female
+      //  2. bodyType = VERY_ATHLETIC | ATHLETIC
+      //  3. fitnessGoal = GAIN_WEIGHT | QUICKLY_GAIN_WEIGHT
+      // add 0.1 g/kg to bodyFatValue
+
+      if (props.gender === "FEMALE") {
+        if (props.bodyType === "ATHLETIC" || props.bodyType === "VERY_ATHLETIC") {
+          if (props.fitnessGoal === "GAIN_WEIGHT" || props.fitnessGoal === "QUICKLY_GAIN_WEIGHT") {
+            adjustedMacroValue += 0.1
+          }
+        }
+      }
+      break
+    case "CARBS":
+    // carbs ...
+    case "PROTEINS":
+    // proteins ...
+  }
+
+
+  return parseFloat(adjustedMacroValue.toFixed(1))
 }
