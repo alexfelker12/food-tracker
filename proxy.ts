@@ -4,10 +4,6 @@ export default function proxy(request: NextRequest) {
   const referrer = request.headers.get("referer")
   const { pathname, origin } = request.nextUrl
 
-  if (pathname.startsWith("/app/journal/today")) {
-    return NextResponse.next()
-  }
-
   // parse referrer safely
   let referrerPathname = ""
   if (referrer) {
@@ -20,8 +16,14 @@ export default function proxy(request: NextRequest) {
     } catch (e) { }
   }
 
-  // redirect to /today only if user is navigating to /journal from a different route than /journal:path* 
-  if (referrerPathname && !referrerPathname.startsWith("/app/journal")) {
+  const notFromJournal = referrerPathname && !referrerPathname.startsWith("/app/journal")
+  const navigatesToToday = pathname === "/app/journal/today"
+
+  //* redirect to today's journal day date when:
+  // 1. coming from another subroute than /app/journal
+  // or
+  // 2. navigating to .../today
+  if (notFromJournal || navigatesToToday) {
     // get today's date in user's local timezone from cookie
     const timezoneCookie = request.cookies.get('user-timezone')?.value
     const timeZone = timezoneCookie || 'Europe/Berlin' // fallback timezone
@@ -39,5 +41,5 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/app/journal", // should only run for one route
+  matcher: ["/app/journal", "/app/journal/today"], // should only run for two specific routes
 }
