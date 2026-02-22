@@ -65,11 +65,8 @@ export function JournalEntryItemActionMove({ ref }: JournalEntryItemActionMovePr
     })
   }
 
-  const os = getMobileOperatingSystem()
-  const shouldReposition = os !== "iOS" // don't reposition if iOS
-
   return (
-    <NestedDrawer repositionInputs={shouldReposition}>
+    <NestedDrawer>
       <DrawerTrigger className="flex-1" ref={ref} disabled={isPending || anyActionPending} asChild>
         <Button variant="outline">
           {isPending ? <Spinner /> : <ArrowDownUpIcon />} Verschieben

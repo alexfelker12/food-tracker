@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useMutationState } from "@tanstack/react-query";
 
 import { BASE_PORTION_GRAMS } from "@/lib/constants";
-import { getGermanNumber, getMobileOperatingSystem } from "@/lib/utils";
+import { getGermanNumber } from "@/lib/utils";
 
 import { EllipsisVerticalIcon } from "lucide-react";
 
@@ -33,7 +33,6 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
 
   // actions drawer
   const drawerLabel = `${journalEntry.name}${journalEntry.brand ? ` (${journalEntry.brand})` : ""}`
-  const shouldReposition = getMobileOperatingSystem() !== "iOS" // don't reposition if iOS
 
   return (
     <JournalEntryContext.Provider value={{
@@ -58,7 +57,6 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
               open={open}
               onOpenChange={setOpen}
               dismissible={!anyActionPending}
-              repositionInputs={shouldReposition}
             >
               <DrawerTrigger asChild>
                 <Button variant="outline" size="icon"><EllipsisVerticalIcon /></Button>

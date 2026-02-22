@@ -3,18 +3,36 @@
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 
-import { cn } from "@/lib/utils"
+import { cn, getMobileOperatingSystem } from "@/lib/utils"
 
 function Drawer({
+  repositionInputs,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) {
-  return <DrawerPrimitive.Root data-slot="drawer" {...props} />
+  const os = getMobileOperatingSystem()
+  const shouldReposition = os !== "iOS"
+  return (
+    <DrawerPrimitive.Root
+      data-slot="drawer"
+      repositionInputs={repositionInputs || shouldReposition}
+      {...props}
+    />
+  );
 }
 
 function NestedDrawer({
+  repositionInputs,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.NestedRoot>) {
-  return <DrawerPrimitive.NestedRoot data-slot="nested-drawer" {...props} />
+  const os = getMobileOperatingSystem()
+  const shouldReposition = os !== "iOS"
+  return (
+    <DrawerPrimitive.NestedRoot
+      data-slot="nested-drawer"
+      repositionInputs={repositionInputs || shouldReposition}
+      {...props}
+    />
+  );
 }
 
 function DrawerTrigger({
