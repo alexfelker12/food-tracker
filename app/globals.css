@@ -228,10 +228,15 @@
   /* input[type="number"]::-webkit-textfield-decoration-container {
     @apply w-fit
   } */
+  input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
     @apply ml-1 hidden
   }
-
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
   /* .barcode-wrap {
     container-type: size; 
     max-height: 100cqw;

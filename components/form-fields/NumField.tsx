@@ -87,6 +87,8 @@ export function NumFieldInput({
         className
       )}
       type="number"
+      inputMode="decimal"
+      autoComplete="off"
       min={min}
       max={max}
       step={step}
