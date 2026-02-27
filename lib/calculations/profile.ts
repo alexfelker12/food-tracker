@@ -71,12 +71,12 @@ export function calculateWaterDemand({ weightKg, activityLevel, bodyType, traini
   const bodyTypeMap = bodyTypeMapping[bodyType]
   const activityWaterMap = activityWaterValueMapping[activityLevel]
 
-  // calculation factors (ml)
-  const waterBaseMl = weightKg * bodyTypeMap
-  const trainingWaterAddition = 100 * trainingDaysPerWeek
+  // calculation factors (litres)
+  const waterBaseLitres = weightKg * bodyTypeMap
+  const trainingWaterAddition = 0.1 * trainingDaysPerWeek // additionally 100 ml per training day
 
   //* waterDemand target
-  const waterDemand = (waterBaseMl * activityWaterMap) + trainingWaterAddition
+  const waterDemand = (waterBaseLitres * activityWaterMap) + trainingWaterAddition
 
   // min/max range
   const minMaxWaterDemand = getMinMaxRange(waterDemand, 0.1)
