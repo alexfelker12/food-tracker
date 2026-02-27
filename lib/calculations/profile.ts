@@ -1,9 +1,10 @@
 import {
   activityLevelValueMapping as activityLevelMapping,
+  activityWaterValueMapping,
   bodyFatValueMapping,
   fitnessGoalValueMapping as fitnessGoalMapping,
   noWorkoutValueMapping,
-  waterGoalValueMapping as waterGoalMapping,
+  bodyTypeValueMapping as bodyTypeMapping,
   workoutFactorMapping,
   workoutValueMapping
 } from "@/schemas/mappings/profileSchemaMappings"
@@ -64,23 +65,21 @@ export function calculateCalorieGoal({ tdee, fitnessGoal }: CalculateCalorieGoal
 
 
 //* WaterDemand
-export type CalculateWaterDemandProps = Pick<Required<MetricsProfileModel>, "weightKg" | "fitnessGoal" | "activityLevel" | "trainingDaysPerWeek">
-export function calculateWaterDemand({ weightKg, activityLevel, fitnessGoal, trainingDaysPerWeek }: CalculateWaterDemandProps) {
+export type CalculateWaterDemandProps = Pick<Required<MetricsProfileModel>, "weightKg" | "bodyType" | "activityLevel" | "trainingDaysPerWeek">
+export function calculateWaterDemand({ weightKg, activityLevel, bodyType, trainingDaysPerWeek }: CalculateWaterDemandProps) {
   // mappings
-  const { workoutValue } = getWorkoutValuesAndFactor({ fitnessGoal, trainingDaysPerWeek })
-  const activityMap = activityLevelMapping[activityLevel]
-  const waterGoalMap = waterGoalMapping[fitnessGoal]
+  const bodyTypeMap = bodyTypeMapping[bodyType]
+  const activityWaterMap = activityWaterValueMapping[activityLevel]
 
-  // calculation factors
-  const waterBaseMl = weightKg * 35
-  const activityFactor = Math.max((activityMap - 1), 0) * 0.6 + 1 // at least 1
-  const proteinFactor = 1 + (Math.max(workoutValue, 1.6) * 0.04) // × Protein_Faktor
+  // calculation factors (ml)
+  const waterBaseMl = weightKg * bodyTypeMap
+  const trainingWaterAddition = 100 * trainingDaysPerWeek
+
+  //* waterDemand target
+  const waterDemand = (waterBaseMl * activityWaterMap) + trainingWaterAddition
 
   // min/max range
-  const waterDemandBase = waterBaseMl * activityFactor * waterGoalMap
-  const waterDemand = (waterDemandBase * proteinFactor)
-
-  const minMaxWaterDemand = getMinMaxRange(waterDemand)
+  const minMaxWaterDemand = getMinMaxRange(waterDemand, 0.1)
   return minMaxWaterDemand
   // return +(WaterDemand).toFixed(0)
 }

@@ -34,7 +34,7 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
   const { min: waterDemandMin, max: waterDemandMax } = calculateWaterDemand({
     weightKg,
     activityLevel,
-    fitnessGoal,
+    bodyType,
     trainingDaysPerWeek
   })
 

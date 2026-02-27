@@ -503,3 +503,28 @@ async function getJournalEntryWithReference({ journalEntryId, userId, portionId 
     }
   })
 }
+
+
+// water demand by date
+interface GetWaterDemandByDateProps {
+  userId: string
+  date: Date
+}
+export async function getWaterDemandByDate({ userId, date }: GetWaterDemandByDateProps) {
+  const waterDemand = await db.nutritionResult.findFirst({
+    where: {
+      metricsProfile: { userId },
+      date: { lte: date }
+    },
+    orderBy: { date: "desc" },
+    select: {
+      waterDemandMin: true,
+      waterDemandMax: true
+    }
+  })
+
+  // TODO: get tracked water for date here
+  // ...
+
+  return waterDemand
+}

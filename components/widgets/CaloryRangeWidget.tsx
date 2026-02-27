@@ -20,12 +20,12 @@ export function CaloryRangeWidget() {
   const formattedTDEE = getGermanNumber(tdee, 0)
 
   return (
-    <Card className="gap-3 py-4 pb-3">
-      <CardHeader className="gap-0 px-4">
-        <CardTitle className="text-center text-lg leading-none">Kalorienüberblick</CardTitle>
+    <Card size="widget">
+      <CardHeader>
+        <CardTitle>Kalorienüberblick</CardTitle>
         <CardDescription className="sr-only">Überblick über deine Ruhe-, Erhaltungs und Zielkalorien nach den Angaben in deinem Profil</CardDescription>
       </CardHeader>
-      <CardContent className="px-4">
+      <CardContent>
         <div className="flex justify-between gap-2">
           <span className="text-muted-foreground text-sm">Ruhe-Kalorien:</span>
           <span>{formattedBMR}

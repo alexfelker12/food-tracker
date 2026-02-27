@@ -23,6 +23,8 @@ export function UserProfileData() {
   const carbsMaxText = getGermanNumber(profile.nutritionResult.carbsMaxGrams, 0)
   const proteinsMinText = getGermanNumber(profile.nutritionResult.proteinsMinGrams, 0)
   const proteinsMaxText = getGermanNumber(profile.nutritionResult.proteinsMaxGrams, 0)
+  const waterDemandMinText = getGermanNumber(profile.nutritionResult.waterDemandMin, 1)
+  const waterDemandMaxText = getGermanNumber(profile.nutritionResult.waterDemandMax, 1)
 
   return (
     <CardContent className="space-y-6 px-0">
@@ -116,6 +118,21 @@ export function UserProfileData() {
           <span>-</span>
           <span className="text-secondary-foreground">
             {carbsMaxText}<span className="ml-0.5 text-muted-foreground">g</span>
+          </span>
+        </GridData>
+      </GridDataSection>
+
+      {/* water goal/demand */}
+      <GridDataSection label="Wasser Bedarf">
+        <GridData className="gap-x-1 gap-y-2 grid grid-cols-[1fr_auto_auto_auto] grid-rows-4">
+          {/* calories */}
+          <span data-slot="grid-data-label">Täglich</span>
+          <span>
+            {waterDemandMinText}<span className="ml-0.5 text-muted-foreground">l</span>
+          </span>
+          <span className="text-muted-foreground">-</span>
+          <span>
+            {waterDemandMaxText}<span className="ml-0.5 text-muted-foreground">l</span>
           </span>
         </GridData>
       </GridDataSection>

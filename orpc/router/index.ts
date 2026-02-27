@@ -17,6 +17,7 @@ import { trackFood } from "./journal/track";
 // day
 import { journalEntriesByDate } from "./journal/day/getEntries";
 import { journalDayMacrosByDate } from "./journal/day/getMacros";
+import { waterDemandByDate } from "./journal/day/getWaterDemand";
 // entry
 import { deleteEntry } from "./journal/entry/deleteEntry";
 import { moveEntry } from "./journal/entry/moveEntry";
@@ -69,6 +70,7 @@ export const router = {
     day: {
       getEntries: journalEntriesByDate,
       getMacros: journalDayMacrosByDate,
+      getWaterDemand: waterDemandByDate,
     },
     entry: {
       retrack: retrackEntry,

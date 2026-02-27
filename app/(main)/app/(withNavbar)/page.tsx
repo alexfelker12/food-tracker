@@ -8,8 +8,9 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { JournalDayMacros } from "@/components/widgets/JournalDayMacros";
 import { CaloryRangeWidget } from "@/components/widgets/CaloryRangeWidget";
+import { JournalDayMacros } from "@/components/widgets/JournalDayMacros";
+import { WaterDemandWidget } from "@/components/widgets/WaterDemandWidget";
 import { DateToday } from "./_components/DateToday";
 
 
@@ -42,8 +43,12 @@ export default function Page() {
             <OpenMacrosWidgetWrap />
           </Suspense>
 
-          <Suspense fallback={<Skeleton className="w-full h-[135px]" />}>
+          <Suspense fallback={<Skeleton className="w-full h-[118px]" />}>
             <CaloryRangeWidgetWrap />
+          </Suspense>
+
+          <Suspense fallback={<Skeleton className="w-full h-[96px]" />}>
+            <WaterDemandWidgetWrap />
           </Suspense>
         </section>
 
@@ -80,3 +85,19 @@ async function CaloryRangeWidgetWrap() {
   )
 }
 
+async function WaterDemandWidgetWrap() {
+  await headers()
+
+  const date = new Date()
+
+  const qc = getQueryClient()
+  await qc.prefetchQuery(orpc.journal.day.getWaterDemand.queryOptions({
+    input: { date }
+  }))
+
+  return (
+    <HydrateClient client={qc}>
+      <WaterDemandWidget date={date} />
+    </HydrateClient>
+  )
+}

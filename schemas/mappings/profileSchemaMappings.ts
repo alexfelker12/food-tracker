@@ -23,15 +23,6 @@ export const fitnessGoalValueMapping: Record<FitnessGoal, number> = {
   QUICKLY_GAIN_WEIGHT: 1.2,
 }
 
-// water goal
-export const waterGoalValueMapping: Record<FitnessGoal, number> = {
-  QUICKLY_LOSE_WEIGHT: 1.08,
-  LOSE_WEIGHT: 1.05,
-  MAINTAIN: 1,
-  GAIN_WEIGHT: 1,
-  QUICKLY_GAIN_WEIGHT: 1,
-}
-
 // workout factors
 type WorkoutValueType = Record<FitnessGoal, number>
 export const workoutFactorMapping: { [t: number]: number } = {
@@ -75,4 +66,21 @@ export const bodyFatValueMapping: Record<Gender, Record<BodyType, number>> = {
     SLIGHTLY_OVERWEIGHT: 0.9,
     MORE_OVERWEIGHT: 0.8,
   }
+}
+
+// water demand 
+export const bodyTypeValueMapping: Record<BodyType, number> = {
+  VERY_ATHLETIC: 0.04,
+  ATHLETIC: 0.038,
+  AVERAGE: 0.035,
+  SLIGHTLY_OVERWEIGHT: 0.033,
+  MORE_OVERWEIGHT: 0.03,
+}
+
+export const activityWaterValueMapping: Record<ActivityLevel, number> = {
+  VERY_LOW: 1,
+  LOW: 1.05,
+  MEDIUM: 1.10,
+  HIGH: 1.15,
+  VERY_HIGH: 1.20,
 }
