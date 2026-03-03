@@ -57,7 +57,7 @@ export function JournalEntryItemActionUpdate({ ref }: JournalEntryItemActionUpda
           <DrawerDescription className="sr-only">Bearbeite die gewählte Portion und dessen Menge</DrawerDescription>
         </DrawerHeader>
 
-        {journalEntry.consumableReference?.food
+        {journalEntry.foodEntry?.food
           ?
           <UpdateJournalEntryForm onMutate={closeNestedDrawer}>
             <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
@@ -99,10 +99,10 @@ function UpdateJournalEntryForm({
       }
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)
-    onSuccess: ({ name }) => {
+    onSuccess: () => {
       const toastMsg = (
         <span className="text-muted-foreground *:[span]:text-foreground">
-          <span>{name}</span> wurde erfolgreich bearbeitet
+          Eintrag wurde erfolgreich bearbeitet
         </span>
       )
 
@@ -116,8 +116,8 @@ function UpdateJournalEntryForm({
   const form = useForm({
     resolver: zodResolver(updateJournalEntrySchema),
     defaultValues: {
-      portionId: journalEntry.consumableReference?.foodPortionId!,
-      portionAmount: journalEntry.portionAmount,
+      portionId: journalEntry.foodEntry?.foodPortionId!,
+      portionAmount: journalEntry.foodEntry.portionAmount,
     },
     mode: "onTouched",
   })
@@ -125,7 +125,7 @@ function UpdateJournalEntryForm({
   return (
     <FoodTrack
       form={form}
-      consumable={journalEntry.consumableReference?.food!}
+      consumable={journalEntry.foodEntry?.food!}
       isPending={isPending}
       onSubmitCallback={(values) => {
         handleEdit({
@@ -136,7 +136,7 @@ function UpdateJournalEntryForm({
       className="px-4"
     >
       {/* form fields here */}
-      {journalEntry.consumableReference?.food &&
+      {journalEntry.foodEntry?.food &&
         <div className="space-y-4">
           {/* <Separator />
             <div>

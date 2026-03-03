@@ -32,7 +32,7 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
   }).some((pending) => pending) // TODO: check if some is correct, else use length based 
 
   // actions drawer
-  const drawerLabel = `${journalEntry.name}${journalEntry.brand ? ` (${journalEntry.brand})` : ""}`
+  const drawerLabel = `${journalEntry.foodEntry.name}${journalEntry.foodEntry.brand ? ` (${journalEntry.foodEntry.brand})` : ""}`
 
   return (
     <JournalEntryContext.Provider value={{
@@ -46,7 +46,7 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
           {/* main item */}
           <CollapsibleTrigger className="flex-1">
             <ItemContent className="items-start">
-              <ItemTitle className="text-start text-wrap">{journalEntry.name}</ItemTitle>
+              <ItemTitle className="text-start text-wrap">{journalEntry.foodEntry.name}</ItemTitle>
               <JournalEntryItemDescription />
             </ItemContent>
           </CollapsibleTrigger>
@@ -77,15 +77,15 @@ export function JournalEntryItem({ journalEntry }: JournalEntryItemProps) {
 function JournalEntryItemDescription() {
   const { journalEntry } = useJournalEntry()
 
-  const portion = journalEntry.portionName
+  const portion = journalEntry.foodEntry.portionName
     // not base portion
-    ? `${journalEntry.portionAmount}x '${journalEntry.portionName}'`
+    ? `${journalEntry.foodEntry.portionAmount}x '${journalEntry.foodEntry.portionName}'`
     // base portion
-    : `${journalEntry.portionAmount * BASE_PORTION_GRAMS} g`
+    : `${journalEntry.foodEntry.portionAmount * BASE_PORTION_GRAMS} g`
 
   return (
     <ItemDescription className="inline-flex gap-1.5">
-      <span>{journalEntry.kcal} kcal</span> <span>-</span> <span>{portion}</span>
+      <span>{journalEntry.nutritionData.kcal} kcal</span> <span>-</span> <span>{portion}</span>
     </ItemDescription>
   );
 }
@@ -94,9 +94,9 @@ function JournalEntryItemContent() {
   const { journalEntry } = useJournalEntry()
 
   //* german format macro values
-  const foodFats = getGermanNumber(journalEntry.fats)
-  const foodCarbs = getGermanNumber(journalEntry.carbs)
-  const foodProteins = getGermanNumber(journalEntry.proteins)
+  const foodFats = getGermanNumber(journalEntry.nutritionData.fats)
+  const foodCarbs = getGermanNumber(journalEntry.nutritionData.carbs)
+  const foodProteins = getGermanNumber(journalEntry.nutritionData.proteins)
 
   return (
     <CollapsibleContent className="w-full">
@@ -106,7 +106,7 @@ function JournalEntryItemContent() {
           <span>Fette: {foodFats} g</span>
           <span>Proteine: {foodProteins} g</span>
         </div>
-        {journalEntry.brand && <span className="text-muted-foreground">Marke: {journalEntry.brand}</span>}
+        {journalEntry.foodEntry.brand && <span className="text-muted-foreground">Marke: {journalEntry.foodEntry.brand}</span>}
       </ItemFooter>
     </CollapsibleContent>
   );

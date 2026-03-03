@@ -40,11 +40,11 @@ export function JournalEntryItemActionMove({ ref }: JournalEntryItemActionMovePr
       }
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)
-    onSuccess: ({ name, intakeTime }) => {
+    onSuccess: ({ intakeTime }) => {
       const intakeTimeLabel = intakeTimeLabels[intakeTime]
       const toastMsg = (
         <span className="text-muted-foreground *:[span]:text-foreground">
-          <span>{name}</span> wurde nach <span>{intakeTimeLabel}</span> verschoben
+          Eintrag wurde nach <span>{intakeTimeLabel}</span> verschoben
         </span>
       )
 

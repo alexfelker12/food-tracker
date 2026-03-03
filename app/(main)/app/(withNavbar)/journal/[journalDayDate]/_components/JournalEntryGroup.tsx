@@ -31,10 +31,10 @@ export function JournalEntryGroup({
   //* sum up macros and calories for this group
   const macroSum = journalEntries.reduce((accumulator, currentValue) => {
     return {
-      kcal: +(accumulator.kcal + currentValue.kcal).toFixed(0),
-      fats: +(accumulator.fats + currentValue.fats).toFixed(1),
-      carbs: +(accumulator.carbs + currentValue.carbs).toFixed(1),
-      proteins: +(accumulator.proteins + currentValue.proteins).toFixed(1),
+      kcal: +(accumulator.kcal + (currentValue.nutritionData?.kcal || 0)).toFixed(0),
+      fats: +(accumulator.fats + (currentValue.nutritionData?.fats || 0)).toFixed(1),
+      carbs: +(accumulator.carbs + (currentValue.nutritionData?.carbs || 0)).toFixed(1),
+      proteins: +(accumulator.proteins + (currentValue.nutritionData?.proteins || 0)).toFixed(1),
     }
   }, {
     kcal: 0,

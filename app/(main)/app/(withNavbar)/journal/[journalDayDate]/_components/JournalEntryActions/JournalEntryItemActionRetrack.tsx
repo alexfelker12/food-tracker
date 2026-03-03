@@ -58,7 +58,7 @@ export function JournalEntryItemActionRetrack({ ref }: JournalEntryItemActionRet
           <DrawerDescription className="sr-only">Tracke diesen Eintrag unter Auswahl der Essenszeit und Portion erneut</DrawerDescription>
         </DrawerHeader>
 
-        {journalEntry.consumableReference?.food
+        {journalEntry.foodEntry?.food
           ?
           <RetrackJournalEntryForm onMutate={closeNestedDrawer}>
             <Button type="submit" className="flex-1"><CheckIcon /> Bestätigen</Button>
@@ -100,11 +100,11 @@ function RetrackJournalEntryForm({
       }
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)
-    onSuccess: ({ name, intakeTime }) => {
+    onSuccess: ({ intakeTime }) => {
       const intakeTimeLabel = intakeTimeLabels[intakeTime]
       const toastMsg = (
         <span className="text-muted-foreground *:[span]:text-foreground">
-          <span>{name}</span> wurde für <span>{intakeTimeLabel}</span> erneut getrackt
+          Eintrag wurde für <span>{intakeTimeLabel}</span> erneut getrackt
         </span>
       )
 
@@ -119,8 +119,8 @@ function RetrackJournalEntryForm({
   const form = useForm({
     resolver: zodResolver(retrackJournalEntrySchema),
     defaultValues: {
-      portionId: journalEntry.consumableReference?.foodPortionId!,
-      portionAmount: journalEntry.portionAmount,
+      portionId: journalEntry.foodEntry?.foodPortionId!,
+      portionAmount: journalEntry.foodEntry.portionAmount,
     },
     mode: "onTouched",
   })
@@ -128,7 +128,7 @@ function RetrackJournalEntryForm({
   return (
     <FoodTrack
       form={form}
-      consumable={journalEntry.consumableReference?.food!}
+      consumable={journalEntry.foodEntry?.food!}
       isPending={isPending}
       onSubmitCallback={(values) => {
         handleRetrack({
@@ -139,7 +139,7 @@ function RetrackJournalEntryForm({
       className="px-4"
     >
       {/* form fields here */}
-      {journalEntry.consumableReference?.food &&
+      {journalEntry.foodEntry?.food &&
         <div className="space-y-4">
           <Separator />
 

@@ -47,8 +47,8 @@ export function JournalEntryItemDropdown({ currentIntakeTime, journalEntryId }: 
       }
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)
-    onSuccess: ({ name }) => {
-      toast.success(`${name} wurde gelöscht`)
+    onSuccess: () => {
+      toast.success(`Eintrag wurde gelöscht`)
       qc.invalidateQueries({
         queryKey: [["journal", "day"]]
       })

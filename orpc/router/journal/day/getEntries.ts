@@ -32,7 +32,7 @@ export const journalEntriesByDate = base
       date
     })
 
-    return await getGroupedJournalEntries({
+    return getGroupedJournalEntries({
       journalEntries: allJournalEntriesByDate
     })
   })

@@ -23,6 +23,7 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
   const food = await db.food.findFirst({
     where: {
       id: consumableId,
+      deletedAt: null
     },
     include: {
       portions: {
@@ -55,53 +56,30 @@ export async function createJournalEntry({ userId, ...schemaProps }: CreateJourn
         data: {
           //* 4.1 create reference to date and user
           date,
-          user: {
-            connect: {
-              id: userId
-            }
-          },
+          user: { connect: { id: userId } },
           //* 4.2 create consumable reference
-          // discriminate between consumable type to set correct consumable fields
-          consumableReference: {
+          foodEntry: {
             create: {
-              ...(consumableType === "FOOD"
-                ? {
-                  food: {
-                    connect: {
-                      id: consumableId
-                    }
-                  },
-                  foodPortion: {
-                    connect: {
-                      id: portionId
-                    }
-                  },
-                } : {
-                  meal: {
-                    connect: {
-                      id: consumableId
-                    }
-                  },
-                  mealPortion: {
-                    connect: {
-                      id: portionId
-                    }
-                  },
-                }
-              ),
+              name,
+              brand,
+              food: { connect: { id: food.id } },
+              foodPortion: { connect: { id: food.portions[0].id } }, // portions[0] is defined, see above
+              // portionName only when base portion was not used (for change compatability)
+              portionName: portionName !== BASE_PORTION_NAME ? portionName : undefined,
+              portionAmount,
             }
           },
-          //* 4.3 fill out scalar fields
+          //* 4.3 fill out nutritionData
+          nutritionData: {
+            create: {
+              kcal: finalKcal,
+              fats: finalFats,
+              carbs: finalCarbs,
+              proteins: finalProteins,
+            }
+          },
+          //* 4.4 fill out scalar fields
           intakeTime,
-          name,
-          brand,
-          // portionName only when base portion was not used (for change compatability)
-          portionName: portionName !== BASE_PORTION_NAME ? portionName : undefined,
-          portionAmount,
-          kcal: finalKcal,
-          fats: finalFats,
-          carbs: finalCarbs,
-          proteins: finalProteins,
         }
       })
     )
@@ -155,53 +133,49 @@ interface GetJournalEntriesByDateProps {
   date: Date
 }
 export async function getJournalEntriesByDate({ userId, date }: GetJournalEntriesByDateProps) {
-  return await db.journalEntry.findMany({
+  const journalEntries = await db.journalEntry.findMany({
     where: {
       userId,
-      date
+      date,
+      foodEntry: { isNot: null, },
+      nutritionData: { isNot: null }
     },
     include: {
-      consumableReference: {
+      foodEntry: {
         include: {
           food: {
-            where: {
-              deletedAt: null
-            },
             include: {
               portions: true
             }
           },
-          foodPortion: true,
-          meal: {
-            where: {
-              deletedAt: null
-            },
-            include: {
-              portions: true
-            }
-          },
-          mealPortion: true
+          foodPortion: true
         }
-      }
+      },
+      nutritionData: true
     }
   })
+
+  return journalEntries as Array<
+    typeof journalEntries[number] & {
+      foodEntry: NonNullable<typeof journalEntries[number]['foodEntry']>
+    } & {
+      nutritionData: NonNullable<typeof journalEntries[number]['nutritionData']>
+    }
+  >
 }
 
 // grouped journal entries
 interface GetGroupedJournalEntriesProps {
   journalEntries: Awaited<ReturnType<typeof getJournalEntriesByDate>>
 }
-export async function getGroupedJournalEntries({ journalEntries }: GetGroupedJournalEntriesProps) {
+export function getGroupedJournalEntries({ journalEntries }: GetGroupedJournalEntriesProps) {
   //* group journal entries by their intake time
-  const journalEntryGroups: Record<IntakeTime, typeof journalEntries> = {
-    BREAKFAST: [],
-    LUNCH: [],
-    DINNER: [],
-    SNACKS: []
-  }
-  journalEntries.forEach((entry) => {
-    journalEntryGroups[entry.intakeTime].push(entry)
-  })
+  const journalEntryGroups = journalEntries.reduce<Record<IntakeTime, typeof journalEntries>>(
+    (entryGroups, entry) => {
+      entryGroups[entry.intakeTime].push(entry)
+      return entryGroups
+    }, { BREAKFAST: [], LUNCH: [], DINNER: [], SNACKS: [] }
+  )
 
   return journalEntryGroups
 }
@@ -227,8 +201,13 @@ export async function getJournalDayMacros({ userId, date }: GetJournalDayMacrosP
     }
   })
 
-  const currentMacros = db.journalEntry.aggregate({
-    where: { userId, date },
+  const currentMacros = db.nutritionData.aggregate({
+    where: {
+      journalEntry: {
+        userId,
+        date
+      }
+    },
     _sum: {
       kcal: true,
       fats: true,
@@ -318,7 +297,7 @@ export async function pastWeekJournalEntryFoods({ userId }: PastWeekJournalEntry
       createdAt: "desc"
     },
     include: {
-      consumableReference: {
+      foodEntry: {
         select: {
           food: {
             include: {
@@ -336,9 +315,9 @@ export async function pastWeekJournalEntryFoods({ userId }: PastWeekJournalEntry
 
   //* use a Set to create an array with unique foods
   const distinctFoodIds = new Set<string>()
-  const distinctFoods: NonNullable<NonNullable<typeof pastWeekJournalEntries[0]["consumableReference"]>["food"]>[] = []
+  const distinctFoods: NonNullable<NonNullable<typeof pastWeekJournalEntries[0]["foodEntry"]>["food"]>[] = []
   pastWeekJournalEntries.forEach((journalEntry) => {
-    const food = journalEntry.consumableReference?.food
+    const food = journalEntry.foodEntry?.food
     if (!food) return;
 
     if (!distinctFoodIds.has(food.id)) distinctFoods.push(food)
@@ -384,10 +363,10 @@ export async function retrackJournalEntry({
   const journalEntryToRetrack = await getJournalEntryWithReference({ journalEntryId, userId, portionId })
 
   //* journal entry does not exist or does not belong to the user
-  if (!journalEntryToRetrack || !journalEntryToRetrack.consumableReference) return null
+  if (!journalEntryToRetrack || !journalEntryToRetrack.foodEntry) return null
 
   //* 2. get the food from the journal entry
-  const { date, consumableReference: { food } } = journalEntryToRetrack
+  const { date, foodEntry: { food } } = journalEntryToRetrack
 
   //* check if food and its portion exist
   if (!food || food.portions.length !== 1) return null // portion does not exist -> bad request
@@ -403,14 +382,29 @@ export async function retrackJournalEntry({
   //* 4. retrack (create) entry
   const retrackedJournalEntry = await db.journalEntry.create({
     data: {
-      name, brand, date, // food/journal entry data
-      kcal: finalKcal, carbs: finalCarbs, fats: finalFats, proteins: finalProteins, // macro data
-      portionName, portionAmount, intakeTime, // retrack data
-      user: { connect: { id: userId } }, // connect to user
-      consumableReference: {
+      // food/journal entry data
+      date,
+      // retrack data
+      intakeTime,
+      // connect to user
+      user: { connect: { id: userId } },
+      foodEntry: {
         create: {
-          food: { connect: { id: food.id } }, // connect to food
-          foodPortion: { connect: { id: portionId } }, // connect to food portion
+          name,
+          brand,
+          portionName,
+          portionAmount,
+          foodId: food.id, // connect to food
+          foodPortionId: portionId // connect to food portion
+        }
+      },
+      // macro data
+      nutritionData: {
+        create: {
+          kcal: finalKcal,
+          carbs: finalCarbs,
+          fats: finalFats,
+          proteins: finalProteins,
         }
       }
     }
@@ -427,15 +421,15 @@ export async function updateJournalEntryFood({ journalEntryId, userId, portionAm
   const journalEntryToUpdate = await getJournalEntryWithReference({ journalEntryId, userId, portionId })
 
   //* journal entry does not exist or does not belong to the user
-  if (!journalEntryToUpdate || !journalEntryToUpdate.consumableReference) return null
+  if (!journalEntryToUpdate || !journalEntryToUpdate.foodEntry) return null
 
   //* 2. get the food from the journal entry
-  const { consumableReference: { food } } = journalEntryToUpdate
+  const { foodEntry: { food } } = journalEntryToUpdate
 
   //* check if food and its portion exist
   if (!food || food.portions.length !== 1) return null
   const { kcal, fats, carbs, protein, portions } = food
-  const { grams: portionGrams, name } = portions[0]
+  const { grams: portionGrams, name: portionName } = portions[0]
 
   //* 3. calculate final macro values 
   const finalKcal = +((kcal * (portionGrams / 100)) * portionAmount).toFixed(0)
@@ -450,28 +444,25 @@ export async function updateJournalEntryFood({ journalEntryId, userId, portionAm
       userId
     },
     data: {
-      //* update portionReference if another portion was selected and portionName
-      ...(portionId === journalEntryToUpdate.consumableReference.foodPortionId
-        ? {}
-        : {
-          consumableReference: {
-            update: {
-              foodPortion: {
-                connect: {
-                  id: portionId
-                }
-              }
-            }
-          },
-          portionName: name
+      //* update portionReference 
+      foodEntry: {
+        update: {
+          foodPortionId: portionId,
+          name: food.name,
+          brand: food.brand,
+          portionName,
+          portionAmount
         }
-      ),
+      },
       //* macro values and portionAmount
-      kcal: finalKcal,
-      fats: finalFats,
-      carbs: finalCarbs,
-      proteins: finalProteins,
-      portionAmount
+      nutritionData: {
+        update: {
+          kcal: finalKcal,
+          fats: finalFats,
+          carbs: finalCarbs,
+          proteins: finalProteins,
+        }
+      }
     }
   })
 
@@ -487,7 +478,7 @@ async function getJournalEntryWithReference({ journalEntryId, userId, portionId 
       userId
     },
     include: {
-      consumableReference: {
+      foodEntry: {
         include: {
           food: {
             include: {

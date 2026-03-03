@@ -254,9 +254,9 @@ model Food {
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // relations
-  portions             FoodPortion[]
-  mealIngredient       MealIngredient[]
-  consumableReferences ConsumableReference[]
+  portions           FoodPortion[]
+  mealIngredient     MealIngredient[]
+  foodJournalEntries FoodJournalEntry[]
 
   @@index([name])
   @@index([brand])
@@ -273,7 +273,7 @@ model FoodPortion {
   grams     Float // weight of this portion in grams
   isDefault Boolean @default(false)
 
-  consumableReference ConsumableReference[]
+  foodJournalEntries FoodJournalEntry[]
 
   // prevent duplicate portion names per food
   @@unique([foodId, name])
@@ -298,9 +298,9 @@ model Meal {
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // relations
-  ingredients          MealIngredient[]
-  portions             MealPortion[]
-  consumableReferences ConsumableReference[]
+  ingredients        MealIngredient[]
+  portions           MealPortion[]
+  mealJournalEntries MealJournalEntry[]
 
   @@index([userId])
   @@index([name])
@@ -334,7 +334,7 @@ model MealPortion {
   grams     Float
   isDefault Boolean @default(false)
 
-  consumableReference ConsumableReference[]
+  mealJournalEntries MealJournalEntry[]
 
   // prevent duplicate portion names per meal
   @@unique([mealId, name])
@@ -351,52 +351,80 @@ enum IntakeTime {
   SNACKS
 }
 
-// represents a (loose) reference to the track food/meal with its portion
-// if food/meal or the portion is not trackable anymore, data will fall back to defaults
-model ConsumableReference {
+//* represents a logged item in the daily journal
+model JournalEntry {
+  id         String     @id @default(cuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  intakeTime IntakeTime
+
+  //* date and user data as base for all types of entries
+  date   DateTime @db.Date
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  //* specific entry type with discriminated fields
+  foodEntry  FoodJournalEntry?
+  mealEntry  MealJournalEntry?
+  waterEntry WaterJournalEntry?
+
+  //* if table has aggregatable nutrition data
+  nutritionData NutritionData?
+
+  @@index([userId, date])
+}
+
+//* detail tables
+model NutritionData {
   id String @id @default(cuid())
 
-  // reference to either food/foodPortion or meal/mealPortion (both optional but one required logically)
-  foodId        String?
-  food          Food?        @relation(fields: [foodId], references: [id], onDelete: Restrict)
-  foodPortionId String?
-  foodPortion   FoodPortion? @relation(fields: [foodPortionId], references: [id], onDelete: SetNull)
-
-  mealId        String?
-  meal          Meal?        @relation(fields: [mealId], references: [id], onDelete: Restrict)
-  mealPortionId String?
-  mealPortion   MealPortion? @relation(fields: [mealPortionId], references: [id], onDelete: SetNull)
+  kcal     Float @default(0)
+  fats     Float @default(0)
+  carbs    Float @default(0)
+  proteins Float @default(0)
 
   journalEntryId String       @unique
   journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
 }
 
-// represents a logged item (food or meal) in the daily journal
-model JournalEntry {
-  id         String     @id @default(cuid())
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  intakeTime IntakeTime @default(BREAKFAST)
+model FoodJournalEntry {
+  id             String       @id @default(cuid())
+  journalEntryId String       @unique
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
 
-  // link to user by date
-  date   DateTime @db.Date
-  userId String
-  user   User     @relation(fields: [userId], references: [id])
+  //* food reference
+  foodId        String
+  food          Food        @relation(fields: [foodId], references: [id])
+  foodPortionId String
+  foodPortion   FoodPortion @relation(fields: [foodPortionId], references: [id])
 
-  //* historical snapshot of food data/macros 
-  name     String
-  brand    String?
-  // final macro values calculated with portion data/amount
-  kcal     Float
-  fats     Float
-  carbs    Float
-  proteins Float
-
-  // portion data
+  //* food snapshot in moment of tracking (point of truth)
+  name          String
+  brand         String?
   portionName   String?
   portionAmount Float
+}
 
-  consumableReference ConsumableReference?
+model MealJournalEntry {
+  id             String       @id @default(cuid())
+  journalEntryId String       @unique
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
 
-  @@index([userId, date])
+  //* meal reference
+  mealId        String
+  meal          Meal        @relation(fields: [mealId], references: [id])
+  mealPortionId String
+  mealPortion   MealPortion @relation(fields: [mealPortionId], references: [id])
+
+  //* meal snapshot in moment of tracking (point of truth)
+  name String
+}
+
+model WaterJournalEntry {
+  id             String       @id @default(cuid())
+  journalEntryId String       @unique
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+
+  //* water demand
+  amountMl Float
 }

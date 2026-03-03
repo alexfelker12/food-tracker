@@ -1,7 +1,13 @@
+import z from "zod";
+
 import { authMiddleware } from "@/orpc/middleware/authorized";
 import { base } from "@/orpc/middleware/base";
+
 import { getJournalDayMacros } from "@/server/actions/journal";
-import z from "zod";
+
+
+type ProcedureReturnType = Awaited<ReturnType<typeof getJournalDayMacros>>
+export type GroupedJournalEntriesReturn = NonNullable<ProcedureReturnType>
 
 export const journalDayMacrosByDate = base
   .use(authMiddleware)
@@ -14,7 +20,7 @@ export const journalDayMacrosByDate = base
   .input(z.object({
     date: z.date()
   }))
-  .output(z.custom<NonNullable<Awaited<ReturnType<typeof getJournalDayMacros>>>>())
+  .output(z.custom<ProcedureReturnType>())
   .handler(async ({
     input: { date },
     context: { session },

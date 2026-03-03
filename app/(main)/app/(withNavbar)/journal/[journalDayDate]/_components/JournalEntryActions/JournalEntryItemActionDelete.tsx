@@ -34,10 +34,10 @@ export function JournalEntryItemActionDelete({ buttonText, ref }: JournalEntryIt
       }
     },
     // onSuccess parameters: (data, variables, onMutateResult, context)
-    onSuccess: ({ name }) => {
+    onSuccess: () => {
       const toastMsg = (
         <span className="text-muted-foreground *:[span]:text-foreground">
-          <span>{name}</span> wurde gelöscht
+          Eintrag wurde gelöscht
         </span>
       )
 
