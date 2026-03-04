@@ -116,7 +116,7 @@ function UpdateJournalEntryForm({
   const form = useForm({
     resolver: zodResolver(updateJournalEntrySchema),
     defaultValues: {
-      portionId: journalEntry.foodEntry?.foodPortionId!,
+      portionId: journalEntry.foodEntry.foodPortionId,
       portionAmount: journalEntry.foodEntry.portionAmount,
     },
     mode: "onTouched",
@@ -125,7 +125,7 @@ function UpdateJournalEntryForm({
   return (
     <FoodTrack
       form={form}
-      consumable={journalEntry.foodEntry?.food!}
+      consumable={journalEntry.foodEntry.food}
       isPending={isPending}
       onSubmitCallback={(values) => {
         handleEdit({
@@ -136,7 +136,7 @@ function UpdateJournalEntryForm({
       className="px-4"
     >
       {/* form fields here */}
-      {journalEntry.foodEntry?.food &&
+      {journalEntry.foodEntry.food &&
         <div className="space-y-4">
           {/* <Separator />
             <div>

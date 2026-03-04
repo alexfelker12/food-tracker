@@ -356,7 +356,7 @@ model JournalEntry {
   id         String     @id @default(cuid())
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  intakeTime IntakeTime
+  intakeTime IntakeTime @default(BREAKFAST)
 
   //* date and user data as base for all types of entries
   date   DateTime @db.Date
@@ -394,7 +394,7 @@ model FoodJournalEntry {
 
   //* food reference
   foodId        String
-  food          Food        @relation(fields: [foodId], references: [id])
+  food          Food        @relation(fields: [foodId], references: [id], onDelete: Restrict)
   foodPortionId String
   foodPortion   FoodPortion @relation(fields: [foodPortionId], references: [id])
 
@@ -412,7 +412,7 @@ model MealJournalEntry {
 
   //* meal reference
   mealId        String
-  meal          Meal        @relation(fields: [mealId], references: [id])
+  meal          Meal        @relation(fields: [mealId], references: [id], onDelete: Restrict)
   mealPortionId String
   mealPortion   MealPortion @relation(fields: [mealPortionId], references: [id])
 

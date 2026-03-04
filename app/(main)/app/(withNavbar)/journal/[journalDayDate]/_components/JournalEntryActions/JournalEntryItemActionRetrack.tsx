@@ -119,7 +119,7 @@ function RetrackJournalEntryForm({
   const form = useForm({
     resolver: zodResolver(retrackJournalEntrySchema),
     defaultValues: {
-      portionId: journalEntry.foodEntry?.foodPortionId!,
+      portionId: journalEntry.foodEntry.foodPortionId,
       portionAmount: journalEntry.foodEntry.portionAmount,
     },
     mode: "onTouched",
@@ -128,7 +128,7 @@ function RetrackJournalEntryForm({
   return (
     <FoodTrack
       form={form}
-      consumable={journalEntry.foodEntry?.food!}
+      consumable={journalEntry.foodEntry.food}
       isPending={isPending}
       onSubmitCallback={(values) => {
         handleRetrack({

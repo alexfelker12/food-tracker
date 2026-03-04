@@ -1,45 +1,5 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `brand` on the `JournalEntry` table. All the data in the column will be lost.
-  - You are about to drop the column `carbs` on the `JournalEntry` table. All the data in the column will be lost.
-  - You are about to drop the column `fats` on the `JournalEntry` table. All the data in the column will be lost.
-  - You are about to drop the column `kcal` on the `JournalEntry` table. All the data in the column will be lost.
-  - You are about to drop the column `name` on the `JournalEntry` table. All the data in the column will be lost.
-  - You are about to drop the column `portionAmount` on the `JournalEntry` table. All the data in the column will be lost.
-  - You are about to drop the column `portionName` on the `JournalEntry` table. All the data in the column will be lost.
-  - You are about to drop the column `proteins` on the `JournalEntry` table. All the data in the column will be lost.
-  - You are about to drop the `ConsumableReference` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- DropForeignKey
-ALTER TABLE "ConsumableReference" DROP CONSTRAINT "ConsumableReference_foodId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ConsumableReference" DROP CONSTRAINT "ConsumableReference_foodPortionId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ConsumableReference" DROP CONSTRAINT "ConsumableReference_journalEntryId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ConsumableReference" DROP CONSTRAINT "ConsumableReference_mealId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ConsumableReference" DROP CONSTRAINT "ConsumableReference_mealPortionId_fkey";
-
--- AlterTable
-ALTER TABLE "JournalEntry" DROP COLUMN "brand",
-DROP COLUMN "carbs",
-DROP COLUMN "fats",
-DROP COLUMN "kcal",
-DROP COLUMN "name",
-DROP COLUMN "portionAmount",
-DROP COLUMN "portionName",
-DROP COLUMN "proteins",
-ALTER COLUMN "intakeTime" DROP DEFAULT;
-
--- DropTable
-DROP TABLE "ConsumableReference";
+ALTER TABLE "JournalEntry" DROP CONSTRAINT "JournalEntry_userId_fkey";
 
 -- CreateTable
 CREATE TABLE "NutritionData" (
@@ -58,9 +18,11 @@ CREATE TABLE "FoodJournalEntry" (
     "id" TEXT NOT NULL,
     "journalEntryId" TEXT NOT NULL,
     "foodId" TEXT NOT NULL,
-    "foodPortionId" TEXT,
+    "foodPortionId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "brand" TEXT,
+    "portionName" TEXT,
+    "portionAmount" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "FoodJournalEntry_pkey" PRIMARY KEY ("id")
 );
@@ -70,7 +32,7 @@ CREATE TABLE "MealJournalEntry" (
     "id" TEXT NOT NULL,
     "journalEntryId" TEXT NOT NULL,
     "mealId" TEXT NOT NULL,
-    "mealPortionId" TEXT,
+    "mealPortionId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
 
     CONSTRAINT "MealJournalEntry_pkey" PRIMARY KEY ("id")
@@ -98,6 +60,9 @@ CREATE UNIQUE INDEX "MealJournalEntry_journalEntryId_key" ON "MealJournalEntry"(
 CREATE UNIQUE INDEX "WaterJournalEntry_journalEntryId_key" ON "WaterJournalEntry"("journalEntryId");
 
 -- AddForeignKey
+ALTER TABLE "JournalEntry" ADD CONSTRAINT "JournalEntry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "NutritionData" ADD CONSTRAINT "NutritionData_journalEntryId_fkey" FOREIGN KEY ("journalEntryId") REFERENCES "JournalEntry"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -107,7 +72,7 @@ ALTER TABLE "FoodJournalEntry" ADD CONSTRAINT "FoodJournalEntry_journalEntryId_f
 ALTER TABLE "FoodJournalEntry" ADD CONSTRAINT "FoodJournalEntry_foodId_fkey" FOREIGN KEY ("foodId") REFERENCES "Food"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "FoodJournalEntry" ADD CONSTRAINT "FoodJournalEntry_foodPortionId_fkey" FOREIGN KEY ("foodPortionId") REFERENCES "FoodPortion"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "FoodJournalEntry" ADD CONSTRAINT "FoodJournalEntry_foodPortionId_fkey" FOREIGN KEY ("foodPortionId") REFERENCES "FoodPortion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MealJournalEntry" ADD CONSTRAINT "MealJournalEntry_journalEntryId_fkey" FOREIGN KEY ("journalEntryId") REFERENCES "JournalEntry"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -116,7 +81,7 @@ ALTER TABLE "MealJournalEntry" ADD CONSTRAINT "MealJournalEntry_journalEntryId_f
 ALTER TABLE "MealJournalEntry" ADD CONSTRAINT "MealJournalEntry_mealId_fkey" FOREIGN KEY ("mealId") REFERENCES "Meal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MealJournalEntry" ADD CONSTRAINT "MealJournalEntry_mealPortionId_fkey" FOREIGN KEY ("mealPortionId") REFERENCES "MealPortion"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "MealJournalEntry" ADD CONSTRAINT "MealJournalEntry_mealPortionId_fkey" FOREIGN KEY ("mealPortionId") REFERENCES "MealPortion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "WaterJournalEntry" ADD CONSTRAINT "WaterJournalEntry_journalEntryId_fkey" FOREIGN KEY ("journalEntryId") REFERENCES "JournalEntry"("id") ON DELETE CASCADE ON UPDATE CASCADE;
