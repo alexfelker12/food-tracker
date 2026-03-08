@@ -19,6 +19,13 @@ import { ProfileCreateSuccess } from "./ProfileCreateSuccess";
 export function ProfileForm({ className, children, ...props }: React.ComponentProps<"form">) {
   const form = useForm({
     resolver: zodResolver(profileSchema),
+    defaultValues: {
+      macroSplitStep: {
+        macroSplit: "RECOMMENDED",
+        fatTargetGrams: 0,
+        proteinTargetGrams: 0
+      }
+    },
     mode: "onTouched",
   })
 

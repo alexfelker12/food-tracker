@@ -1,17 +1,19 @@
 import { headers } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { auth } from "@/lib/auth";
+import { APP_BASE_URL } from "@/lib/constants";
 import { db } from "@/lib/db";
+
+import { AlertCircleIcon, FileUserIcon, LayoutDashboardIcon } from "lucide-react";
 
 import { FullScreenLoader } from "@/components/FullScreenLoader";
 import { ProfileForm } from "@/components/profile/ProfileForm";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { AlertCircleIcon, FileUserIcon, LayoutDashboardIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { APP_BASE_URL } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
+
 
 export default function Page() {
   return (
@@ -24,22 +26,22 @@ export default function Page() {
 }
 
 async function PageWrap() {
-  // const session = await auth.api.getSession({
-  //   headers: await headers()
-  // })
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
-  // if (!session) redirect("/auth")
+  if (!session) redirect("/auth")
 
-  // const alreadyHasProfile = await db.metricsProfile.findFirst({
-  //   where: {
-  //     userId: session.user.id
-  //   }
-  // })
+  const alreadyHasProfile = await db.metricsProfile.findFirst({
+    where: {
+      userId: session.user.id
+    }
+  })
 
-  // // await new Promise(r => setTimeout(r, 20000));
-  // // redirect(`${APP_BASE_URL}?toast-msg=${encodeURIComponent("Du hast bereits ein Profil")}`)
+  // await new Promise(r => setTimeout(r, 20000));
+  // redirect(`${APP_BASE_URL}?toast-msg=${encodeURIComponent("Du hast bereits ein Profil")}`)
 
-  // if (alreadyHasProfile) return <UserHasProfile />
+  if (alreadyHasProfile) return <UserHasProfile />
   return <ProfileForm />
 }
 
