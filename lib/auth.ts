@@ -9,8 +9,7 @@ import { admin, username } from "better-auth/plugins";
 import { db } from "./db";
 import { validateUsername } from "./utils";
 
-
-export const betterAuthConfig: BetterAuthOptions = {
+export const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: "postgresql"
   }),
@@ -38,11 +37,10 @@ export const betterAuthConfig: BetterAuthOptions = {
     admin()
   ],
   session: {
+    expiresIn: 60 * 60 * 24 * 30, // 30 days
     cookieCache: {
       enabled: true,
-      maxAge: 3 * 60 // duration in seconds
+      maxAge: 60 * 3 // duration in seconds
     }
   }
-}
-
-export const auth = betterAuth(betterAuthConfig)
+})
