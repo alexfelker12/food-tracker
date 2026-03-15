@@ -18,13 +18,13 @@ import { WaterEntryProvider } from "./water-entry/WaterEntryProvider";
 
 
 export function WaterEntryHistory() {
-  const { data: waterJournalEntries, isPending } = useQuery(orpc.journal.day.water.list.queryOptions({
+  const { data: waterJournalEntries, isPending, isStale } = useQuery(orpc.journal.day.water.list.queryOptions({
     input: { date: new Date(get_yyyymmdd_date()) }
   }))
 
   if (!isPending && !waterJournalEntries) return null
 
-  if (isPending) return <div className="place-items-center grid w-full h-40">
+  if (isPending || (isStale && waterJournalEntries.length === 0)) return <div className="place-items-center grid w-full h-[165px]">
     <Spinner className="text-primary size-6" />
   </div>
 
