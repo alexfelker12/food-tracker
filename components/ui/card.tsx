@@ -12,7 +12,8 @@ const cardVariants = cva("flex flex-col bg-card shadow-sm border text-card-foreg
         "gap-2 py-3 rounded-md",
         "*:data-[slot=card-header]:gap-0 *:data-[slot=card-header]:px-3",
         "**:data-[slot=card-title]:text-center **:data-[slot=card-title]:text-lg **:data-[slot=card-title]:leading-none",
-        "*:data-[slot=card-content]:px-3 *:data-[slot=card-content]:leading-snug"
+        "*:data-[slot=card-content]:px-3 *:data-[slot=card-content]:leading-snug",
+        "has-data-[slot=card-action]:**:data-[slot=card-title]:text-start has-data-[floating]:mt-2"
       )
     },
   },

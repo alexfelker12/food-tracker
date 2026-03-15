@@ -24,10 +24,15 @@ export const waterDemandByDate = base
   .handler(async ({
     input: { date },
     context: { session },
-    // errors
+    errors
   }) => {
-    return await getWaterDemandByDate({
+    const waterDemand = await getWaterDemandByDate({
       userId: session.user.id,
       date
     })
+
+    // no nutritionResult/profile yet
+    if (!waterDemand) throw errors.FORBIDDEN()
+
+    return waterDemand
   })

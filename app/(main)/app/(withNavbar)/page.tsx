@@ -47,7 +47,7 @@ export default function Page() {
             <CaloryRangeWidgetWrap />
           </Suspense>
 
-          <Suspense fallback={<Skeleton className="w-full h-24" />}>
+          <Suspense fallback={<Skeleton className="w-full h-32" />}>
             <WaterDemandWidgetWrap />
           </Suspense>
         </section>

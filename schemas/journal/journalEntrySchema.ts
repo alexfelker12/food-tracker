@@ -43,3 +43,11 @@ export const retrackJournalEntrySchema = journalEntrySchema.pick({
   portionAmount: true,
   portionId: true,
 })
+
+
+//* water demand schema
+export const waterDemandSchema = z.object({
+  amountMl: z
+    .number({ error: "Bitte angeben" })
+    .min(1, { error: "Bitte mehr als 0 ml angeben" }),
+})

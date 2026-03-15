@@ -7,24 +7,14 @@ import { cn } from "@/lib/utils";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
 
-import { NumFieldInput } from "@/components/form-fields/NumField";
+import { NumFieldInput, NumFieldProps } from "@/components/form-fields/NumField";
 
 
-interface CompactNumFieldProps extends React.ComponentProps<typeof Field> {
-  label: string
-  description: string
-  placeholder?: `${number}`
-  unit: string
-  min?: number
-  max?: number
-  step?: number
-  field: ControllerRenderProps<any, any>
-  fieldState: ControllerFieldState
-}
+interface CompactNumFieldProps extends NumFieldProps { }
 
 export function CompactNumField({
   label, description, placeholder, unit, // text elements
-  min, max, step, // value range check
+  min, max, step, autoWidth, // value range check
   field, fieldState, // Controller-render props
   orientation = "horizontal", className, ...props // Field props
 }: CompactNumFieldProps) {
@@ -51,6 +41,7 @@ export function CompactNumField({
           min={min}
           max={max}
           step={step}
+          autoWidth={autoWidth}
         />
         <InputGroupAddon align="inline-end" className="text-nowrap">{unit}</InputGroupAddon>
       </InputGroup>

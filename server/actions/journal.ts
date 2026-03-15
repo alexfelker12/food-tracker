@@ -1,5 +1,5 @@
 import { journalEntrySchema } from "@/schemas/journal/journalEntrySchema";
-import { JournalEntrySchema, RetrackJournalEntrySchema, UpdateJournalEntrySchema } from "@/schemas/types";
+import { JournalEntrySchema, RetrackJournalEntrySchema, UpdateJournalEntrySchema, WaterDemandSchema } from "@/schemas/types";
 
 import { IntakeTime } from "@/generated/prisma/enums";
 
@@ -497,12 +497,13 @@ async function getJournalEntryWithReference({ journalEntryId, userId, portionId 
 
 
 // water demand by date
+// TODO: optimize function
 interface GetWaterDemandByDateProps {
   userId: string
   date: Date
 }
 export async function getWaterDemandByDate({ userId, date }: GetWaterDemandByDateProps) {
-  const waterDemand = await db.nutritionResult.findFirst({
+  const waterDemandPromise = db.nutritionResult.findFirst({
     where: {
       metricsProfile: { userId },
       date: { lte: date }
@@ -514,8 +515,49 @@ export async function getWaterDemandByDate({ userId, date }: GetWaterDemandByDat
     }
   })
 
-  // TODO: get tracked water for date here
-  // ...
+  const trackedWaterPromise = db.waterJournalEntry.aggregate({
+    where: {
+      journalEntry: {
+        userId,
+        date
+      }
+    },
+    _sum: {
+      amountMl: true
+    }
+  })
 
-  return waterDemand
+  const queriesResult = await Promise.all([waterDemandPromise, trackedWaterPromise])
+
+  const waterDemand = queriesResult[0]
+  const trackedWaterSum = queriesResult[1]._sum.amountMl
+  const trackedWater = trackedWaterSum ?? 0
+
+  return { waterDemand, trackedWater }
+}
+
+// water demand by date
+interface TrackWaterByDateProps extends WaterDemandSchema {
+  userId: string
+  date: Date
+}
+export async function trackWaterByDate({ userId, date, amountMl }: TrackWaterByDateProps) {
+  return await db.journalEntry.create({
+    data: {
+      date,
+      userId,
+      waterEntry: {
+        create: {
+          amountMl
+        }
+      }
+    },
+    include: {
+      waterEntry: {
+        select: {
+          amountMl: true
+        }
+      }
+    }
+  })
 }

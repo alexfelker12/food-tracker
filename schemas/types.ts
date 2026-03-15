@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { foodWithPortionsSchema } from "./food/foodSchema";
-import { journalEntrySchema, retrackJournalEntrySchema, updateJournalEntrySchema } from "./journal/journalEntrySchema";
+import { journalEntrySchema, retrackJournalEntrySchema, updateJournalEntrySchema, waterDemandSchema } from "./journal/journalEntrySchema";
 import { mergedProfileSchema, profileSchema } from "./profileSchema";
 
 
@@ -27,3 +27,6 @@ export type UpdateJournalEntrySchema = z.infer<typeof updateJournalEntrySchema>
 
 // Retrack Journal entry
 export type RetrackJournalEntrySchema = z.infer<typeof retrackJournalEntrySchema>
+
+// Water demand
+export type WaterDemandSchema = z.infer<typeof waterDemandSchema>

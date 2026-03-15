@@ -58,6 +58,7 @@ function Button({
   return (
     <Comp
       data-slot="button"
+      {...(background === "floating" && { "data-floating": true })}
       className={cn(buttonVariants({ variant, size, background, className }))}
       {...props}
     />
