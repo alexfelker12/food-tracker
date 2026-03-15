@@ -19,6 +19,11 @@ import { journalEntriesByDate } from "./journal/day/getEntries";
 import { journalDayMacrosByDate } from "./journal/day/getMacros";
 import { waterDemandByDate } from "./journal/day/getWaterDemand";
 import { trackWater } from "./journal/day/trackWater";
+// water
+import { listWaterEntries } from "./journal/day/water/listWater";
+import { editWaterEntry } from "./journal/day/water/editWater";
+import { deleteWaterEntry } from "./journal/day/water/deleteWater";
+
 // entry
 import { deleteEntry } from "./journal/entry/deleteEntry";
 import { moveEntry } from "./journal/entry/moveEntry";
@@ -73,11 +78,11 @@ export const router = {
       getMacros: journalDayMacrosByDate,
       getWaterDemand: waterDemandByDate,
       trackWater: trackWater,
-      // water: {
-      //   list: listWaterEntries,
-      //   edit: editWaterEntry,
-      //   delete: deleteWaterEntry,
-      // },
+      water: {
+        list: listWaterEntries,
+        edit: editWaterEntry,
+        delete: deleteWaterEntry,
+      },
     },
     entry: {
       retrack: retrackEntry,

@@ -561,3 +561,72 @@ export async function trackWaterByDate({ userId, date, amountMl }: TrackWaterByD
     }
   })
 }
+
+
+
+// water (journal) entries by date
+interface GetWaterEntriesByDateProps {
+  userId: string
+  date: Date
+}
+export async function getWaterEntriesByDate({ userId, date }: GetWaterEntriesByDateProps) {
+  const waterEntries = await db.journalEntry.findMany({
+    where: {
+      userId,
+      date,
+      waterEntry: { isNot: null, },
+    },
+    include: {
+      waterEntry: true
+    }
+  })
+
+  return waterEntries
+}
+
+// edit water entry
+interface WaterEntryAction {
+  userId: string
+  journalEntryId: string
+}
+
+interface EditWaterEntryByIdProps extends WaterEntryAction, Pick<WaterDemandSchema, "amountMl"> { }
+export async function editWaterEntryById({ userId, journalEntryId, amountMl }: EditWaterEntryByIdProps) {
+  const { data: updatedWaterEntry, error } = await tryCatch(db.journalEntry.update({
+    where: {
+      id: journalEntryId,
+      userId
+    },
+    data: {
+      waterEntry: {
+        update: {
+          amountMl
+        }
+      }
+    }
+  }))
+
+  //* if journalEntry does not exist or does not belong the user the update will fail
+  if (error) return null
+
+  return updatedWaterEntry
+}
+
+// delete water entry by id
+interface DeleteWaterEntryProps {
+  userId: string
+  journalEntryId: string
+}
+export async function deleteWaterEntry({ userId, journalEntryId }: DeleteWaterEntryProps) {
+  const { data: deletedWaterEntry, error } = await tryCatch(db.journalEntry.delete({
+    where: {
+      id: journalEntryId,
+      userId
+    }
+  }))
+
+  //* if journalEntry does not exist or does not belong the user delete will fail
+  if (error) return null
+
+  return deletedWaterEntry
+}
