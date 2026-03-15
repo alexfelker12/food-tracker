@@ -581,7 +581,11 @@ export async function getWaterEntriesByDate({ userId, date }: GetWaterEntriesByD
     }
   })
 
-  return waterEntries
+  return waterEntries as Array<
+    typeof waterEntries[number] & {
+      waterEntry: NonNullable<typeof waterEntries[number]['waterEntry']>
+    }
+  >
 }
 
 // edit water entry

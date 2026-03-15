@@ -76,9 +76,10 @@ export function getAge(dateOrDateString: string | Date) {
 // Posted by Darth Egregious, modified by community. See post 'Timeline' for change history
 // Retrieved 2025-12-04, License - CC BY-SA 4.0
 //* adjusted to use as a function
-export function get_yyyymmdd_date(date: Date) {
-  const offset = date.getTimezoneOffset()
-  const adjustedISOdate = new Date(date.getTime() - (offset * 60 * 1000))
+export function get_yyyymmdd_date(date?: Date) {
+  const dateObj = date || new Date()
+  const offset = dateObj.getTimezoneOffset()
+  const adjustedISOdate = new Date(dateObj.getTime() - (offset * 60 * 1000))
   return adjustedISOdate.toISOString().split('T')[0]
 }
 
@@ -94,6 +95,15 @@ export function getGermanDate(date: Date) {
     day: "2-digit",
     month: "2-digit",
     year: "numeric"
+  })
+}
+
+// formats date to german date time, e.g.: 14:27
+export function getGermanTime(date: Date) {
+  return date.toLocaleTimeString("de-DE", {
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
   })
 }
 

@@ -21,7 +21,6 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 
 
-// TODO: tracked water in list, edit/delete tracked amounts 
 export interface AddWaterFormBaseProps {
   currentAmountMl: number
   minAmountMl: number
@@ -52,6 +51,7 @@ export function AddWaterForm({ currentAmountMl, minAmountMl, maxAmountMl, onSucc
     onSuccess: (data) => {
       form.reset()
       qc.invalidateQueries({ queryKey: [["journal", "day", "getWaterDemand"]] })
+      qc.invalidateQueries({ queryKey: [["journal", "day", "water"]] })
       toast("Wasser wurde getrackt", { description: `${data.waterEntry?.amountMl} ml` })
       onSuccessComplete?.()
     }

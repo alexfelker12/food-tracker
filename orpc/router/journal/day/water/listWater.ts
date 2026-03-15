@@ -7,7 +7,7 @@ import { getWaterEntriesByDate } from "@/server/actions/journal";
 
 
 type ProcedureReturnType = Awaited<ReturnType<typeof getWaterEntriesByDate>>
-export type ListJournalDaysType = NonNullable<ProcedureReturnType>
+export type ListWaterEntriesType = ProcedureReturnType
 export const listWaterEntries = base
   .use(authMiddleware)
   .route({

@@ -14,7 +14,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 export interface NumFieldProps extends React.ComponentProps<typeof Field> {
   label: string
   description: string
-  placeholder: `${number}`
+  placeholder?: `${number}`
   unit: string
   min?: number
   max?: number

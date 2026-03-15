@@ -1,18 +1,15 @@
 "use client"
 
-import { useState } from "react";
-
-import { useMutationState, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { orpc } from "@/lib/orpc";
 import { cn, getGermanNumber } from "@/lib/utils";
 
-import { PlusIcon } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { AddWaterForm, AddWaterFormBaseProps } from "@/components/water-demand/AddWaterForm";
+
+import { AddWaterFormWrap } from "../water-demand/AddWaterFormWrap";
+import { WaterEntryHistoryWrap } from "../water-demand/WaterEntryHistoryWrap";
 
 
 export type WaterDemandWidgetProps = {
@@ -36,11 +33,14 @@ export function WaterDemandWidget({ date }: WaterDemandWidgetProps) {
         <CardAction
         // className="-top-2 -right-1 z-0 absolute"
         >
-          <AddWaterFormWrap
-            currentAmountMl={trackedWater}
-            minAmountMl={waterDemandMin * 1000}
-            maxAmountMl={waterDemandMax * 1000}
-          />
+          <ButtonGroup>
+            <WaterEntryHistoryWrap />
+            <AddWaterFormWrap
+              currentAmountMl={trackedWater}
+              minAmountMl={waterDemandMin * 1000}
+              maxAmountMl={waterDemandMax * 1000}
+            />
+          </ButtonGroup>
         </CardAction>
       </CardHeader>
       <CardContent>
@@ -66,34 +66,5 @@ function WidgetDataRow({ label, labelValue, unit, className, ...props }: React.C
         <span className="text-muted-foreground text-sm">{unit}</span>
       </div>
     </div>
-  );
-}
-
-function AddWaterFormWrap(props: AddWaterFormBaseProps) {
-  const [open, setOpen] = useState(false)
-
-  //* mutation state of any pending trackWater action
-  const anyActionPending = useMutationState({
-    filters: { mutationKey: [["journal", "day", "trackWater"]] },
-    select: (mutation) => mutation.state.status === "pending"
-  }).at(-1)
-
-  return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="outline" size="xs"><PlusIcon /> Tracken</Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="pb-0">
-          <DrawerTitle>Wasser tracken</DrawerTitle>
-          <DrawerDescription className="sr-only">Tracke hiermit die Menge deiner konsumierten Flüssigkeit in ml</DrawerDescription>
-        </DrawerHeader>
-        <AddWaterForm {...props} onSuccessComplete={() => setOpen(false)}>
-          <DrawerClose asChild>
-            <Button variant="outline" disabled={anyActionPending}>Abbrechen</Button>
-          </DrawerClose>
-        </AddWaterForm>
-      </DrawerContent>
-    </Drawer>
   );
 }
