@@ -31,7 +31,7 @@ export function CompactNumField({
       <div className="flex flex-col flex-1 gap-0.5">
         <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
         <FieldDescription className="sr-only">{description}</FieldDescription>
-        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+        {fieldState.invalid && <FieldError className="max-h-4" errors={[fieldState.error]} />}
       </div>
       <InputGroup className="w-fit">
         <NumFieldInput

@@ -35,15 +35,9 @@ export function WaterEntryActionDelete() {
     onMutate: () => setOpen(false),
     // onSuccess parameters: (data, variables, onMutateResult, context)
     onSuccess: () => {
-      const toastMsg = (
-        <span className="text-muted-foreground *:[span]:text-foreground">
-          Eintrag wurde gelöscht
-        </span>
-      )
-
       qc.invalidateQueries({ queryKey: [["journal", "day", "getWaterDemand"]] })
       qc.invalidateQueries({ queryKey: [["journal", "day", "water"]] })
-      toast.success(toastMsg)
+      toast.success("Eintrag wurde gelöscht")
     }
   }))
 

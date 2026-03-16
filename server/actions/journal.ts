@@ -576,6 +576,9 @@ export async function getWaterEntriesByDate({ userId, date }: GetWaterEntriesByD
       date,
       waterEntry: { isNot: null, },
     },
+    orderBy: {
+      createdAt: "desc"
+    },
     include: {
       waterEntry: true
     }
@@ -607,13 +610,18 @@ export async function editWaterEntryById({ userId, journalEntryId, amountMl }: E
           amountMl
         }
       }
+    },
+    include: {
+      waterEntry: true
     }
   }))
 
-  //* if journalEntry does not exist or does not belong the user the update will fail
+  //* if journalEntry does not exist or does not belong to the user the update will fail
   if (error) return null
 
-  return updatedWaterEntry
+  return updatedWaterEntry as typeof updatedWaterEntry & {
+    waterEntry: NonNullable<typeof updatedWaterEntry['waterEntry']>
+  }
 }
 
 // delete water entry by id
@@ -629,7 +637,7 @@ export async function deleteWaterEntry({ userId, journalEntryId }: DeleteWaterEn
     }
   }))
 
-  //* if journalEntry does not exist or does not belong the user delete will fail
+  //* if journalEntry does not exist or does not belong to the user delete will fail
   if (error) return null
 
   return deletedWaterEntry

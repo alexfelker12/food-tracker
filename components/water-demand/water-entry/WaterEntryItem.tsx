@@ -22,7 +22,7 @@ export function WaterEntryItem() {
     <Item variant="outline" size="xs">
       <ItemContent>
         <ItemTitle>
-          <span className="flex items-center gap-0.5"><PlusIcon className="size-3" /> {amountMl} ml</span>
+          <span className="flex items-center gap-0.5"><PlusIcon className="size-3" />{amountMl} ml</span>
         </ItemTitle>
         <ItemDescription>{entryTimestamp}</ItemDescription>
       </ItemContent>

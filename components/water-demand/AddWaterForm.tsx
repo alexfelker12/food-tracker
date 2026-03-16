@@ -21,15 +21,10 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 
 
-export interface AddWaterFormBaseProps {
-  currentAmountMl: number
-  minAmountMl: number
-  maxAmountMl: number
-}
-interface AddWaterFormProps extends AddWaterFormBaseProps, React.ComponentProps<"form"> {
+interface AddWaterFormProps extends React.ComponentProps<"form"> {
   onSuccessComplete?: () => void
 }
-export function AddWaterForm({ currentAmountMl, minAmountMl, maxAmountMl, onSuccessComplete, className, children, ...props }: AddWaterFormProps) {
+export function AddWaterForm({ onSuccessComplete, className, children, ...props }: AddWaterFormProps) {
   const qc = useQueryClient()
 
   //* main form
@@ -52,16 +47,11 @@ export function AddWaterForm({ currentAmountMl, minAmountMl, maxAmountMl, onSucc
       form.reset()
       qc.invalidateQueries({ queryKey: [["journal", "day", "getWaterDemand"]] })
       qc.invalidateQueries({ queryKey: [["journal", "day", "water"]] })
-      toast("Wasser wurde getrackt", { description: `${data.waterEntry?.amountMl} ml` })
+      toast.success("Wasser wurde getrackt", { description: `${data.waterEntry?.amountMl} ml` })
       onSuccessComplete?.()
     }
   }))
 
-  // formatted text/state
-  const minGoalMl = +(minAmountMl).toFixed(0)
-  const maxGoalMl = +(maxAmountMl).toFixed(0)
-  const minAmountLeftMl = +(minAmountMl - currentAmountMl).toFixed(0)
-  const maxAmountLeftMl = +(maxAmountMl - currentAmountMl).toFixed(0)
 
   return (
     <FormProvider {...form}>
@@ -74,32 +64,6 @@ export function AddWaterForm({ currentAmountMl, minAmountMl, maxAmountMl, onSucc
         // onSubmit={form.handleSubmit((values) => console.log(values))}
         {...props}
       >
-
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between items-center text-sm">
-            <span>Tages-Ziel:</span>
-            <span>
-              {minGoalMl} <span className="text-muted-foreground">ml</span> - {" "}
-              {maxGoalMl} <span className="text-muted-foreground">ml</span>
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center text-sm">
-            <span>Noch übrig:</span>
-            <span>
-              {minAmountLeftMl} <span className="text-muted-foreground">ml</span> - {" "}
-              {maxAmountLeftMl} <span className="text-muted-foreground">ml</span>
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center text-sm">
-            <span>Bisher getrackt:</span>
-            <span>{currentAmountMl} <span className="text-muted-foreground">ml</span></span>
-          </div>
-        </div>
-
-        <Separator />
-
         <ButtonGroup orientation="vertical" className="items-center w-full">
           <ButtonGroup className="w-full">
             <AmountInput />
@@ -129,7 +93,7 @@ export function AddWaterForm({ currentAmountMl, minAmountMl, maxAmountMl, onSucc
   );
 }
 
-function AmountInput() {
+export function AmountInput() {
   const { control } = useFormContext<WaterDemandSchema>();
 
   return (
@@ -142,7 +106,7 @@ function AmountInput() {
           label="Menge"
           description="Menge in ml"
           unit="ml"
-          className="*:first:flex-row flex-1 *:first:justify-between"
+          className="flex-1 *:gap-0"
           placeholder="0"
           max={9999}
           step={10}
