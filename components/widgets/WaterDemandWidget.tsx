@@ -34,7 +34,9 @@ export function WaterDemandWidget({ date }: WaterDemandWidgetProps) {
         // className="-top-2 -right-1 z-0 absolute"
         >
           <ButtonGroup>
-            <WaterEntryHistoryWrap />
+            <WaterEntryHistoryWrap
+              date={date}
+            />
             <AddWaterFormWrap
               currentAmountMl={trackedWater}
               minAmountMl={waterDemandMin * 1000}

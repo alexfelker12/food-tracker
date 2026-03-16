@@ -11,10 +11,10 @@ import { HistoryIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 
-import { WaterEntryHistory } from "./WaterEntryHistory";
+import { WaterEntryHistory, WaterEntryHistoryProps } from "./WaterEntryHistory";
 
 
-export function WaterEntryHistoryWrap() {
+export function WaterEntryHistoryWrap({ date }: WaterEntryHistoryProps) {
   const buttonRef = useRef<HTMLInputElement>(null)
 
   //* mutation state of any pending water entry action
@@ -23,8 +23,7 @@ export function WaterEntryHistoryWrap() {
     select: (mutation) => mutation.state.status === "pending"
   }).at(-1)
 
-  //* today's date
-  const dateToday = getGermanDate(new Date())
+  const dateToday = getGermanDate(date)
 
   return (
     <Drawer>
@@ -38,7 +37,7 @@ export function WaterEntryHistoryWrap() {
         </DrawerHeader>
 
         <div className="mx-2 px-2 overflow-y-auto">
-          <WaterEntryHistory />
+          <WaterEntryHistory date={date} />
         </div>
 
         <DrawerFooter>

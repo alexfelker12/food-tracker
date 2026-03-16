@@ -3,6 +3,7 @@ import { Suspense } from "react";
 
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
+import { get_yyyymmdd_date } from "@/lib/utils";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Separator } from "@/components/ui/separator";
@@ -88,7 +89,7 @@ async function CaloryRangeWidgetWrap() {
 async function WaterDemandWidgetWrap() {
   await headers()
 
-  const date = new Date()
+  const date = new Date(get_yyyymmdd_date())
 
   const qc = getQueryClient()
   await qc.prefetchQuery(orpc.journal.day.getWaterDemand.queryOptions({

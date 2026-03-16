@@ -91,7 +91,11 @@ export function NumFieldInput({
   return (
     <InputComp
       id={field.name}
-      className={cn("text-right flex-none pr-1! max-w-auto", className)}
+      className={cn(
+        "text-right flex-none pr-1! max-w-[68px]",
+        autoWidth && "max-w-auto",
+        className
+      )}
       type="number"
       inputMode="decimal"
       autoComplete="off"

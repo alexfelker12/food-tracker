@@ -5,7 +5,6 @@ import { useMutationState, useQuery } from "@tanstack/react-query";
 import { ListWaterEntriesType } from "@/orpc/router/journal/day/water/listWater";
 
 import { orpc } from "@/lib/orpc";
-import { get_yyyymmdd_date } from "@/lib/utils";
 
 import { ListXIcon } from "lucide-react";
 
@@ -17,9 +16,12 @@ import { WaterEntryItem } from "./water-entry/WaterEntryItem";
 import { WaterEntryProvider } from "./water-entry/WaterEntryProvider";
 
 
-export function WaterEntryHistory() {
+export interface WaterEntryHistoryProps {
+  date: Date
+}
+export function WaterEntryHistory({ date }: WaterEntryHistoryProps) {
   const { data: waterJournalEntries, isPending, isStale } = useQuery(orpc.journal.day.water.list.queryOptions({
-    input: { date: new Date(get_yyyymmdd_date()) }
+    input: { date }
   }))
 
   if (!isPending && !waterJournalEntries) return null

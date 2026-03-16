@@ -5,16 +5,17 @@ import { Suspense } from "react";
 import { APP_BASE_URL } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
-import { cn, getGermanDate, isValidJournalDayDate, offsetDate } from "@/lib/utils";
+import { cn, getGermanDate, isValidJournalDayDate } from "@/lib/utils";
 
 import { BackButton } from "@/components/BackButton";
 import { RefererContextProvider } from "@/components/RefererContext";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { JournalDayMacros } from "@/components/widgets/JournalDayMacros";
+import { WaterDemandWidget } from "@/components/widgets/WaterDemandWidget";
 
 import { JournalDay, JournalDayProps } from "./_components/JournalDay";
-import { JournalDayMacros } from "@/components/widgets/JournalDayMacros";
 import { JournalDayPicker } from "./_components/JournalDayPicker";
 
 
@@ -57,17 +58,23 @@ export default async function Page({
           <div className="size-9"></div>
         </div>
 
-        <div className="flex flex-col flex-1 gap-6 **:data-[slot=open-carbs-label]:text-label-carbs **:data-[slot=open-fats-label]:text-label-fats **:data-[slot=open-proteins-label]:text-label-proteins">
+        <div className="flex flex-col flex-1 gap-4 **:data-[slot=open-carbs-label]:text-label-carbs **:data-[slot=open-fats-label]:text-label-fats **:data-[slot=open-proteins-label]:text-label-proteins">
           <Suspense fallback={<Skeleton className="w-full h-[106px]" />}>
             {/* <div className="top-4 right-0 left-0 sticky"> */}
             <JournalDayMacroWrap date={journalDay} />
             {/* </div> */}
           </Suspense>
 
+          <Suspense fallback={<Skeleton className="w-full h-32" />}>
+            <JournalDayWaterDemandWrap date={journalDay} />
+          </Suspense>
+
           <Suspense fallback={<div className="place-items-center grid w-full h-40">
             <Spinner className="text-primary size-6" />
           </div>}>
-            <JournalDayWrap date={journalDay} />
+            <div className="mt-2">
+              <JournalDayWrap date={journalDay} />
+            </div>
           </Suspense>
         </div>
 
@@ -114,3 +121,17 @@ async function JournalDayPickerWrap({ date }: JournalDayProps) {
     </HydrateClient>
   )
 }
+
+async function JournalDayWaterDemandWrap({ date }: JournalDayProps) {
+  const qc = getQueryClient()
+  await qc.prefetchQuery(orpc.journal.day.getWaterDemand.queryOptions({
+    input: { date }
+  }))
+
+  return (
+    <HydrateClient client={qc}>
+      <WaterDemandWidget date={date} />
+    </HydrateClient>
+  )
+}
+

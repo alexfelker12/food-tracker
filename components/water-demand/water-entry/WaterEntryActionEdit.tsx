@@ -25,10 +25,12 @@ import { useWaterEntry } from "./WaterEntryProvider";
 
 
 export function WaterEntryActionEdit() {
-  const [open, setOpen] = useState(false)
   const { waterJournalEntry, anyActionPending } = useWaterEntry()
   const firstButtonRef = useRef<HTMLButtonElement>(null)
+  const drawerCloseRef = useRef<HTMLButtonElement>(null)
   const qc = useQueryClient()
+
+  const closeNestedDrawer = () => drawerCloseRef.current?.click()
 
   //* create food mutation
   const { mutate: handleEdit, isPending } = useMutation(orpc.journal.day.water.edit.mutationOptions({
@@ -45,7 +47,7 @@ export function WaterEntryActionEdit() {
       qc.invalidateQueries({ queryKey: [["journal", "day", "getWaterDemand"]] })
       qc.invalidateQueries({ queryKey: [["journal", "day", "water"]] })
       toast.success("Menge wurde angepasst", { description: `${data.waterEntry.amountMl} ml` })
-      setOpen(false)
+      closeNestedDrawer()
     }
   }))
 
@@ -58,13 +60,14 @@ export function WaterEntryActionEdit() {
     mode: "onTouched",
   })
 
-  const formAmountMl = form.watch("amountMl")
+  // const formAmountMl = form.watch("amountMl")
 
   const entryDatetime = getGermanDate(createdAt)
   const entryTimestamp = getGermanTime(createdAt)
 
+
   return (
-    <NestedDrawer open={open} onOpenChange={setOpen}>
+    <NestedDrawer>
       <DrawerTrigger className="flex-1" disabled={isPending || anyActionPending} asChild>
         <Button variant="secondary" size="icon-sm">
           {isPending
@@ -73,6 +76,7 @@ export function WaterEntryActionEdit() {
           }
         </Button>
       </DrawerTrigger>
+      <DrawerClose ref={drawerCloseRef} className="hidden!" aria-hidden={true} />
       <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>
         <DrawerHeader className="pb-0">
           <DrawerTitle className="text-lg">{entryDatetime} - {entryTimestamp}</DrawerTitle>
