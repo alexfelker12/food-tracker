@@ -1,28 +1,31 @@
 "use client"
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { ListJournalDaysType } from "@/orpc/router/journal/list";
 
+import { APP_BASE_URL } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
-import { get_yyyymmdd_date, getGermanDate } from "@/lib/utils";
+import { get_yyyymmdd_date, getGermanDate, getNextDate, getPrevDate } from "@/lib/utils";
 
-import { Calendar1Icon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, Calendar1Icon } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { APP_BASE_URL } from "@/lib/constants";
-import { useState } from "react";
+
 import { JournalCalendar } from "../../_components/JournalCalendar";
-import { Badge } from "@/components/ui/badge";
+import NoPrefetchLink from "@/components/NoPrefetchLink";
 
 
 export type JournalDayPickerProps = {
   date: Date
+  children?: React.ReactNode
 }
-export function JournalDayPicker({ date }: JournalDayPickerProps) {
+export function JournalDayPicker({ date, children }: JournalDayPickerProps) {
   const germanDate = getGermanDate(date)
   const yyyymmdd_date = get_yyyymmdd_date(date)
 
@@ -30,11 +33,26 @@ export function JournalDayPicker({ date }: JournalDayPickerProps) {
   if (!data) return <h1 className="font-bold text-2xl">{germanDate}</h1>;
 
   return (
-    <JournalDayPickerWrap yyyymmdd_date_string={yyyymmdd_date} {...data}>
-      <Button className="font-semibold text-lg" variant="secondary">
-        <Calendar1Icon className="size-4.5" /> <span className="mt-0.5 leading-none">{germanDate}</span>
-      </Button>
-    </JournalDayPickerWrap>
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center">
+
+        {children}
+
+        <JournalDayPickerWrap yyyymmdd_date_string={yyyymmdd_date} {...data}>
+          <Button className="font-semibold text-lg" variant="secondary">
+            <Calendar1Icon className="size-4.5" /> <span className="mt-0.5 leading-none">{germanDate}</span>
+          </Button>
+        </JournalDayPickerWrap>
+
+        <div className="size-9"></div>
+
+      </div>
+
+      <div className="flex justify-between items-center gap-3 w-full">
+        <PrevDaySwitcher yyyymmdd_date_string={yyyymmdd_date} minDate={data.minDate} />
+        <NextDaySwitcher yyyymmdd_date_string={yyyymmdd_date} />
+      </div>
+    </div>
   );
 }
 
@@ -96,5 +114,54 @@ function JournalDayPickerWrap({ yyyymmdd_date_string, children, journalDays, min
         </div>
       </PopoverContent>
     </Popover>
+  );
+}
+
+type JournalDaySwitcherProps = {
+  yyyymmdd_date_string: string
+}
+function PrevDaySwitcher({ yyyymmdd_date_string, minDate }: JournalDaySwitcherProps & Pick<ListJournalDaysType, "minDate">) {
+  const prevDate = getPrevDate(yyyymmdd_date_string, minDate)
+  const germanPrevDate = prevDate ? getGermanDate(prevDate) : "-"
+  const prev_yyyymmdd_string = prevDate ? get_yyyymmdd_date(prevDate) : null
+  const isLink = !!prev_yyyymmdd_string
+
+  return (
+    <Button
+      variant={isLink ? "outline" : "ghost"}
+      size="xs"
+      asChild={isLink}
+      disabled={!isLink}
+    >
+      {isLink
+        ? <NoPrefetchLink href={APP_BASE_URL + `/journal/${prev_yyyymmdd_string}`}>
+          <ArrowLeftIcon className="-ml-0.5" /> <span className="">{germanPrevDate}</span>
+        </NoPrefetchLink>
+        : <span className="italic">{germanPrevDate}</span>
+      }
+    </Button>
+  );
+}
+
+function NextDaySwitcher({ yyyymmdd_date_string }: JournalDaySwitcherProps) {
+  const nextDate = getNextDate(yyyymmdd_date_string)
+  const germanNextDate = nextDate ? getGermanDate(nextDate) : "-"
+  const next_yyyymmdd_string = nextDate ? get_yyyymmdd_date(nextDate) : null
+  const isLink = !!next_yyyymmdd_string
+
+  return (
+    <Button
+      variant={isLink ? "outline" : "ghost"}
+      size="xs"
+      asChild={isLink}
+      disabled={!isLink}
+    >
+      {isLink
+        ? <NoPrefetchLink href={APP_BASE_URL + `/journal/${next_yyyymmdd_string}`}>
+          <span className="">{germanNextDate}</span> <ArrowRightIcon className="-mr-0.5" />
+        </NoPrefetchLink>
+        : <span>{germanNextDate}</span>
+      }
+    </Button>
   );
 }

@@ -221,3 +221,37 @@ export function getTimezoneOffsetMs(date: Date, tz: string) {
   const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
   return tzDate.getTime() - utcDate.getTime();
 }
+
+
+/**
+ * creates a date object from the day before the passed date_string if it's reachable by the user
+ * @param yyyymmdd_date_string date stringin yyyymmdd format
+ * @param minDate Date, first day of using the app
+ * @returns Date | null, previous reachable date by user
+ */
+export function getPrevDate(yyyymmdd_date_string: string, minDate: Date) {
+  const prevDate = new Date(yyyymmdd_date_string)
+  prevDate.setDate(prevDate.getDate() - 1)
+  prevDate.setHours(0, 0, 0, 0)
+  minDate.setHours(0, 0, 0, 0)
+
+  if (prevDate < minDate) return null
+  return prevDate
+}
+
+/**
+ * creates a date object from the day after the passed date_string if it's reachable by the user
+ * @param yyyymmdd_date_string date stringin yyyymmdd format
+ * @returns Date | null, next reachable date by user
+ */
+export function getNextDate(yyyymmdd_date_string: string) {
+  const nextDate = new Date(yyyymmdd_date_string)
+  nextDate.setDate(nextDate.getDate() + 1)
+  nextDate.setHours(0, 0, 0, 0)
+  const nextWeekDate = new Date()
+  nextWeekDate.setDate(nextWeekDate.getDate() + 6)
+  nextWeekDate.setHours(0, 0, 0, 0)
+
+  if (nextDate > nextWeekDate) return null
+  return nextDate
+}

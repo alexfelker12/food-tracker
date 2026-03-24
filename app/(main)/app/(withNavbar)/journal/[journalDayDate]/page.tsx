@@ -7,6 +7,8 @@ import { orpc } from "@/lib/orpc";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
 import { cn, getGermanDate, isValidJournalDayDate } from "@/lib/utils";
 
+import { ChevronLeftIcon } from "lucide-react";
+
 import { BackButton } from "@/components/BackButton";
 import { RefererContextProvider } from "@/components/RefererContext";
 import { buttonVariants } from "@/components/ui/button";
@@ -39,24 +41,38 @@ export default async function Page({
     <main className="flex justify-center p-4 h-full">
       <div className="flex flex-col gap-6 w-full">
 
-        <div className="flex justify-between items-center">
-          <RefererContextProvider referer={referer}>
-            <BackButton refererPath={APP_BASE_URL + '/journal' as `/${string}`} />
-          </RefererContextProvider>
+        <Suspense fallback={
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <div className={cn(
+                buttonVariants({ variant: "secondary", size: "icon" }),
+                ""
+              )}>
+                <ChevronLeftIcon />
+              </div>
 
-          <Suspense fallback={
-            <div className={cn(
-              buttonVariants({ variant: "secondary" }),
-              "font-semibold text-lg text-muted-foreground select-none"
-            )}>
-              <Spinner className="size-4.5" /> <span className="mt-0.5 leading-none">{germanDate}</span>
+              <div className={cn(
+                buttonVariants({ variant: "secondary" }),
+                "font-semibold text-lg text-muted-foreground select-none"
+              )}>
+                <Spinner className="size-4.5" /> <span className="mt-0.5 leading-none">{germanDate}</span>
+              </div>
+
+              <div className="size-9"></div>
             </div>
-          }>
-            <JournalDayPickerWrap date={journalDay} />
-          </Suspense>
 
-          <div className="size-9"></div>
-        </div>
+            <div className="flex justify-between items-center">
+              <Skeleton className="w-28 h-7" />
+              <Skeleton className="w-28 h-7" />
+            </div>
+          </div>
+        }>
+          <JournalDayPickerWrap date={journalDay}>
+            <RefererContextProvider referer={referer}>
+              <BackButton refererPath={APP_BASE_URL + '/journal' as `/${string}`} />
+            </RefererContextProvider>
+          </JournalDayPickerWrap>
+        </Suspense>
 
         <div className="flex flex-col flex-1 gap-4 **:data-[slot=open-carbs-label]:text-label-carbs **:data-[slot=open-fats-label]:text-label-fats **:data-[slot=open-proteins-label]:text-label-proteins">
           <Suspense fallback={<Skeleton className="w-full h-[106px]" />}>
@@ -79,7 +95,7 @@ export default async function Page({
         </div>
 
       </div>
-    </main>
+    </main >
   );
 }
 
@@ -109,7 +125,7 @@ async function JournalDayMacroWrap({ date }: JournalDayProps) {
   )
 }
 
-async function JournalDayPickerWrap({ date }: JournalDayProps) {
+async function JournalDayPickerWrap({ date, children }: JournalDayProps & { children?: React.ReactElement }) {
   const qc = getQueryClient()
   await qc.prefetchQuery(orpc.journal.list.queryOptions({
     input: { date }
@@ -117,7 +133,7 @@ async function JournalDayPickerWrap({ date }: JournalDayProps) {
 
   return (
     <HydrateClient client={qc}>
-      <JournalDayPicker date={date} />
+      <JournalDayPicker date={date} children={children} />
     </HydrateClient>
   )
 }
