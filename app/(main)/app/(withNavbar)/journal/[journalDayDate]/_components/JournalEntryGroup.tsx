@@ -4,28 +4,27 @@ import { IntakeTime } from "@/generated/prisma/client";
 
 import { JournalEntriesByDateReturn } from "@/orpc/router/journal/day/getEntries";
 
-import { APP_BASE_URL } from "@/lib/constants";
 import { cn, getGermanNumber } from "@/lib/utils";
 
 import { PlusIcon } from "lucide-react";
 
-import NoPrefetchLink from "@/components/NoPrefetchLink";
 import { Button } from "@/components/ui/button";
 import { ItemGroup } from "@/components/ui/item";
 import { Separator } from "@/components/ui/separator";
 
-import { JournalEntryItem } from "./JournalEntryItem";
 import { FoodTrackMenu } from "@/components/track/FoodTrackMenu";
+import { JournalEntryItem } from "./JournalEntryItem";
 
 
 export interface JournalEntryGroupProps extends React.ComponentProps<"section"> {
   label: string
   value: IntakeTime
+  date: Date
   journalEntries: JournalEntriesByDateReturn
 }
 
 export function JournalEntryGroup({
-  label, value, journalEntries,
+  label, value, date, journalEntries,
   className, ...props
 }: JournalEntryGroupProps) {
   //* sum up macros and calories for this group
@@ -80,7 +79,7 @@ export function JournalEntryGroup({
         </div>
 
         <div className="-top-2 -right-1 z-0 absolute">
-          <FoodTrackMenu preselectedIntakeTime={value}>
+          <FoodTrackMenu preselectedIntakeTime={value} trackingDay={date}>
             <Button variant="outline" size="xs" background="floating">
               <PlusIcon /> Tracken
             </Button>

@@ -26,24 +26,28 @@ export function JournalDay({ date }: JournalDayProps) {
       <JournalEntryGroup
         label="Frühstück"
         value={intakeTimeEnum.BREAKFAST}
+        date={date}
         journalEntries={groupedJournalEntries.BREAKFAST}
       />
       {/* lunch */}
       <JournalEntryGroup
         label="Mittagessen"
         value={intakeTimeEnum.LUNCH}
+        date={date}
         journalEntries={groupedJournalEntries.LUNCH}
       />
       {/* dinner */}
       <JournalEntryGroup
         label="Abendessen"
         value={intakeTimeEnum.DINNER}
+        date={date}
         journalEntries={groupedJournalEntries.DINNER}
       />
       {/* snacks */}
       <JournalEntryGroup
         label="Snacks"
         value={intakeTimeEnum.SNACKS}
+        date={date}
         journalEntries={groupedJournalEntries.SNACKS}
       />
     </div>

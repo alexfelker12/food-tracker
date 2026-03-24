@@ -3,11 +3,15 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 
+import { intakeTimeLabels } from "@/schemas/labels/journalEntrySchemaLabels";
+
 import { IntakeTime } from "@/generated/prisma/client";
 
 import { useIntakeTimeParam } from "@/hooks/useIntakeTimeParam";
+import { useTrackingDayParam } from "@/hooks/useTrackingDayParam";
 
 import { APP_BASE_URL } from "@/lib/constants";
+import { get_yyyymmdd_date, getGermanDate } from "@/lib/utils";
 
 import { ArrowLeftIcon, ScanBarcodeIcon } from "lucide-react";
 
@@ -19,18 +23,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, NestedDrawer } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
-import { intakeTimeLabels } from "@/schemas/labels/journalEntrySchemaLabels";
 
 
 interface FoodTrackMenuProps {
   preselectedIntakeTime?: IntakeTime
+  trackingDay?: Date
   children?: React.ReactNode
 }
-export function FoodTrackMenu({ preselectedIntakeTime, children }: FoodTrackMenuProps) {
+export function FoodTrackMenu({ preselectedIntakeTime, trackingDay, children }: FoodTrackMenuProps) {
   const [open, setOpen] = useState(false)
   const firstButtonRef = useRef<HTMLButtonElement>(null)
   const nestedFirstButtonRef = useRef<HTMLButtonElement>(null)
   const { intakeTimeKey } = useIntakeTimeParam()
+  const { trackingDayKey } = useTrackingDayParam()
+  const trackingDayString = trackingDay ? get_yyyymmdd_date(trackingDay) : ""
+  const germanDate = trackingDay ? getGermanDate(trackingDay) : ""
+
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -42,11 +50,18 @@ export function FoodTrackMenu({ preselectedIntakeTime, children }: FoodTrackMenu
         <DrawerHeader>
           <DrawerTitle className="text-lg">
             <span>Tracken</span>
-            {preselectedIntakeTime && (
-              <Badge className="bg-accent ml-2 text-accent-foreground text-sm">
-                {intakeTimeLabels[preselectedIntakeTime]}
-              </Badge>
-            )}
+            <div className="inline-flex items-center gap-1 ml-3">
+              {trackingDay &&
+                <Badge variant="secondary" className="text-sm">
+                  {germanDate}
+                </Badge>
+              }
+              {preselectedIntakeTime && (
+                <Badge className="bg-accent text-accent-foreground text-sm">
+                  {intakeTimeLabels[preselectedIntakeTime]}
+                </Badge>
+              )}
+            </div>
           </DrawerTitle>
           <DrawerDescription className="text-base sr-only">Finde Lebensmittel und Mahlzeiten per Suche oder mit dem Barcode-Scanner</DrawerDescription>
         </DrawerHeader>
@@ -56,6 +71,7 @@ export function FoodTrackMenu({ preselectedIntakeTime, children }: FoodTrackMenu
           <NavbarBarcodeScanDrawer
             closeMainDrawer={() => setOpen(false)}
             preselectedIntakeTime={preselectedIntakeTime}
+            trackingDay={trackingDay}
           >
             <Button variant="outline" className="flex-1" ref={firstButtonRef}>
               <ScanBarcodeIcon /> Per Barcode finden
@@ -67,7 +83,7 @@ export function FoodTrackMenu({ preselectedIntakeTime, children }: FoodTrackMenu
             <DrawerClose asChild>
               <IntakeTimeOptionLink
                 label="Lebensmittel"
-                href={`${APP_BASE_URL}/track/food?${intakeTimeKey}=${preselectedIntakeTime}`}
+                href={`${APP_BASE_URL}/track/food?${intakeTimeKey}=${preselectedIntakeTime}&${trackingDayKey}=${trackingDayString}`}
               />
             </DrawerClose>
             :
@@ -110,16 +126,17 @@ export function FoodTrackMenu({ preselectedIntakeTime, children }: FoodTrackMenu
   )
 }
 
-interface NavbarBarcodeScanDrawerProps extends Pick<FoodTrackMenuProps, "preselectedIntakeTime"> {
+interface NavbarBarcodeScanDrawerProps extends Pick<FoodTrackMenuProps, "preselectedIntakeTime" | "trackingDay"> {
   closeMainDrawer: () => void
   children?: React.ReactNode
 }
-function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime, children }: NavbarBarcodeScanDrawerProps) {
+function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime, trackingDay, children }: NavbarBarcodeScanDrawerProps) {
   const [open, setOpen] = useState(false)
   const [barcode, setBarcode] = useState("")
   const [lastBarcode, setLastBarcode] = useState("")
   const firstButtonRef = useRef<HTMLButtonElement>(null)
   const { intakeTimeKey } = useIntakeTimeParam()
+  const { trackingDayKey } = useTrackingDayParam()
 
   return (
     <NestedDrawer open={open} onOpenChange={setOpen}>
@@ -143,7 +160,7 @@ function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime, child
             closeNestedDrawer={() => setOpen(false)}
             closeMainDrawer={closeMainDrawer}
             enabled={open}
-            urlSuffix={`?${intakeTimeKey}=${preselectedIntakeTime}`}
+            urlSuffix={`?${intakeTimeKey}=${preselectedIntakeTime}&${trackingDayKey}=${trackingDay}`}
           >
             <NavbarBarcodeScan />
           </BarcodeScanProvider>

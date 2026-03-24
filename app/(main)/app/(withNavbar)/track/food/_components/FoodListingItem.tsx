@@ -12,6 +12,7 @@ import { ArrowUpRightIcon } from "lucide-react";
 import NoPrefetchLink from "@/components/NoPrefetchLink";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTrackingDayParam } from "@/hooks/useTrackingDayParam";
 
 
 interface FoodListingItemProps extends React.ComponentProps<typeof Item> {
@@ -22,12 +23,17 @@ export function FoodListingItem({ food, linkSuffix, ...props }: FoodListingItemP
   const { kcal, name } = getDefaultPortionData(food)
 
   const { intakeTime, intakeTimeKey } = useIntakeTimeParam()
+  const { trackingDay, trackingDayKey } = useTrackingDayParam()
 
   const intakeTimeParam = intakeTime
     ? `?${intakeTimeKey}=${intakeTime}`
     : ""
 
-  const itemLink = `${APP_BASE_URL}/track/food/${food.id}${linkSuffix || intakeTimeParam}`
+  const trackingDayParam = trackingDay
+    ? `${intakeTimeParam === "" ? "?" : "&"}${trackingDayKey}=${trackingDay}`
+    : ""
+
+  const itemLink = `${APP_BASE_URL}/track/food/${food.id}${linkSuffix || `${intakeTimeParam}${trackingDayParam}`}`
 
   return (
     <Item

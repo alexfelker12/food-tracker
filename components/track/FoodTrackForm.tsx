@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isDefinedError } from "@orpc/client"
@@ -17,10 +18,11 @@ import { intakeTimeLabels } from "@/schemas/labels/journalEntrySchemaLabels"
 import { IntakeTime } from "@/generated/prisma/enums"
 
 import { useIntakeTimeParam } from "@/hooks/useIntakeTimeParam"
+import { useTrackingDayParam } from "@/hooks/useTrackingDayParam"
 
 import { APP_BASE_URL, BASE_PORTION_NAME } from "@/lib/constants"
 import { orpc } from "@/lib/orpc"
-import { getGermanDate, offsetDate } from "@/lib/utils"
+import { getGermanDate } from "@/lib/utils"
 
 import { NotebookTextIcon } from "lucide-react"
 
@@ -34,7 +36,6 @@ import { FoodTrackMacros } from "./components/FoodTrackMacros"
 import { FoodTrackPortionAmount } from "./components/FoodTrackPortionAmount"
 import { FoodTrackSubmit } from "./components/FoodTrackSubmit"
 import { FoodTrack } from "./FoodTrack"
-import { useEffect } from "react"
 
 
 const compProps = journalEntrySchema.pick({ consumableType: true })
@@ -45,6 +46,7 @@ export interface FoodTrackFormProps extends
 }
 export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps) {
   const { intakeTime } = useIntakeTimeParam()
+  const { trackingDay } = useTrackingDayParam()
   const { refererUrl } = useRefererUrl()
   const { back, push } = useRouter()
 
@@ -56,13 +58,13 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
   const defaultPortion = consumable.portions.find((portion) => portion.isDefault)
   const initialPortion = defaultPortion ?? consumable.portions.find((portion) => portion.name === BASE_PORTION_NAME)!
 
-  // const today = offsetDate(new Date())
-  const today = new Date()
+  // const firstDay = offsetDate(new Date())
+  const firstDay = trackingDay ? new Date(trackingDay) : new Date()
 
   const defaultValues: z.infer<typeof journalEntrySchema> = {
     consumableId: consumable?.id,
     consumableType,
-    daysToTrack: [today],
+    daysToTrack: [firstDay],
     portionId: initialPortion.id,
     portionAmount: 1,
     intakeTime: intakeTime as IntakeTime,
@@ -78,7 +80,7 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
   //* update form with changing intaketime
   useEffect(() => {
     form.reset(defaultValues)
-  }, [intakeTime])
+  }, [intakeTime, firstDay])
 
   //* create food mutation
   const { mutate: trackConsumable, isPending } = useMutation(orpc.journal.track.mutationOptions({

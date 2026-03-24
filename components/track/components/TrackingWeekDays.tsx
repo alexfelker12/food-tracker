@@ -7,6 +7,7 @@ import { ControllerFieldState, ControllerRenderProps } from "react-hook-form";
 import { cn, get_yyyymmdd_date, getGermanDate, offsetDate } from "@/lib/utils";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useTrackingDayParam } from "@/hooks/useTrackingDayParam";
 
 
 interface TrackingWeekDaysProps extends React.ComponentProps<"div"> {
@@ -18,14 +19,16 @@ export function TrackingWeekDays({
   field, fieldState, // Controller-render props
   className, ...props // Field props
 }: TrackingWeekDaysProps) {
+  const { trackingDay } = useTrackingDayParam()
+
   const trackingDays = useMemo(() => {
     return Array.from({ length: 7 }).map((_, index) => {
-      const date = new Date()
+      const date = trackingDay ? new Date(trackingDay) : new Date()
       const day = date.getDate()
       date.setDate(day + index)
       return date
     })
-  }, [(new Date()).getDate()]) // should only be reevaluated when day changes
+  }, [(trackingDay ? new Date(trackingDay) : new Date()).getDate()]) // should only be reevaluated when day changes
 
   const toWeekDay = (date: Date) => {
     return date.toLocaleDateString("de-DE", {
