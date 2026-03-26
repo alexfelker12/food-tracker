@@ -48,22 +48,16 @@ export function FoodTrackMenu({ preselectedIntakeTime, trackingDay, children }: 
 
       <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>
         <DrawerHeader>
-          <DrawerTitle className="text-lg">
-            <span>Tracken</span>
-            <div className="inline-flex items-center gap-1 ml-3">
-              {trackingDay &&
-                <Badge variant="secondary" className="text-sm">
-                  {germanDate}
-                </Badge>
-              }
-              {preselectedIntakeTime && (
-                <Badge className="bg-accent text-accent-foreground text-sm">
-                  {intakeTimeLabels[preselectedIntakeTime]}
-                </Badge>
-              )}
-            </div>
-          </DrawerTitle>
-          <DrawerDescription className="text-base sr-only">Finde Lebensmittel und Mahlzeiten per Suche oder mit dem Barcode-Scanner</DrawerDescription>
+          <DrawerTitle className="text-lg">Tracken</DrawerTitle>
+          <DrawerDescription className="space-x-1.5">
+            {trackingDay && <Badge variant="secondary" className="text-sm">{germanDate}</Badge>}
+            {preselectedIntakeTime && (
+              <Badge className="bg-accent text-accent-foreground text-sm">
+                {intakeTimeLabels[preselectedIntakeTime]}
+              </Badge>
+            )}
+            <span className="text-base sr-only">Finde Lebensmittel und Mahlzeiten per Suche oder mit dem Barcode-Scanner</span>
+          </DrawerDescription>
         </DrawerHeader>
 
         <DrawerFooter className="pt-0">

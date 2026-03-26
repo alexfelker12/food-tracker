@@ -83,9 +83,11 @@ function JournalEntryItemDescription() {
     // base portion
     : `${journalEntry.foodEntry.portionAmount * BASE_PORTION_GRAMS} g`
 
+  const entryKcal = getGermanNumber(journalEntry.nutritionData.kcal)
+
   return (
     <ItemDescription className="inline-flex gap-1.5">
-      <span>{journalEntry.nutritionData.kcal} kcal</span> <span>-</span> <span>{portion}</span>
+      <span>{entryKcal} kcal</span> <span>-</span> <span>{portion}</span>
     </ItemDescription>
   );
 }
