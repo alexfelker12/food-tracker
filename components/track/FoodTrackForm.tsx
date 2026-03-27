@@ -98,6 +98,10 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
       // default multiple days
       const title = `${consumable.name} wurde getrackt`
       let description = <span>Zu {count} Tagen hinzugefügt</span>
+      const hrefBase = APP_BASE_URL + "/journal/"
+      let href = hrefBase + "today"
+
+      trackingDay
 
       if (count === 1) {
         // single day was tracked - add more details
@@ -109,18 +113,20 @@ export function FoodTrackForm({ consumable, consumableType }: FoodTrackFormProps
           <span className="text-foreground">{intakeTimeLabels[variables.intakeTime]}</span> {" "}
           hinzugefügt
         </span>
+
+        if (trackingDay) href = hrefBase + trackingDay
       }
 
       toast.success(title, {
         description,
         action:
           <Button variant="outline" className="ml-auto" onClick={() => toast.dismiss()} asChild>
-            <Link href={APP_BASE_URL + "/journal/today"}><NotebookTextIcon /> Tagebuch</Link>
+            <Link href={href}><NotebookTextIcon /> Tagebuch</Link>
           </Button>
         ,
         // cancel: {
         //   label: <><NotebookTextIcon /> Tagebuch</>,
-        //   onClick: () => push(APP_BASE_URL + "/journal/today")
+        //   onClick: () => push(href)
         // },
       })
 
