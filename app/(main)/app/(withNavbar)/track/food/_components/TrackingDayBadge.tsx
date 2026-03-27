@@ -6,10 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { getGermanDate } from "@/lib/utils"
 
 
-export function TrackingDay() {
+export function TrackingDayBadge() {
   const { trackingDay } = useTrackingDayParam()
 
-  if (!trackingDay) return <div data-trackingday="false" /> // always render an element for styling consistency
+  if (!trackingDay) return null
 
   const germanDate = getGermanDate(new Date(trackingDay))
 

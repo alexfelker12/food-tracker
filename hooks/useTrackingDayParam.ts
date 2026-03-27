@@ -7,7 +7,7 @@ type UseTrackingDayParamReturn = {
   trackingDayKey: string
 }
 export function useTrackingDayParam(): UseTrackingDayParamReturn {
-  const trackingDayKey = "trackingDay"
+  const trackingDayKey = "trackingday"
   const searchParams = useSearchParams()
 
   const trackingDay = searchParams.get(trackingDayKey)

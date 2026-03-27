@@ -33,7 +33,7 @@ export default async function Page({
           <div className="flex items-center gap-4">
             <BackButton refererPath={APP_BASE_URL + '/track/food' as `/${string}`} />
 
-            <h1 className="font-bold text-2xl">Lebesmittel tracken</h1>
+            <h1 className="font-semibold text-xl">Lebensmittel tracken</h1>
           </div>
 
           <Suspense fallback={<FullScreenLoader />}>

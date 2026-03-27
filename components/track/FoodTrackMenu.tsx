@@ -39,7 +39,6 @@ export function FoodTrackMenu({ preselectedIntakeTime, preselectedTrackingDay, c
   const trackingDayString = preselectedTrackingDay ? get_yyyymmdd_date(preselectedTrackingDay) : ""
   const germanDate = preselectedTrackingDay ? getGermanDate(preselectedTrackingDay) : ""
 
-
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
@@ -133,8 +132,6 @@ export function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime
   const { trackingDay, trackingDayKey } = useTrackingDayParam()
   const time = preselectedIntakeTime || intakeTime
   const day = preselectedTrackingDay || trackingDay
-
-  console.log(`?${intakeTimeKey}=${time}&${trackingDayKey}=${day}`)
 
   return (
     <NestedDrawer open={open} onOpenChange={setOpen}>

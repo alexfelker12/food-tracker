@@ -1,21 +1,18 @@
 "use client"
 
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 
 import { ScanBarcodeIcon, SearchIcon, XIcon } from "lucide-react";
 
+import { NavbarBarcodeScanDrawer } from "@/components/track/FoodTrackMenu";
+import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { CommandInputRaw } from "@/components/ui/command";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 
 import { useFoodSearch } from "./FoodSearchContext";
-import { Button } from "@/components/ui/button";
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { BarcodeScanner } from "@/components/BarcodeScanner";
-import { Separator } from "@/components/ui/separator";
-import { NavbarBarcodeScanDrawer } from "@/components/track/FoodTrackMenu";
 
 
 export function FoodSearchInput() {
@@ -80,11 +77,13 @@ export function FoodSearchInput() {
         </InputGroupAddon>
       </InputGroup>
 
-      <NavbarBarcodeScanDrawer closeMainDrawer={() => { }}>
-        <Button variant="secondary" aria-description="Per Barcode finden">
-          <ScanBarcodeIcon /> Scan
-        </Button>
-      </NavbarBarcodeScanDrawer>
+      <Suspense>
+        <NavbarBarcodeScanDrawer closeMainDrawer={() => { }}>
+          <Button variant="secondary" aria-description="Per Barcode finden">
+            <ScanBarcodeIcon /> Scan
+          </Button>
+        </NavbarBarcodeScanDrawer>
+      </Suspense>
 
     </ButtonGroup>
   );
