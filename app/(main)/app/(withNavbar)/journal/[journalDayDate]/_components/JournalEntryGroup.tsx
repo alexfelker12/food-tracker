@@ -104,7 +104,7 @@ export function JournalEntryGroup({
                   <span>{journalEntriesCount === 1 ? "Eintrag" : "Einträge"}</span>
                 </span>
               </ButtonGroupText>
-              <FoodTrackMenu preselectedIntakeTime={value} trackingDay={date}>
+              <FoodTrackMenu preselectedIntakeTime={value} preselectedTrackingDay={date}>
                 <Button variant="outline" size="xs" background="floating">
                   <PlusIcon /> Tracken
                 </Button>

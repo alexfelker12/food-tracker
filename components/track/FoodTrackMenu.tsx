@@ -27,17 +27,17 @@ import { Separator } from "@/components/ui/separator";
 
 interface FoodTrackMenuProps {
   preselectedIntakeTime?: IntakeTime
-  trackingDay?: Date
+  preselectedTrackingDay?: Date
   children?: React.ReactNode
 }
-export function FoodTrackMenu({ preselectedIntakeTime, trackingDay, children }: FoodTrackMenuProps) {
+export function FoodTrackMenu({ preselectedIntakeTime, preselectedTrackingDay, children }: FoodTrackMenuProps) {
   const [open, setOpen] = useState(false)
   const firstButtonRef = useRef<HTMLButtonElement>(null)
   const nestedFirstButtonRef = useRef<HTMLButtonElement>(null)
   const { intakeTimeKey } = useIntakeTimeParam()
   const { trackingDayKey } = useTrackingDayParam()
-  const trackingDayString = trackingDay ? get_yyyymmdd_date(trackingDay) : ""
-  const germanDate = trackingDay ? getGermanDate(trackingDay) : ""
+  const trackingDayString = preselectedTrackingDay ? get_yyyymmdd_date(preselectedTrackingDay) : ""
+  const germanDate = preselectedTrackingDay ? getGermanDate(preselectedTrackingDay) : ""
 
 
   return (
@@ -50,7 +50,7 @@ export function FoodTrackMenu({ preselectedIntakeTime, trackingDay, children }: 
         <DrawerHeader>
           <DrawerTitle className="text-lg">Tracken</DrawerTitle>
           <DrawerDescription className="space-x-1.5">
-            {trackingDay && <Badge variant="secondary" className="text-sm">{germanDate}</Badge>}
+            {preselectedTrackingDay && <Badge variant="secondary" className="text-sm">{germanDate}</Badge>}
             {preselectedIntakeTime && (
               <Badge className="bg-accent text-accent-foreground text-sm">
                 {intakeTimeLabels[preselectedIntakeTime]}
@@ -65,7 +65,7 @@ export function FoodTrackMenu({ preselectedIntakeTime, trackingDay, children }: 
           <NavbarBarcodeScanDrawer
             closeMainDrawer={() => setOpen(false)}
             preselectedIntakeTime={preselectedIntakeTime}
-            trackingDay={trackingDay}
+            preselectedTrackingDay={preselectedTrackingDay}
           >
             <Button variant="outline" className="flex-1" ref={firstButtonRef}>
               <ScanBarcodeIcon /> Per Barcode finden
@@ -120,23 +120,26 @@ export function FoodTrackMenu({ preselectedIntakeTime, trackingDay, children }: 
   )
 }
 
-interface NavbarBarcodeScanDrawerProps extends Pick<FoodTrackMenuProps, "preselectedIntakeTime" | "trackingDay"> {
+interface NavbarBarcodeScanDrawerProps extends Pick<FoodTrackMenuProps, "preselectedIntakeTime" | "preselectedTrackingDay"> {
   closeMainDrawer: () => void
   children?: React.ReactNode
 }
-function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime, trackingDay, children }: NavbarBarcodeScanDrawerProps) {
+export function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime, preselectedTrackingDay, children }: NavbarBarcodeScanDrawerProps) {
   const [open, setOpen] = useState(false)
   const [barcode, setBarcode] = useState("")
   const [lastBarcode, setLastBarcode] = useState("")
   const firstButtonRef = useRef<HTMLButtonElement>(null)
-  const { intakeTimeKey } = useIntakeTimeParam()
-  const { trackingDayKey } = useTrackingDayParam()
+  const { intakeTime, intakeTimeKey } = useIntakeTimeParam()
+  const { trackingDay, trackingDayKey } = useTrackingDayParam()
+  const time = preselectedIntakeTime || intakeTime
+  const day = preselectedTrackingDay || trackingDay
+
+  console.log(`?${intakeTimeKey}=${time}&${trackingDayKey}=${day}`)
 
   return (
     <NestedDrawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         {children}
-
       </DrawerTrigger>
       <DrawerContent onOpenAutoFocus={() => firstButtonRef.current?.focus()}>
 
@@ -154,7 +157,7 @@ function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime, track
             closeNestedDrawer={() => setOpen(false)}
             closeMainDrawer={closeMainDrawer}
             enabled={open}
-            urlSuffix={`?${intakeTimeKey}=${preselectedIntakeTime}&${trackingDayKey}=${trackingDay}`}
+            urlSuffix={`?${intakeTimeKey}=${time}&${trackingDayKey}=${day}`}
           >
             <NavbarBarcodeScan />
           </BarcodeScanProvider>
