@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, NestedDrawer } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
+import { useQueryParamString } from "@/hooks/useQueryParamString";
 
 
 interface FoodTrackMenuProps {
@@ -34,9 +35,11 @@ export function FoodTrackMenu({ preselectedIntakeTime, preselectedTrackingDay, c
   const [open, setOpen] = useState(false)
   const firstButtonRef = useRef<HTMLButtonElement>(null)
   const nestedFirstButtonRef = useRef<HTMLButtonElement>(null)
-  const { intakeTimeKey } = useIntakeTimeParam()
-  const { trackingDayKey } = useTrackingDayParam()
-  const trackingDayString = preselectedTrackingDay ? get_yyyymmdd_date(preselectedTrackingDay) : ""
+
+  const intakeTimeString = preselectedIntakeTime
+  const trackingDayString = preselectedTrackingDay ? get_yyyymmdd_date(preselectedTrackingDay) : null
+  const queryParams = useQueryParamString({ intakeTimeString, trackingDayString })
+
   const germanDate = preselectedTrackingDay ? getGermanDate(preselectedTrackingDay) : ""
 
   return (
@@ -76,7 +79,7 @@ export function FoodTrackMenu({ preselectedIntakeTime, preselectedTrackingDay, c
             <DrawerClose asChild>
               <IntakeTimeOptionLink
                 label="Lebensmittel"
-                href={`${APP_BASE_URL}/track/food?${intakeTimeKey}=${preselectedIntakeTime}&${trackingDayKey}=${trackingDayString}`}
+                href={`${APP_BASE_URL}/track/food${queryParams ?? ""}`}
               />
             </DrawerClose>
             :
@@ -128,10 +131,10 @@ export function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime
   const [barcode, setBarcode] = useState("")
   const [lastBarcode, setLastBarcode] = useState("")
   const firstButtonRef = useRef<HTMLButtonElement>(null)
-  const { intakeTime, intakeTimeKey } = useIntakeTimeParam()
-  const { trackingDay, trackingDayKey } = useTrackingDayParam()
-  const time = preselectedIntakeTime || intakeTime
-  const day = preselectedTrackingDay || trackingDay
+
+  const intakeTimeString = preselectedIntakeTime
+  const trackingDayString = preselectedTrackingDay ? get_yyyymmdd_date(preselectedTrackingDay) : null
+  const urlSuffix = useQueryParamString({ intakeTimeString, trackingDayString })
 
   return (
     <NestedDrawer open={open} onOpenChange={setOpen}>
@@ -154,7 +157,7 @@ export function NavbarBarcodeScanDrawer({ closeMainDrawer, preselectedIntakeTime
             closeNestedDrawer={() => setOpen(false)}
             closeMainDrawer={closeMainDrawer}
             enabled={open}
-            urlSuffix={`?${intakeTimeKey}=${time}&${trackingDayKey}=${day}`}
+            urlSuffix={urlSuffix ?? undefined}
           >
             <NavbarBarcodeScan />
           </BarcodeScanProvider>
