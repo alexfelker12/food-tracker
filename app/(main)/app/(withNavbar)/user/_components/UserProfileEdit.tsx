@@ -21,15 +21,16 @@ import { ProfileFormFieldFitnessGoal } from "@/components/profile/parts/fields/P
 import { ProfileFormFieldGender } from "@/components/profile/parts/fields/ProfileFormFieldGender";
 import { ProfileFormFieldHeight } from "@/components/profile/parts/fields/ProfileFormFieldHeight";
 import { ProfileFormFieldMacroPlan } from "@/components/profile/parts/fields/ProfileFormFieldMacroPlan";
+import { ProfileFormFieldSelectedPlan } from "@/components/profile/parts/fields/ProfileFormFieldSelectedPlan";
 import { ProfileFormFieldTrainingDays } from "@/components/profile/parts/fields/ProfileFormFieldTrainingDays";
 import { ProfileFormFieldWeight } from "@/components/profile/parts/fields/ProfileFormFieldWeight";
+
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 
 import { useUserProfile } from "./UserProfileContext";
-import { ProfileFormFieldSelectedPlan } from "@/components/profile/parts/fields/ProfileFormFieldSelectedPlan";
 
 
 export function UserProfileEdit() {
