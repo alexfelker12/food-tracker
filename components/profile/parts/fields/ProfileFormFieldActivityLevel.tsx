@@ -9,6 +9,7 @@ import { ProfileSchema } from "@/schemas/types";
 import { EnumFieldInput } from "@/components/form-fields/EnumField";
 import { ActivityLevelInformation } from "@/components/information/ActivityLevelInformation";
 import { InformationDialog } from "@/components/information/InformationDialog";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 
@@ -33,6 +34,7 @@ export function ProfileFormFieldActivityLevel() {
           </FieldContent>
 
           <ButtonGroup>
+
             <EnumFieldInput
               field={field}
               fieldState={fieldState}
@@ -45,14 +47,46 @@ export function ProfileFormFieldActivityLevel() {
               title="Dein Aktivitätslevel"
               description="Hier findest du für die korrekte Auswahl genauere Informationen zu jedem Aktivitätslevel"
             >
-              <div className="space-y-3">
-                <ActivityLevelInformation activityLevel="VERY_LOW" />
-                <ActivityLevelInformation activityLevel="LOW" />
-                <ActivityLevelInformation activityLevel="MEDIUM" />
-                <ActivityLevelInformation activityLevel="HIGH" />
-                <ActivityLevelInformation activityLevel="VERY_HIGH" />
-              </div>
+              <Accordion type="single" defaultValue="VERY_LOW">
+
+                <AccordionItem value="VERY_LOW">
+                  <AccordionTrigger className="text-base">{activityLevelLabels["VERY_LOW"]}</AccordionTrigger>
+                  <AccordionContent>
+                    <ActivityLevelInformation activityLevel="VERY_LOW" />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="LOW">
+                  <AccordionTrigger className="text-base">{activityLevelLabels["LOW"]}</AccordionTrigger>
+                  <AccordionContent>
+                    <ActivityLevelInformation activityLevel="LOW" />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="MEDIUM">
+                  <AccordionTrigger className="text-base">{activityLevelLabels["MEDIUM"]}</AccordionTrigger>
+                  <AccordionContent>
+                    <ActivityLevelInformation activityLevel="MEDIUM" />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="HIGH">
+                  <AccordionTrigger className="text-base">{activityLevelLabels["HIGH"]}</AccordionTrigger>
+                  <AccordionContent>
+                    <ActivityLevelInformation activityLevel="HIGH" />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="VERY_HIGH">
+                  <AccordionTrigger className="text-base">{activityLevelLabels["VERY_HIGH"]}</AccordionTrigger>
+                  <AccordionContent>
+                    <ActivityLevelInformation activityLevel="VERY_HIGH" />
+                  </AccordionContent>
+                </AccordionItem>
+
+              </Accordion>
             </InformationDialog>
+
           </ButtonGroup>
 
         </Field>

@@ -41,9 +41,9 @@ export const fitnessGoalLabels: Record<FitnessGoal, string> = {
 
 export const activityLevelLabels: Record<ActivityLevel, string> = {
   VERY_LOW: "Sehr niedrig",
-  LOW: "niedrig",
-  MEDIUM: "mittel",
-  HIGH: "hoch",
+  LOW: "Niedrig",
+  MEDIUM: "Mittel",
+  HIGH: "Hoch",
   VERY_HIGH: "Sehr hoch",
 }
 

@@ -47,39 +47,46 @@ export function ProfileFormFieldFitnessGoal() {
               title="Dein Fitness-Ziel"
               description="Hier findest du für die korrekte Auswahl genauere Informationen zu jedem Fitness-Ziel"
             >
-              <Accordion type="single" collapsible defaultValue="QUICKLY_LOSE_WEIGHT">
+              <Accordion type="single" defaultValue="QUICKLY_LOSE_WEIGHT">
+
                 <AccordionItem value="QUICKLY_LOSE_WEIGHT">
                   <AccordionTrigger className="text-base">{fitnessGoalLabels["QUICKLY_LOSE_WEIGHT"]}</AccordionTrigger>
                   <AccordionContent>
                     <FitnessGoalInformation fitnessGoal="QUICKLY_LOSE_WEIGHT" />
                   </AccordionContent>
                 </AccordionItem>
+
                 <AccordionItem value="LOSE_WEIGHT">
                   <AccordionTrigger className="text-base">{fitnessGoalLabels["LOSE_WEIGHT"]}</AccordionTrigger>
                   <AccordionContent>
                     <FitnessGoalInformation fitnessGoal="LOSE_WEIGHT" />
                   </AccordionContent>
                 </AccordionItem>
+
                 <AccordionItem value="MAINTAIN">
                   <AccordionTrigger className="text-base">{fitnessGoalLabels["MAINTAIN"]}</AccordionTrigger>
                   <AccordionContent>
                     <FitnessGoalInformation fitnessGoal="MAINTAIN" />
                   </AccordionContent>
                 </AccordionItem>
+
                 <AccordionItem value="GAIN_WEIGHT">
                   <AccordionTrigger className="text-base">{fitnessGoalLabels["GAIN_WEIGHT"]}</AccordionTrigger>
                   <AccordionContent>
                     <FitnessGoalInformation fitnessGoal="GAIN_WEIGHT" />
                   </AccordionContent>
                 </AccordionItem>
+
                 <AccordionItem value="QUICKLY_GAIN_WEIGHT">
                   <AccordionTrigger className="text-base">{fitnessGoalLabels["QUICKLY_GAIN_WEIGHT"]}</AccordionTrigger>
                   <AccordionContent>
                     <FitnessGoalInformation fitnessGoal="QUICKLY_GAIN_WEIGHT" />
                   </AccordionContent>
                 </AccordionItem>
+
               </Accordion>
             </InformationDialog>
+
           </ButtonGroup>
 
         </Field>
