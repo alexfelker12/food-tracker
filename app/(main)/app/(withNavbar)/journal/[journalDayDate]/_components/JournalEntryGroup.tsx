@@ -6,19 +6,20 @@ import { IntakeTime } from "@/generated/prisma/client";
 
 import { JournalEntriesByDateReturn } from "@/orpc/router/journal/day/getEntries";
 
-import { cn, getGermanNumber } from "@/lib/utils";
+import { cn, get_yyyymmdd_date, getGermanNumber } from "@/lib/utils";
 
-import { PlusIcon } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { ItemGroup } from "@/components/ui/item";
-import { Separator } from "@/components/ui/separator";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDownIcon, PlusIcon } from "lucide-react";
 
 import { FoodTrackMenu } from "@/components/track/FoodTrackMenu";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ItemGroup } from "@/components/ui/item";
+import { Separator } from "@/components/ui/separator";
+
 import { JournalEntryItem } from "./JournalEntryItem";
-import { Badge } from "@/components/ui/badge";
-import { ButtonGroup, ButtonGroupText } from "@/components/ui/button-group";
+import { useLocalStorageState } from "@/hooks/useLocalStorageState";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export interface JournalEntryGroupProps extends React.ComponentProps<typeof Collapsible> {
@@ -27,17 +28,58 @@ export interface JournalEntryGroupProps extends React.ComponentProps<typeof Coll
   date: Date
   journalEntries: JournalEntriesByDateReturn
 }
-
+type CollapsibleState = {
+  open: boolean
+  manuallySet: boolean
+  lastEntryCount: number
+}
 export function JournalEntryGroup({
   label, value, date, journalEntries,
   className, ...props
 }: JournalEntryGroupProps) {
+  const yyyymmdd_date = get_yyyymmdd_date(date)
+  const groupStorageKey = `${yyyymmdd_date}-${value}`
   const journalEntriesCount = journalEntries.length
-  const [open, setOpen] = useState(() => journalEntriesCount > 0)
+
+  const [state, setState, isHydrated] = useLocalStorageState<CollapsibleState>(
+    groupStorageKey,
+    {
+      open: journalEntriesCount > 0,
+      manuallySet: false,
+      lastEntryCount: journalEntriesCount,
+    }
+  )
+
+  const { open } = state
 
   useEffect(() => {
-    setOpen(journalEntriesCount > 0)
-  }, [journalEntriesCount])
+    setState((prev) => {
+      const hasNewEntries = journalEntriesCount > prev.lastEntryCount
+
+      if (hasNewEntries) {
+        return {
+          open: true,
+          manuallySet: false,
+          lastEntryCount: journalEntriesCount,
+        }
+      }
+
+      return {
+        ...prev,
+        lastEntryCount: journalEntriesCount,
+      }
+    })
+  }, [journalEntriesCount, setState])
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      open: nextOpen,
+      manuallySet: true,
+    }))
+  }
+
+  if (!isHydrated) return <Skeleton className="h-15" />
 
   //* sum up macros and calories for this group
   const macroSum = journalEntries.reduce((accumulator, currentValue) => {
@@ -64,7 +106,7 @@ export function JournalEntryGroup({
       className={cn("relative shadow-2xs border rounded-md", className)}
       aria-label={label}
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={handleOpenChange}
       asChild
       {...props}
     >
@@ -72,7 +114,7 @@ export function JournalEntryGroup({
         <div className="flex justify-between items-center p-2">
           <CollapsibleTrigger className="w-full">
             <div className="space-y-0.5 w-full leading-none">
-              <h3 className="space-x-2 px-1 text-accent-foreground text-base text-start">{label}</h3>
+              <h3 className="px-1 text-accent-foreground text-base text-start">{label}</h3>
               <div className="pl-1 text-muted-foreground text-sm text-start leading-none">
                 {macroSum.kcal
                   ?
@@ -98,12 +140,22 @@ export function JournalEntryGroup({
 
           <div className="-top-2 -right-1 z-0 absolute">
             <ButtonGroup>
-              <ButtonGroupText className="bg-background dark:bg-input/30 px-2">
+              <Button
+                size="xs"
+                variant="outline"
+                background="floating"
+                className="px-2"
+                onClick={() => handleOpenChange(!open)}
+              >
                 <span className="inline-flex items-center gap-1 text-muted-foreground text-xs">
+                  <ChevronDownIcon className={cn(
+                    "text-muted-foreground transition-transform size-4",
+                    open && "rotate-180"
+                  )} />
                   <span>{journalEntriesCount || "keine"}</span>
                   <span>{journalEntriesCount === 1 ? "Eintrag" : "Einträge"}</span>
                 </span>
-              </ButtonGroupText>
+              </Button>
               <FoodTrackMenu preselectedIntakeTime={value} preselectedTrackingDay={date}>
                 <Button variant="outline" size="xs" background="floating">
                   <PlusIcon /> Tracken
