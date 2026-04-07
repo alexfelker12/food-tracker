@@ -40,6 +40,7 @@ export function JournalCalendar({ journalDays, minDate, noSelection = true, disp
         "**:[.rdp-week>td,.rdp-weekdays>th]:flex-1 w-full", // responsive styling
         "p-0 [&_.rdp-day]:text-muted-foreground/75", // bare hightlight styling of days without journal entries 
         "[&_.rdp-day[data-selected=true]_button]:text-primary-foreground! [&_.rdp-day[data-selected=true]_button]:text-base",
+        "**:[.rdp-month]:block **:[.rdp-month]:space-y-4 **:[.rdp-month_>_table]:w-full",
         className
       )} // shadow-sm border rounded-lg
       classNames={{
