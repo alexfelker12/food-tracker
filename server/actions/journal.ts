@@ -220,35 +220,57 @@ export async function getJournalDayMacros({ userId, date }: GetJournalDayMacrosP
     .all([latestNutritionResult, currentMacros])
     .then(([nutritionResult, { _sum: { kcal, fats, carbs, proteins } }]) => {
       if (!nutritionResult) return {
-        availableMacros: {
-          kcal: 0,
-          fats: 0,
-          carbs: 0,
-          proteins: 0,
+        calories: {
+          min: 0,
+          current: 0,
+          max: 0
         },
-        openMacros: {
-          kcal: 0,
-          fats: 0,
-          carbs: 0,
-          proteins: 0,
-        }
-      }; // can't calculate calories and macros if no calory goal was created - just return "-"
+        proteins: {
+          min: 0,
+          current: 0,
+          max: 0
+        },
+        carbs: {
+          min: 0,
+          current: 0,
+          max: 0
+        },
+        fats: {
+          min: 0,
+          current: 0,
+          max: 0
+        },
+      }; // can't calculate calories and macros if no calory goal was created
 
-      const { calorieGoalTarget, fatsTargetGrams, carbsTargetGrams, proteinsTargetGrams } = nutritionResult
+      const {
+        calorieGoalMin, calorieGoalMax,
+        proteinsMinGrams, proteinsMaxGrams,
+        carbsMinGrams, carbsMaxGrams,
+        fatsMinGrams, fatsMaxGrams
+      } = nutritionResult
 
+      // all numbers should be rounded to a full integer for the graphs display
       return {
-        availableMacros: {
-          kcal: calorieGoalTarget,
-          fats: fatsTargetGrams,
-          carbs: carbsTargetGrams,
-          proteins: proteinsTargetGrams,
+        calories: {
+          min: +(calorieGoalMin).toFixed(0),
+          current: kcal ? +(kcal).toFixed(0) : 0,
+          max: +(calorieGoalMax).toFixed(0)
         },
-        openMacros: {
-          kcal: +(calorieGoalTarget - (kcal || 0)).toFixed(0),
-          fats: +(fatsTargetGrams - (fats || 0)).toFixed(1),
-          carbs: +(carbsTargetGrams - (carbs || 0)).toFixed(1),
-          proteins: +(proteinsTargetGrams - (proteins || 0)).toFixed(1),
-        }
+        proteins: {
+          min: +(proteinsMinGrams).toFixed(0),
+          current: proteins ? +(proteins).toFixed(0) : 0,
+          max: +(proteinsMaxGrams).toFixed(0)
+        },
+        carbs: {
+          min: +(carbsMinGrams).toFixed(0),
+          current: carbs ? +(carbs).toFixed(0) : 0,
+          max: +(carbsMaxGrams).toFixed(0)
+        },
+        fats: {
+          min: +(fatsMinGrams).toFixed(0),
+          current: fats ? +(fats).toFixed(0) : 0,
+          max: +(fatsMaxGrams).toFixed(0)
+        },
       }
     })
 

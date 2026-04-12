@@ -3,78 +3,23 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { orpc } from "@/lib/orpc";
-import { cn, getGermanNumber } from "@/lib/utils";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { NutrientDisplayRow } from "../nutrient/NutrientDisplayRow";
+import { NutrientDisplayDetailed } from "../nutrient/NutrientDisplayDetailed";
 
 
 export type JournalDayMacrosProps = {
   date: Date
+  variant?: "row" | "detailed"
 }
-export function JournalDayMacros({ date }: JournalDayMacrosProps) {
-  const { data: { openMacros } } = useSuspenseQuery(orpc.journal.day.getMacros.queryOptions({
+export function JournalDayMacros({ date, variant = "detailed" }: JournalDayMacrosProps) {
+  const { data } = useSuspenseQuery(orpc.journal.day.getMacros.queryOptions({
     input: { date }
   }))
 
-  const openKcal = openMacros.kcal === 0 ? "-" : getGermanNumber(openMacros.kcal)
-  const openFats = openMacros.fats === 0 ? "-" : getGermanNumber(openMacros.fats)
-  const openCarbs = openMacros.carbs === 0 ? "-" : getGermanNumber(openMacros.carbs)
-  const openProteins = openMacros.proteins === 0 ? "-" : getGermanNumber(openMacros.proteins)
+  const label = "Offene Nährwerte"
 
-  return (
-    <Card className="gap-3 py-4 pb-3 rounded-md">
-      <CardHeader className="gap-0 px-4">
-        <CardTitle className="text-center text-xl leading-none">Offene Nährwerte</CardTitle>
-        <CardDescription className="sr-only">Zeigt die offenen Kalorien und Makrowerte für diesen Tag an</CardDescription>
-        {/* <CardAction>
-          <Button asChild variant="outline" size="icon">
-            <Link href={APP_BASE_URL + "/track"}>
-              <PlusIcon /><span className="sr-only">Lebensmittel tracken</span>
-            </Link>
-          </Button>
-        </CardAction> */}
-      </CardHeader>
-      <CardContent className="px-2">
-        <div className="flex justify-between items-center gap-2 h-11 leading-none">
-
-          <div className="flex flex-col items-center gap-1 w-18 text-center text-lg leading-none">
-            <span className="text-muted-foreground text-sm">Kalorien</span>
-            <span>{openKcal}</span>
-          </div>
-
-          <Separator orientation="vertical" className="h-4/5!" />
-
-          <div className="flex flex-1 items-center gap-1 h-full">
-
-            <div data-slot="open-carbs" className="flex flex-col flex-1 gap-1 text-center">
-              <span data-slot="open-carbs-label" className="text-muted-foreground text-xs">Carbs</span>
-              <span>{openCarbs} <span className={cn(
-                "text-muted-foreground text-xs",
-                openMacros.carbs === 0 && "hidden"
-              )}>g</span></span>
-            </div>
-
-            <div data-slot="open-fats" className="flex flex-col flex-1 gap-1 text-center">
-              <span data-slot="open-fats-label" className="text-muted-foreground text-xs">Fette</span>
-              <span>{openFats} <span className={cn(
-                "text-muted-foreground text-xs",
-                openMacros.fats === 0 && "hidden"
-              )}>g</span></span>
-            </div>
-
-            <div data-slot="open-proteins" className="flex flex-col flex-1 gap-1 text-center">
-              <span data-slot="open-proteins-label" className="text-muted-foreground text-xs">Proteine</span>
-              <span>{openProteins} <span className={cn(
-                "text-muted-foreground text-xs",
-                openMacros.proteins === 0 && "hidden"
-              )}>g</span></span>
-            </div>
-
-          </div>
-
-        </div>
-      </CardContent>
-    </Card>
-  );
+  return variant === "detailed"
+    ? <NutrientDisplayDetailed label={label} {...data} />
+    : <NutrientDisplayRow label={label} {...data} />
 }

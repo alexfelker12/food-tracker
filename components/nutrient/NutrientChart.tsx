@@ -158,7 +158,7 @@ export function NutrientChart({
               <span
                 className={cn(
                   "bottom-[10%] absolute text-muted-foreground",
-                  unit === "kcal" ? "text-[12cqw]" : "text-[11cqw]"
+                  unit === "kcal" ? "text-[13cqw]" : "text-[12cqw]"
                 )}
               >{unit}</span>
             </>
@@ -170,12 +170,12 @@ export function NutrientChart({
       {!compact && (
         <div className="flex flex-col items-center -mt-1">
           {showLabel && (
-            <span className="font-medium text-[15cqw] text-foreground leading-[1.1]">
+            <span className="font-medium text-[18cqw] text-foreground leading-[1.1]">
               {label}
             </span>
           )}
 
-          <span className="text-[12cqw] text-muted-foreground/80">
+          <span className="text-[14cqw] text-muted-foreground/80">
             {rangeText}
           </span>
         </div>

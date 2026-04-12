@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils"
 
 export function NutrientDisplayDetailed({
   calories,
-  protein,
+  proteins,
   carbs,
-  fat,
+  fats,
   color,
   label,
   className,
@@ -30,9 +30,9 @@ export function NutrientDisplayDetailed({
         </div>
 
         <div className="flex-1 space-y-1">
-          <MacroCircleRow {...protein} {...nutrientPresets.protein} />
+          <MacroCircleRow {...proteins} {...nutrientPresets.proteins} />
           <MacroCircleRow {...carbs} {...nutrientPresets.carbs} />
-          <MacroCircleRow {...fat} {...nutrientPresets.fat} />
+          <MacroCircleRow {...fats} {...nutrientPresets.fats} />
         </div>
       </div>
     </div>

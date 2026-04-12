@@ -5,7 +5,7 @@ export const nutrientPresets: Record<
   { unit: string; label: string }
 > = {
   calories: { unit: "kcal", label: "Kalorien" },
-  protein: { unit: "gramm", label: "Proteine" },
+  proteins: { unit: "gramm", label: "Proteine" },
   carbs: { unit: "gramm", label: "Carbs" },
-  fat: { unit: "gramm", label: "Fette" },
+  fats: { unit: "gramm", label: "Fette" },
 }

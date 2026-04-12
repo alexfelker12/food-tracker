@@ -120,7 +120,7 @@ async function JournalDayMacroWrap({ date }: JournalDayProps) {
 
   return (
     <HydrateClient client={qc}>
-      <JournalDayMacros date={date} />
+      <JournalDayMacros date={date} variant="row" />
     </HydrateClient>
   )
 }

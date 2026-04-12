@@ -1,4 +1,4 @@
-export type NutrientType = "calories" | "protein" | "carbs" | "fat"
+export type NutrientType = "calories" | "proteins" | "carbs" | "fats"
 
 export type ArcStyle = "open" | "full"
 
@@ -28,9 +28,9 @@ export interface NutrientChartProps extends NutrientChartBaseProps {
 
 export interface NutrientDashboardProps {
   calories: { current: number; min: number; max: number }
-  protein: { current: number; min: number; max: number }
+  proteins: { current: number; min: number; max: number }
   carbs: { current: number; min: number; max: number }
-  fat: { current: number; min: number; max: number }
+  fats: { current: number; min: number; max: number }
   label?: string
   color?: string
   className?: string

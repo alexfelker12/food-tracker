@@ -6,9 +6,9 @@ import { nutrientPresets } from "./nutrient.presets";
 
 export function NutrientDisplayRow({
   calories,
-  protein,
+  proteins,
   carbs,
-  fat,
+  fats,
   label,
   className
 }: NutrientDashboardProps) {
@@ -28,8 +28,8 @@ export function NutrientDisplayRow({
         </div>
         <div className="flex-1 min-w-0">
           <NutrientChart
-            {...protein}
-            {...nutrientPresets.protein}
+            {...proteins}
+            {...nutrientPresets.proteins}
             // color="var(--primary)"
             showLabel
           />
@@ -44,8 +44,8 @@ export function NutrientDisplayRow({
         </div>
         <div className="flex-1 min-w-0">
           <NutrientChart
-            {...fat}
-            {...nutrientPresets.fat}
+            {...fats}
+            {...nutrientPresets.fats}
             // color="var(--primary)"
             showLabel
           />
