@@ -28,14 +28,6 @@ export function NutrientDisplayRow({
         </div>
         <div className="flex-1 min-w-0">
           <NutrientChart
-            {...proteins}
-            {...nutrientPresets.proteins}
-            // color="var(--primary)"
-            showLabel
-          />
-        </div>
-        <div className="flex-1 min-w-0">
-          <NutrientChart
             {...carbs}
             {...nutrientPresets.carbs}
             // color="var(--primary)"
@@ -46,6 +38,14 @@ export function NutrientDisplayRow({
           <NutrientChart
             {...fats}
             {...nutrientPresets.fats}
+            // color="var(--primary)"
+            showLabel
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <NutrientChart
+            {...proteins}
+            {...nutrientPresets.proteins}
             // color="var(--primary)"
             showLabel
           />

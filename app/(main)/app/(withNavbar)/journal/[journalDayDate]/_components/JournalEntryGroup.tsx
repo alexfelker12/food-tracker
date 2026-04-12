@@ -84,10 +84,10 @@ export function JournalEntryGroup({
   //* sum up macros and calories for this group
   const macroSum = journalEntries.reduce((accumulator, currentValue) => {
     return {
-      kcal: +(accumulator.kcal + (currentValue.nutritionData?.kcal || 0)).toFixed(0),
-      fats: +(accumulator.fats + (currentValue.nutritionData?.fats || 0)).toFixed(1),
-      carbs: +(accumulator.carbs + (currentValue.nutritionData?.carbs || 0)).toFixed(1),
-      proteins: +(accumulator.proteins + (currentValue.nutritionData?.proteins || 0)).toFixed(1),
+      kcal: accumulator.kcal + (currentValue.nutritionData?.kcal || 0),
+      fats: accumulator.fats + (currentValue.nutritionData?.fats || 0),
+      carbs: accumulator.carbs + (currentValue.nutritionData?.carbs || 0),
+      proteins: accumulator.proteins + (currentValue.nutritionData?.proteins || 0),
     }
   }, {
     kcal: 0,
@@ -96,10 +96,10 @@ export function JournalEntryGroup({
     proteins: 0
   })
 
-  const groupKcal = getGermanNumber(macroSum.kcal)
-  const groupFats = getGermanNumber(macroSum.fats)
-  const groupCarbs = getGermanNumber(macroSum.carbs)
-  const groupProteins = getGermanNumber(macroSum.proteins)
+  const groupKcal = getGermanNumber(macroSum.kcal, 0)
+  const groupFats = getGermanNumber(macroSum.fats, 0)
+  const groupCarbs = getGermanNumber(macroSum.carbs, 0)
+  const groupProteins = getGermanNumber(macroSum.proteins, 0)
 
   return (
     <Collapsible

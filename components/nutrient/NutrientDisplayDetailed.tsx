@@ -30,9 +30,9 @@ export function NutrientDisplayDetailed({
         </div>
 
         <div className="flex-1 space-y-1">
-          <MacroCircleRow {...proteins} {...nutrientPresets.proteins} />
           <MacroCircleRow {...carbs} {...nutrientPresets.carbs} />
           <MacroCircleRow {...fats} {...nutrientPresets.fats} />
+          <MacroCircleRow {...proteins} {...nutrientPresets.proteins} />
         </div>
       </div>
     </div>
