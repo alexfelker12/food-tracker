@@ -10,11 +10,14 @@ export function NutrientDisplayDetailed({
   carbs,
   fat,
   color,
+  label,
   className,
 }: NutrientDashboardProps) {
   return (
     <div className={cn("space-y-2 bg-card p-4 rounded-xl", className)}>
-      <h3 className="font-semibold text-lg">Offene Nährwerte</h3>
+      {label && (
+        <h3 className="w-full font-semibold text-center text-lg leading-none">{label}</h3>
+      )}
 
       <div className="flex items-center gap-4">
         <div className="w-[35%] shrink-0">

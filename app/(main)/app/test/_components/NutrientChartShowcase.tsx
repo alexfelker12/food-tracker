@@ -24,13 +24,17 @@ export function NutrientChartShowcase() {
       <section className="space-y-2">
         <h2 className="font-semibold text-base text-foreground">Variante angereihte Graphen</h2>
 
-        <NutrientDisplayRow {...sampleData} label="Offene Nährwerte" />
+        <NutrientDisplayRow
+          label="Offene Nährwerte"
+          {...sampleData}
+        />
       </section>
 
       <section className="space-y-2">
         <h2 className="font-semibold text-base text-foreground">Variante mit kleineren Kreis Graphen</h2>
 
         <NutrientDisplayDetailed
+          label="Offene Nährwerte"
           calories={{ current: 1650, min: 1800, max: 2200 }}
           protein={{ current: 95, min: 80, max: 120 }}
           carbs={{ current: 180, min: 200, max: 280 }}
