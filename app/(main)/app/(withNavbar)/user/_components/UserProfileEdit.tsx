@@ -34,6 +34,8 @@ import { useUserProfile } from "./UserProfileContext";
 
 
 export function UserProfileEdit() {
+  "use no memo";
+
   const { profile, queryKey, cancelEdit } = useUserProfile()
   const qc = useQueryClient()
 
@@ -44,6 +46,9 @@ export function UserProfileEdit() {
     fitnessGoal, activityLevel, trainingDaysPerWeek,
     macroSplit, proteinTargetGrams, fatTargetGrams
   } = currentProfileData
+
+  const initialProteinTargetGrams = proteinTargetGrams || nutritionResult.proteinsTargetGrams
+  const initialFatTargetGrams = fatTargetGrams || nutritionResult.fatsTargetGrams
 
   const form = useForm({
     resolver: zodResolver(profileSchema),
@@ -58,7 +63,9 @@ export function UserProfileEdit() {
         fitnessGoal, activityLevel, trainingDaysPerWeek,
       },
       macroSplitStep: {
-        macroSplit, proteinTargetGrams, fatTargetGrams
+        macroSplit,
+        proteinTargetGrams: initialProteinTargetGrams,
+        fatTargetGrams: initialFatTargetGrams
       }
     },
     mode: "onTouched",
@@ -89,7 +96,20 @@ export function UserProfileEdit() {
             "**:data-[slot=field]:items-center",
             "**:data-[slot=field-description]:sr-only"
           )}
-          onSubmit={form.handleSubmit((values) => updateProfile(values))}
+          onSubmit={form.handleSubmit((values) => {
+            // TODO: integrate this into profileSchema sometime?
+            //* reapply error because this error is no part of zod validation and therefore gets cleared in submit
+            if (form.formState.errors.root) {
+              form.setError("root", {
+                type: "custom",
+                message: form.formState.errors.root.message
+              })
+              return
+            }
+
+            //* zod validation and custom plan validation passed
+            updateProfile(values)
+          })}
         >
           {/* user data */}
           <GridDataSection label="Benutzerdaten">
@@ -112,7 +132,7 @@ export function UserProfileEdit() {
           </GridDataSection>
 
           {/* split data */}
-          <GridDataSection label="Makronährwertdaten" className="space-y-3" listingClassNames="gap-3">
+          <GridDataSection label="Makronährwertdaten">
             <ProfileFormFieldMacroPlan />
             <ProfileFormFieldSelectedPlan />
           </GridDataSection>

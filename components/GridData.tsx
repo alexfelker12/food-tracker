@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 
 
 interface GridDataSectionProps extends React.ComponentProps<"section"> {
-  label: string
+  label?: string
   listingClassNames?: string
 }
 function GridDataSection({
@@ -21,10 +21,12 @@ function GridDataSection({
       )}
       {...props}
     >
-      <div>
-        <span>{label}</span>
-        <Separator />
-      </div>
+      {label && (
+        <div>
+          <span>{label}</span>
+          <Separator />
+        </div>
+      )}
       <div className={cn(
         "flex flex-col gap-2 text-sm",
         listingClassNames

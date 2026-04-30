@@ -47,7 +47,8 @@ export function changedProfileCalculation(profileData: ChangedProfileCalculation
     bodyType,
     gender,
     fatTargetGrams,
-    proteinTargetGrams
+    proteinTargetGrams,
+    macroSplit
   }
   const macroStrategy = createMacroStrategy(macroSplit)
   const macrosAndCalories = macroStrategy.calculate(context)

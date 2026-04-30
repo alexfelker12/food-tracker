@@ -17,6 +17,8 @@ import { ProfileCreateSuccess } from "./ProfileCreateSuccess";
 
 
 export function ProfileForm({ className, children, ...props }: React.ComponentProps<"form">) {
+  "use no memo";
+
   const form = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {

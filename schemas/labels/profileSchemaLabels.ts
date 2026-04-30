@@ -51,13 +51,12 @@ export const macroSplitLabels: DetailedOptionLabel<MacroSplit> = {
   RECOMMENDED: {
     label: "Empfohlen",
     description: "Eine nach deinen Angaben empfohlene Nährstoffverteilung",
-    icon: SparklesIcon
+    icon: SparklesIcon,
   },
   CUSTOM: {
-    label: "Angepasst (bald wieder verfügbar)",
+    label: "Angepasst",
     description: "Nach deinen wünschen angepasste Nährstoffverteilung",
     icon: SlidersHorizontalIcon,
-    disabled: true
   },
 }
 

@@ -25,7 +25,7 @@ export class CustomMacroStrategy implements MacroCalculationStrategy {
     const fatCalories = context.fatTargetGrams * 9
     // subtract protein and fat calories from calorieGoal
     const remainingCalories = context.calorieGoalInitial - proteinCalories - fatCalories
-    const carbsTargetGrams = remainingCalories * 4
+    const carbsTargetGrams = remainingCalories / 4
 
     //* carbs min/max range
     const { min: carbsMinGrams, max: carbsMaxGrams } = getMinMaxRange(carbsTargetGrams)

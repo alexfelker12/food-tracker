@@ -16,6 +16,7 @@ export type MacroCalculationContext =
     | "gender"
     | "proteinTargetGrams"
     | "fatTargetGrams"
+    | "macroSplit"
   > &
   Pick<NutritionResult,
     "calorieGoalInitial"
@@ -73,7 +74,10 @@ export const checkPlanValidity = ({ context, fatGrams, proteinGrams, carbGrams }
     weightKg: context.weightKg
   }).valid
 
-  const isCarbAmountValid = checkCarbRestrictions({ carbGrams }).valid
+  const isCarbAmountValid = checkCarbRestrictions({
+    carbGrams,
+    macroSplitPlan: context.macroSplit
+  }).valid
 
   return {
     isProteinAmountValid, // TODO read in output of checkPlanValidity "proteinRestrictions"-output

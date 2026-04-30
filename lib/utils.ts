@@ -86,7 +86,11 @@ export function get_yyyymmdd_date(date?: Date) {
 
 // formats number to german decimal number format, e.g.: 1.234,56
 export function getGermanNumber(number: number, maximumFractionDigits: number = 2) {
-  return new Intl.NumberFormat("de-DE", { style: "decimal", maximumFractionDigits }).format(number)
+  return new Intl.NumberFormat("de-DE", {
+    style: "decimal",
+    signDisplay: "negative",
+    maximumFractionDigits
+  }).format(number)
 }
 
 // formats date to german date format, e.g.: 18.07.2025
