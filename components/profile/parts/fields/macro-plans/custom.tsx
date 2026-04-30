@@ -5,6 +5,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { getFatsRange, getProteinsRange } from "@/lib/calculations/profile";
 import { ProfileSchema } from "@/schemas/types";
+import { getGermanNumber } from "@/lib/utils";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
@@ -23,6 +24,12 @@ export function CustomPlan(props: SelectedPlanProps) {
   const gender = getValues("userDataStep.gender")
   const { proteinsMinGrams, proteinsMaxGrams } = getProteinsRange({ weightKg })
   const { fatsMinGrams, fatsMaxGrams } = getFatsRange({ weightKg, gender })
+
+  // get 0 digit integers for min/max slider values
+  const proteinSliderMin = +getGermanNumber(proteinsMinGrams, 0)
+  const proteinSliderMax = +getGermanNumber(proteinsMaxGrams, 0)
+  const fatsSliderMin = +getGermanNumber(fatsMinGrams, 0)
+  const fatsSliderMax = +getGermanNumber(fatsMaxGrams, 0)
 
   //* toggle error on macroSplitStep
   const handleCustomPlanError = useEffectEvent((isValid: boolean) => {
@@ -57,7 +64,7 @@ export function CustomPlan(props: SelectedPlanProps) {
                   <FieldLabel className="justify-between gap-2 w-full">
                     <span>Protein-Zielmenge</span>
                     <span className="text-muted-foreground">
-                      <span className="text-foreground">{value}</span>g
+                      <span className="text-foreground">{value?.toFixed(0)}</span>g
                     </span>
                   </FieldLabel>
                   <FieldDescription className="">
@@ -70,14 +77,14 @@ export function CustomPlan(props: SelectedPlanProps) {
                   <Slider
                     value={[value ?? 1]}
                     onValueChange={(value) => onChange(value[0])}
-                    min={proteinsMinGrams}
-                    max={proteinsMaxGrams}
+                    min={proteinSliderMin}
+                    max={proteinSliderMax}
                     aria-invalid={fieldState.invalid}
                     {...field}
                   />
                   <div className="flex justify-between items-center gap-2 w-full text-muted-foreground text-xs">
-                    <span>{proteinsMinGrams}g</span>
-                    <span>{proteinsMaxGrams}g</span>
+                    <span>{proteinSliderMin}g</span>
+                    <span>{proteinSliderMax}g</span>
                   </div>
                 </div>
               </Field>
@@ -106,14 +113,14 @@ export function CustomPlan(props: SelectedPlanProps) {
                   <Slider
                     value={[value ?? 1]}
                     onValueChange={(value) => onChange(value[0])}
-                    min={fatsMinGrams}
-                    max={fatsMaxGrams}
+                    min={fatsSliderMin}
+                    max={fatsSliderMax}
                     aria-invalid={fieldState.invalid}
                     {...field}
                   />
                   <div className="flex justify-between items-center gap-2 w-full text-muted-foreground text-xs">
-                    <span>{fatsMinGrams}g</span>
-                    <span>{fatsMaxGrams}g</span>
+                    <span>{fatsSliderMin}g</span>
+                    <span>{fatsSliderMax}g</span>
                   </div>
                 </div>
               </Field>
