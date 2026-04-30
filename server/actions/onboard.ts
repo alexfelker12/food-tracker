@@ -28,7 +28,10 @@ export async function createInitialProfileAndResult({ userProfileData, userId, d
 
   //* first nutrition result
   const { nutritionResult: nutritionData, planValidity } = changedProfileCalculation(mergedProfileData)
-  if (!planValidity.isPlanValid && userProfileData.macroSplitStep.macroSplit === "RECOMMENDED") return "invalid plan"
+  //* only check recommended plan, allow everything for custom
+  // if (!planValidity.isPlanValid && userProfileData.macroSplitStep.macroSplit === "RECOMMENDED") return "invalid plan"
+  //* always check carbs validity, regardless of chosen plan
+  if (!planValidity.isCarbAmountValid) return "invalid plan"
 
   const initialProfile = await db.metricsProfile.create({
     data: {

@@ -38,34 +38,16 @@ export function NutritionResultDisplay({ nutritionResult, planValidity }: Select
 
       <GridData className="gap-2 gap-x-1 grid grid-cols-[1fr_auto_auto_auto] grid-row-3"> */}
         {/* proteins */}
-        {planValidity.isProteinAmountValid ? (
-          <>
-            <span data-slot="grid-data-label">Proteine</span>
-            <span>{proteinsMin}<span className="ml-0.5 text-muted-foreground">g</span></span>
-            <span className="text-muted-foreground">-</span>
-            <span>{proteinsMax}<span className="ml-0.5 text-muted-foreground">g</span></span>
-          </>
-        ) : (
-          <>
-            <span className="text-destructive text-start">Proteine</span>
-            <span className="col-span-3 text-destructive">ungültig</span>
-          </>
-        )}
+        <span data-slot="grid-data-label">Proteine</span>
+        <span>{proteinsMin}<span className="ml-0.5 text-muted-foreground">g</span></span>
+        <span className="text-muted-foreground">-</span>
+        <span>{proteinsMax}<span className="ml-0.5 text-muted-foreground">g</span></span>
 
         {/* fats */}
-        {planValidity.isFatAmountValid ? (
-          <>
-            <span data-slot="grid-data-label">Fette</span>
-            <span>{fatsMin}<span className="ml-0.5 text-muted-foreground">g</span></span>
-            <span className="text-muted-foreground">-</span>
-            <span>{fatsMax}<span className="ml-0.5 text-muted-foreground">g</span></span>
-          </>
-        ) : (
-          <>
-            <span className="text-destructive text-start">Fette</span>
-            <span className="col-span-3 text-destructive">ungültig</span>
-          </>
-        )}
+        <span data-slot="grid-data-label">Fette</span>
+        <span>{fatsMin}<span className="ml-0.5 text-muted-foreground">g</span></span>
+        <span className="text-muted-foreground">-</span>
+        <span>{fatsMax}<span className="ml-0.5 text-muted-foreground">g</span></span>
 
         {/* carbs*/}
         {planValidity.isCarbAmountValid ? (

@@ -3,11 +3,9 @@
 import { useEffect, useEffectEvent } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
-import { getFatsRange, getProteinsRange } from "@/lib/calculations/profile";
 import { ProfileSchema } from "@/schemas/types";
-import { getGermanNumber } from "@/lib/utils";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { Slider } from "@/components/ui/slider";
 
@@ -17,19 +15,13 @@ import { SelectedPlanProps } from "./registry";
 
 export function CustomPlan(props: SelectedPlanProps) {
   const { planValidity, nutritionResult } = props
-  const { control, formState, getValues, setValue, setError, clearErrors, trigger } = useFormContext<ProfileSchema>();
+  const { control, formState, setError, clearErrors } = useFormContext<ProfileSchema>();
 
-  //* get min/max values for custom plan sliders
-  const weightKg = getValues("bodyDataStep.weightKg")
-  const gender = getValues("userDataStep.gender")
-  const { proteinsMinGrams, proteinsMaxGrams } = getProteinsRange({ weightKg })
-  const { fatsMinGrams, fatsMaxGrams } = getFatsRange({ weightKg, gender })
-
-  // get 0 digit integers for min/max slider values
-  const proteinSliderMin = +getGermanNumber(proteinsMinGrams, 0)
-  const proteinSliderMax = +getGermanNumber(proteinsMaxGrams, 0)
-  const fatsSliderMin = +getGermanNumber(fatsMinGrams, 0)
-  const fatsSliderMax = +getGermanNumber(fatsMaxGrams, 0)
+  // min/max for custom plan sliders
+  const proteinSliderMin = 50
+  const proteinSliderMax = 300
+  const fatsSliderMin = 30
+  const fatsSliderMax = 200
 
   //* toggle error on macroSplitStep
   const handleCustomPlanError = useEffectEvent((isValid: boolean) => {

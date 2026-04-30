@@ -62,7 +62,10 @@ export async function updateUserProfileAndLatestResult({ userProfileData, userId
   }
 
   const { nutritionResult: nutritionData, planValidity } = changedProfileCalculation(mergedProfileData)
-  if (!planValidity.isPlanValid && userProfileData.macroSplitStep.macroSplit === "RECOMMENDED") return "invalid plan"
+  //* only check recommended plan, allow everything for custom
+  // if (!planValidity.isPlanValid && userProfileData.macroSplitStep.macroSplit === "RECOMMENDED") return "invalid plan"
+  //* always check carbs validity, regardless of chosen plan
+  if (!planValidity.isCarbAmountValid) return "invalid plan"
 
   const updatedProfile = await db.metricsProfile.update({
     where: { id: userProfile.id, userId },
