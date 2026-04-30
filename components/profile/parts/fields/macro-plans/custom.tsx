@@ -100,7 +100,7 @@ export function CustomPlan(props: SelectedPlanProps) {
                   <FieldLabel className="justify-between gap-2 w-full">
                     <span>Fett-Zielmenge</span>
                     <span className="text-muted-foreground">
-                      <span className="text-foreground">{value}</span>g
+                      <span className="text-foreground">{value?.toFixed(0)}</span>g
                     </span>
                   </FieldLabel>
                   <FieldDescription className="">
